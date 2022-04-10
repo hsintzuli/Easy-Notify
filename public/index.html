@@ -17,6 +17,7 @@
 <body>
 <p>Easy-Notify Test Page</p>
 <form>
+<<<<<<< HEAD
 APP ID: <input id='app-id' type='text' value='rgTYgjeI6YDgs1MGGzTwc' size="30"></input>
 Public Key: <input id='public-key' type='text' value='BP7iIrnwbdqDRGJZE5w5EuMMl5Dbi6L46RB69cK8gb22pHam3jsDrZaxtq638jbMLO5eypRrL03imKOeqMsM6NM' size="100"></input><br>
 <button id="subscribe">subscirbe</button>
@@ -35,6 +36,26 @@ Notification Time-To-Live: <input id='notification-ttl' type='number' value='0'>
 </form>
 <button id="realtime">Push Notification Now!</button>
 <button id="scheduled">Push Scheduled Notification</button>
+=======
+  APP ID: <input id='app-id' type='text' value='rgTYgjeI6YDgs1MGGzTwc' size="30"></input>
+  Public Key: <input id='public-key' type='text' value='BP7iIrnwbdqDRGJZE5w5EuMMl5Dbi6L46RB69cK8gb22pHam3jsDrZaxtq638jbMLO5eypRrL03imKOeqMsM6NM' size="100"></input><br>
+  <button id="subscribe">subscirbe</button>
+  <button id="unsubscribe">unsubscirbe</button>
+</form>
+
+<form>
+  Notification title: <input id='notification-title' type='text' value='Easy-Notify'></input>
+  Notification message: <input id='notification-message' type='text' value='Notification content'></input>
+  Notification type:<select id='notification-send-type' name="type">
+    <option value="webpush">Web-Push</option>
+    <option value="websocket">Websocket</option>
+  </select>
+  Notification Scheduled-Time: <input id='notification-time' type="datetime-local"></input>
+  Notification Time-To-Live: <input id='notification-ttl' type='number' value='0'></input> seconds
+  </form>
+  <button id="realtime">Push Notification Now!</button>
+  <button id="scheduled">Push Scheduled Notification</button>
+>>>>>>> c7007647adec4f2ed7f0a7edef06fe8380096ea6
 
 <script src="./index.js"></script>
 </body>

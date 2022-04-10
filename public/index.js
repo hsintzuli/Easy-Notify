@@ -72,9 +72,31 @@ $('#unsubscribe').click(async function (event) {
 $('#realtime').click(async function (event) {
   event.preventDefault();
   const appID = $('#app-id').val();
+<<<<<<< HEAD
   const title = $('#notification-title').val();
   const message = $('#notification-message').val();
   const sendType = $('#notification-send-type').val();
+=======
+  const title = $('#notification-title').val();
+  const message = $('#notification-message').val();
+  const sendType = $('#notification-send-type').val();
+  const ttl = $('#notification-ttl').val();
+  try {
+    const res = await axios.post('/api/1.0/push/realtime', { appID, payload: { title, message }, sendType, ttl }, { headers: { 'content-type': 'application/json' } });
+    console.log(res.data);
+  } catch (err) {
+    console.log(err);
+  }
+});
+
+$('#scheduled').click(async function (event) {
+  event.preventDefault();
+  const appID = $('#app-id').val();
+  const title = $('#notification-title').val();
+  const message = $('#notification-message').val();
+  const sendType = $('#notification-send-type').val();
+  const sendTime = $('#notification-time').val();
+>>>>>>> c7007647adec4f2ed7f0a7edef06fe8380096ea6
   const ttl = $('#notification-ttl').val();
   try {
     const res = await axios.post(
@@ -96,6 +118,8 @@ $('#scheduled').click(async function (event) {
   const sendType = $('#notification-send-type').val();
   const sendTime = $('#notification-time').val();
   const ttl = $('#notification-ttl').val();
+
+  console.log('time', sendTime);
 
   console.log('time', sendTime);
 

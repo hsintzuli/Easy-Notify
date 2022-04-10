@@ -12,7 +12,7 @@ self.addEventListener('push', async function (event) {
   // Keep the service worker alive until the notification is created.
   event.waitUntil(
     self.registration.showNotification(data.title, {
-      body: data.message,
+      body: data.body,
     })
   );
 });
