@@ -1,7 +1,7 @@
 const router = require('express').Router();
-const { genKey } = require('../controllers/user');
+const { subscribe } = require('../controllers/subscribe');
 const { wrapAsync } = require('../../utils/util');
 
-router.route('/keys').get(wrapAsync(genKey));
+router.route('/subscribe').post(wrapAsync(subscribe));
 
 module.exports = router;
