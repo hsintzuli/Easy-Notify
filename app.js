@@ -1,5 +1,15 @@
 require('dotenv').config();
 const { PORT, API_VERSION } = process.env;
+const mongoose = require('mongoose');
+const { MONGO_HOST, MONGO_USERNAME, MONGO_PASSWORD, MONGO_DATABASE } = process.env;
+
+mongoose.connect(`mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOST}:27017/${MONGO_DATABASE}?authSource=admin`);
+
+const mongodb = mongoose.connection;
+mongodb.on('error', console.error.bind(console, 'connection error:'));
+mongodb.once('open', function () {
+  console.log('Connection Successful!');
+});
 
 // Express Initialization
 const express = require('express');
@@ -10,7 +20,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // API routes
-app.use('/api/' + API_VERSION, [require('./server/routes/client')]);
+app.use('/api/' + API_VERSION, [require('./server/routes/client'), require('./server/routes/subscribe'), require('./server/routes/push')]);
 
 // Page not found
 app.use(function (req, res, next) {
