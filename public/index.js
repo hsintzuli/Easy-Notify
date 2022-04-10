@@ -72,11 +72,6 @@ $('#unsubscribe').click(async function (event) {
 $('#realtime').click(async function (event) {
   event.preventDefault();
   const appID = $('#app-id').val();
-<<<<<<< HEAD
-  const title = $('#notification-title').val();
-  const message = $('#notification-message').val();
-  const sendType = $('#notification-send-type').val();
-=======
   const title = $('#notification-title').val();
   const message = $('#notification-message').val();
   const sendType = $('#notification-send-type').val();
@@ -96,7 +91,6 @@ $('#scheduled').click(async function (event) {
   const message = $('#notification-message').val();
   const sendType = $('#notification-send-type').val();
   const sendTime = $('#notification-time').val();
->>>>>>> c7007647adec4f2ed7f0a7edef06fe8380096ea6
   const ttl = $('#notification-ttl').val();
   try {
     const res = await axios.post(
