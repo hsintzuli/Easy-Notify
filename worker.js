@@ -1,4 +1,4 @@
-require('dotenv').config({ path: __dirname + '/.env' });
+require('dotenv').config();
 const webpush = require('web-push');
 const rabbitmqLib = require('./utils/rabbit');
 const Content = require('./server/models/content');
@@ -15,7 +15,7 @@ mongodb.once('open', function () {
   console.log('Connection Successful!');
 });
 
-const { DELAY_QUEUE } = process.env;
+const { WEBPUSH_QUEUE } = process.env;
 
 async function fnConsumer(msg, callback) {
   const { contentID, vapidDetails, appID } = JSON.parse(msg.content);
@@ -47,5 +47,5 @@ async function fnConsumer(msg, callback) {
 // InitConnection of rabbitmq
 rabbitmqLib.initConnection(() => {
   // start consumer worker when the connection to rabbitmq has been made
-  rabbitmqLib.consumeQueue(DELAY_QUEUE, fnConsumer);
+  rabbitmqLib.consumeQueue(WEBPUSH_QUEUE, fnConsumer);
 });

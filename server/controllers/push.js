@@ -29,6 +29,7 @@ const pushNotification = async (req, res) => {
     time = moment(time).format('YYYY-MM-DD HH:mm:ss');
   }
 
+  console.log('delay', delay.toString());
   const jobOptions = {
     headers: { 'x-delay': delay.toString() },
     contentType: 'application/json',
@@ -47,10 +48,11 @@ const pushNotification = async (req, res) => {
   });
   const mongoResult = await content.save();
   const newJob = { contentID: mongoResult._id, vapidDetails, appID };
-  res.status(201).json(mongoResult);
-  console.log(newJob);
-  await rabbitmqLib.publishMessage(DELAY_EXCHANGE, '', JSON.stringify(newJob), jobOptions);
+
+  console.log('Create job', jobOptions);
+  await rabbitmqLib.publishMessage(DELAY_EXCHANGE, type, JSON.stringify(newJob), jobOptions);
   await notification_model.createNotification(mongoResult._id, appID, type, scheduled, time);
+  res.status(201).json(mongoResult);
   return;
 };
 

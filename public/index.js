@@ -35,6 +35,14 @@ SubscriptionGenerator.prototype.unsubscribe = async function () {
   return Promise.resolve();
 };
 
+const socket = io();
+socket.on('connection', (data) => {
+  console.log('Connect socket io server', data);
+});
+socket.on('push', (data) => {
+  console.log('Receive notificatiom from socket:', data);
+});
+
 const mySubscription = new SubscriptionGenerator();
 $(document).ready(async () => {
   // Register a Service Worker.
@@ -45,15 +53,15 @@ $(document).ready(async () => {
 
 $('#subscribe').click(async function (event) {
   event.preventDefault();
+  const appID = $('#app-id').val();
+  const publicKey = $('#public-key').val();
+  socket.emit('subscribe', { app_id: appID });
   let subscription = await mySubscription.getSubscription();
   if (subscription) {
     return console.log('Subscription already exist\n' + JSON.stringify(subscription));
   }
-  const appID = $('#app-id').val();
-  const publicKey = $('#public-key').val();
-  console.log('appID', appID);
-  console.log('publicKey', publicKey);
   subscription = await mySubscription.subscribe(publicKey, true);
+
   console.log('Successfully get subscription\n' + JSON.stringify(subscription));
   try {
     const res = await axios.post('/api/1.0/subscribe', { app_id: appID, subscription: subscription }, { headers: { 'content-type': 'application/json' } });
@@ -77,28 +85,12 @@ $('#realtime').click(async function (event) {
   const sendType = $('#notification-send-type').val();
   const ttl = $('#notification-ttl').val();
   try {
-    const res = await axios.post('/api/1.0/push/realtime', { appID, payload: { title, message }, sendType, ttl }, { headers: { 'content-type': 'application/json' } });
-    console.log(res.data);
-  } catch (err) {
-    console.log(err);
-  }
-});
-
-$('#scheduled').click(async function (event) {
-  event.preventDefault();
-  const appID = $('#app-id').val();
-  const title = $('#notification-title').val();
-  const message = $('#notification-message').val();
-  const sendType = $('#notification-send-type').val();
-  const sendTime = $('#notification-time').val();
-  const ttl = $('#notification-ttl').val();
-  try {
     const res = await axios.post(
       '/api/1.0/push/realtime',
       { appID, payload: { title, message }, sendType, ttl },
       { headers: { 'content-type': 'application/json' } }
     );
-    console.log(res.data);
+    console.log('Push success! Notification id:', res.data._id);
   } catch (err) {
     console.log(err);
   }
@@ -112,18 +104,13 @@ $('#scheduled').click(async function (event) {
   const sendType = $('#notification-send-type').val();
   const sendTime = $('#notification-time').val();
   const ttl = $('#notification-ttl').val();
-
-  console.log('time', sendTime);
-
-  console.log('time', sendTime);
-
   try {
     const res = await axios.post(
       '/api/1.0/push/scheduled',
       { appID, payload: { title, message }, sendType, sendTime, ttl: ttl },
       { headers: { 'content-type': 'application/json' } }
     );
-    console.log(res.data);
+    console.log('Push success! Notification id:', res.data._id);
   } catch (err) {
     console.log(err);
   }

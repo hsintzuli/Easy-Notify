@@ -22,6 +22,12 @@ app.use(express.urlencoded({ extended: true }));
 // API routes
 app.use('/api/' + API_VERSION, [require('./server/routes/client'), require('./server/routes/subscribe'), require('./server/routes/push')]);
 
+// Initialize Socket IO
+const http = require('http');
+const server = http.createServer(app);
+require('./utils/mysocket').config(server);
+require('./utils/websocketWorker').initializSocketWorker();
+
 // Page not found
 app.use(function (req, res, next) {
   res.sendStatus(404);
@@ -38,6 +44,6 @@ app.use((err, req, res, next) => {
   });
 });
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`Server listening in port ${PORT}`);
 });
