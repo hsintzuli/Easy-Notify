@@ -23,6 +23,7 @@ const pushNotification = async (req, res) => {
   let delay = 0;
   let time;
   if (scheduled) {
+	  console.log('sendTime', sendTime);
     time = new Date(sendTime);
     console.log('Scheduled Time', time);
     delay = time.getTime() - Date.now();

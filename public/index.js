@@ -35,7 +35,7 @@ SubscriptionGenerator.prototype.unsubscribe = async function () {
   return Promise.resolve();
 };
 
-const socket = io();
+const socket = io({ transports: ['websocket', 'polling'] });
 socket.on('connection', (data) => {
   console.log('Connect socket io server', data);
 });
@@ -102,8 +102,10 @@ $('#scheduled').click(async function (event) {
   const title = $('#notification-title').val();
   const message = $('#notification-message').val();
   const sendType = $('#notification-send-type').val();
-  const sendTime = $('#notification-time').val();
+  const date = $('#notification-date').val();
+  const time = $('#notification-time').val();
   const ttl = $('#notification-ttl').val();
+  const sendTime = new Date(date + ' ' + time);
   try {
     const res = await axios.post(
       '/api/1.0/push/scheduled',
