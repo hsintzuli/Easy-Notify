@@ -1,6 +1,7 @@
 require('dotenv').config();
 const { PORT, API_VERSION } = process.env;
 const mongoose = require('mongoose');
+const session = require('express-session');
 const { MONGO_HOST, MONGO_USERNAME, MONGO_PASSWORD, MONGO_DATABASE } = process.env;
 
 mongoose.connect(`mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOST}:27017/${MONGO_DATABASE}?authSource=admin`);
@@ -18,9 +19,22 @@ const app = express();
 app.use(express.static('public'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    saveUninitialized: false,
+    name: 'user',
+    resave: false,
+  })
+);
 
 // API routes
-app.use('/api/' + API_VERSION, [require('./server/routes/client'), require('./server/routes/subscribe'), require('./server/routes/push')]);
+app.use('/api/' + API_VERSION, [
+  require('./server/routes/user'),
+  require('./server/routes/client'),
+  // require('./server/routes/subscribe'),
+  require('./server/routes/push'),
+]);
 
 // Initialize Socket IO
 const http = require('http');

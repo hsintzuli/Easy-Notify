@@ -2,7 +2,7 @@ require('dotenv').config();
 const webpush = require('web-push');
 const rabbitmqLib = require('./utils/rabbit');
 const Content = require('./server/models/content');
-const subscribe = require('./server/models/subscribe');
+const subscribe = require('./server/models/subscription');
 const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
 const { MONGO_HOST, MONGO_USERNAME, MONGO_PASSWORD, MONGO_DATABASE } = process.env;
