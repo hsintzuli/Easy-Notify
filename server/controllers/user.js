@@ -3,16 +3,6 @@ const User = require('../models/user');
 const Order = require('../models/order');
 const { TAPPAY_PARTNER_KEY, TAPPAY_MERCHANT_ID } = process.env;
 
-// const genKey = async (req, res) => {
-//   const key = webpush.generateVAPIDKeys();
-//   console.log('key', key);
-//   return res.json({ key });
-// };
-
-// module.exports = {
-//   genKey,
-// };
-
 const signUp = async (req, res) => {
   const { name, email, password } = req.body;
 
@@ -75,10 +65,6 @@ const signIn = async (req, res) => {
 };
 
 const createOrder = async (req, res) => {
-  if (!req.session.user) {
-    res.status(403).send({ error: 'Please sign in first' });
-    return;
-  }
   const user_id = req.session.user;
   const { plan_id, prime } = req.body;
   if (!plan_id || !prime) {

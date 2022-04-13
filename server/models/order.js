@@ -34,10 +34,6 @@ const createOrder = async (order, plan_id, tappayKey, tappayId, prime) => {
   } finally {
     conn.release();
   }
-
-  const [result] = await pool.query('INSERT INTO order_table SET ?', order);
-  console.log(result);
-  return { order };
 };
 
 const payOrderByPrime = async function (tappayKey, tappayId, prime, order) {

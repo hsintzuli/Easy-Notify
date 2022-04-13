@@ -7,6 +7,31 @@ const wrapAsync = (fn) => {
   };
 };
 
+const userAuthentication = async function (req, res, next) {
+  if (!req.session.user) {
+    res.status(403).send({ error: 'Forbidden' });
+    return;
+  }
+  next();
+};
+
+const apiAuthentication = () => {
+  return async function (req, res, next) {
+    let accessToken = req.get('Authorization');
+    if (!accessToken) {
+      res.status(401).send({ error: 'Unauthorized' });
+      return;
+    }
+
+    accessToken = accessToken.replace('Bearer ', '');
+    if (accessToken == 'null') {
+      res.status(401).send({ error: 'Unauthorized' });
+      return;
+    }
+  };
+};
+
 module.exports = {
   wrapAsync,
+  userAuthentication,
 };
