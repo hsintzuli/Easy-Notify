@@ -1,3 +1,5 @@
+const Channel = require('../server/models/channel');
+
 // reference: https://thecodebarbarian.com/80-20-guide-to-express-error-handling
 const wrapAsync = (fn) => {
   return function (req, res, next) {
@@ -15,23 +17,32 @@ const userAuthentication = async function (req, res, next) {
   next();
 };
 
-const apiAuthentication = () => {
-  return async function (req, res, next) {
-    let accessToken = req.get('Authorization');
-    if (!accessToken) {
-      res.status(401).send({ error: 'Unauthorized' });
-      return;
-    }
+const apiAuthentication = async (req, res, next) => {
+  let accessToken = req.get('Authorization');
+  console.log(accessToken);
+  if (!accessToken) {
+    res.status(401).send({ error: 'Unauthorized' });
+    return;
+  }
 
-    accessToken = accessToken.replace('Bearer ', '');
-    if (accessToken == 'null') {
-      res.status(401).send({ error: 'Unauthorized' });
-      return;
-    }
-  };
+  const [channelId, channelKey] = accessToken.split(':');
+  console.log(channelId, channelKey);
+  if (!channelId || !channelKey) {
+    res.status(401).send({ error: 'Unauthorized' });
+    return;
+  }
+
+  const channel = await Channel.getChannelById(channelId);
+  if (!channel || channel.channel_key !== channelKey) {
+    res.status(403).send({ error: 'Forbidden' });
+    return;
+  }
+  req.locals = { channel };
+  next();
 };
 
 module.exports = {
   wrapAsync,
   userAuthentication,
+  apiAuthentication,
 };

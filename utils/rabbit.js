@@ -4,7 +4,7 @@ const AMQP_URL = `amqp://${RABBIT_USER}:${RABBIT_PW}@${RABBIT_HOST}:${RABBIT_POR
 let amqpConn = null;
 let pubChannel = null;
 
-const initConnection = async (fnFinish) => {
+const initConnection = async (fnToExecute) => {
   try {
     const conn = await amqp.connect(AMQP_URL);
     conn.on('error', (err) => {
@@ -18,16 +18,17 @@ const initConnection = async (fnFinish) => {
       // Reconnect when connection was closed
       console.error('[AMQP] reconnecting');
       return setTimeout(() => {
-        module.exports.initConnection(fnFinish);
-      }, 1000);
+        module.exports.initConnection(fnToExecute);
+      }, 10000);
     });
 
     // Connection OK
     console.log('[AMQP] connected');
     amqpConn = conn;
+    startPublish();
 
-    // Execute finish function
-    await fnFinish();
+    // Execute function
+    await fnToExecute();
   } catch (err) {
     console.error('[AMQP]', err.message);
     return setTimeout(this, 1000);
@@ -48,17 +49,14 @@ const consumeQueue = async (queue, fnConsumer) => {
       console.log('[AMQP] channel closed');
     });
 
-    // Set prefetch value
-    // ch.prefetch(process.env.CLOUDAMQP_CONSUMER_PREFETCH ? process.env.CLOUDAMQP_CONSUMER_PREFETCH : 10);
-
     // Connect to queue
     await ch.assertQueue(queue, { durable: true });
     await ch.consume(queue, processMsg, { noAck: false });
 
     function processMsg(msg) {
       // Process incoming messages and send them to fnConsumer
-      // Here we need to send a callback(true) for acknowledge the message or callback(false) for reject them
-      fnConsumer(msg, function (ok) {
+      // Send a callback(true) for acknowledge the message or callback(false) for reject them
+      fnConsumer(msg, (ok) => {
         try {
           ok ? ch.ack(msg) : ch.reject(msg, true);
         } catch (e) {
@@ -74,13 +72,11 @@ const consumeQueue = async (queue, fnConsumer) => {
 const startPublish = async () => {
   try {
     const ch = await amqpConn.createConfirmChannel();
-    // Set publisher channel in a var
     pubChannel = ch;
     console.log('[AMQP] Publisher started');
     ch.on('error', function (err) {
       console.error('[AMQP] channel error', err.message);
     });
-
     ch.on('close', function () {
       console.log('[AMQP] channel closed');
     });
@@ -118,7 +114,6 @@ async function closeOnErr(err) {
 module.exports = {
   initConnection,
   consumeQueue,
-  startPublish,
   publishMessage,
   closeOnErr,
 };

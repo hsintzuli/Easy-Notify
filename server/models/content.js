@@ -10,10 +10,13 @@ const contentSchema = new Schema({
     type: String,
     required: true,
   },
-  ttl: {
-    type: Number,
+  optionMsg: {
+    type: Object,
   },
-  userIDs: {
+  config: {
+    type: Object,
+  },
+  clientIds: {
     type: Array,
   },
 });

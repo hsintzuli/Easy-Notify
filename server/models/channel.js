@@ -70,9 +70,20 @@ const verifyChannelWithUser = async (user_id, channel_id) => {
   return verified;
 };
 
+const getChannelById = async (channel_id) => {
+  const [results] = await pool.query(
+    `SELECT c.id, c.app_id, c.channel_key, c.public_key, c.private_key, 
+    app.name AS app_name, app.default_icon AS icon, app.contact_email AS email 
+    FROM channel AS c LEFT JOIN app ON c.app_id = app.id WHERE c.id = ?`,
+    channel_id
+  );
+  return results[0];
+};
+
 module.exports = {
   createChannel,
   deleteChannel,
   updateChannelKey,
+  getChannelById,
   verifyChannelWithUser,
 };
