@@ -18,15 +18,16 @@
 <body>
 <p>Easy-Notify Test Page</p>
 <form>
-  APP ID: <input id='app-id' type='text' value='rgTYgjeI6YDgs1MGGzTwc' size="30"></input>
-  Public Key: <input id='public-key' type='text' value='BP7iIrnwbdqDRGJZE5w5EuMMl5Dbi6L46RB69cK8gb22pHam3jsDrZaxtq638jbMLO5eypRrL03imKOeqMsM6NM' size="100"></input><br>
+  Channel ID: <input id='channel-id' type='text' value='yuGLYmo2FvOeCxF1O5YiZ' size="30"></input>
+  Public Key: <input id='public-key' type='text' value='BEtUGljjQsnAW6Ekm2fhmmnjChwldm0OHgs_4N8ReFGaVO49ws6gEGOQgHJmyfYcPr_-6fAXuxqQbvsF1AHswIA' size="100"></input><br>
   <button id="subscribe">subscirbe</button>
   <button id="unsubscribe">unsubscirbe</button>
 </form>
 
 <form>
   Notification title: <input id='notification-title' type='text' value='Easy-Notify'></input>
-  Notification message: <input id='notification-message' type='text' value='Notification content'></input>
+  Notification body: <input id='notification-body' type='text' value='Notification content'></input>
+  Notification icon url: <input id='notification-icon' type="text"></input>
   Notification type:<select id='notification-send-type' name="type">
     <option value="webpush">Web-Push</option>
     <option value="websocket">Websocket</option>

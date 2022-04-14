@@ -7,6 +7,9 @@ self.addEventListener('push', async function (event) {
   // Other formats are supported (ArrayBuffer, Blob, JSON), check out the documentation
   // on https://developer.mozilla.org/en-US/docs/Web/API/PushMessageData.
   const data = event.data ? event.data.json() : 'no payload';
+  if (data.title === 'auth') {
+    return channel.postMessage(data);
+  }
   console.log(data);
   channel.postMessage(data);
   // Keep the service worker alive until the notification is created.

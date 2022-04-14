@@ -30,11 +30,10 @@ app.use(
 
 // API routes
 app.use('/api/' + API_VERSION, [
+  require('./server/routes/subscription'),
   require('./server/routes/notification'),
   require('./server/routes/user'),
   require('./server/routes/apps'),
-
-  // require('./server/routes/subscribe'),
 ]);
 
 // Initialize Socket IO
