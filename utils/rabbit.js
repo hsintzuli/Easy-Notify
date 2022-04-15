@@ -30,8 +30,7 @@ const initConnection = async (fnToExecute) => {
     // Execute function
     await fnToExecute();
   } catch (err) {
-    console.error('[AMQP]', err.message);
-    return setTimeout(this, 1000);
+    return closeOnErr(err);
   }
 };
 
@@ -88,15 +87,15 @@ const startPublish = async () => {
 const publishMessage = async (exchange, routingKey, content, options) => {
   // Verify if pubchannel is started
   if (!pubChannel) {
-    console.error("[AMQP] Can't publish message. Publisher is not initialized. You need to initialize them with StartPublisher function");
+    console.error("[AMQP] Can't publish message. Publisher is not initialized.");
     return;
   }
   // convert string message in buffer
   const message = Buffer.from(content, 'utf-8');
   try {
     // Publish message to exchange
-    // options is not required
     await pubChannel.publish(exchange, routingKey, message, options);
+    console.log('[AMQP] success publish');
   } catch (e) {
     console.error('[AMQP] publish', err);
     await pubChannel.connection.close();

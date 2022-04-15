@@ -10,6 +10,7 @@ const wrapAsync = (fn) => {
 };
 
 const userAuthentication = async function (req, res, next) {
+  console.log('in');
   if (!req.session.user) {
     res.status(403).send({ error: 'Forbidden' });
     return;
@@ -33,6 +34,7 @@ const apiAuthentication = async (req, res, next) => {
   }
 
   const channel = await Channel.getChannelById(channelId);
+  console.log(channel);
   if (!channel || channel.channel_key !== channelKey) {
     res.status(403).send({ error: 'Forbidden' });
     return;

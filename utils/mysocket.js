@@ -15,14 +15,18 @@ function config(server) {
     console.log('Socket connect!');
     socket.emit('connection', 'Hello! ' + socket.id);
     socket.on('subscribe', async (res) => {
-      console.log('subscribe room', res.app_id);
-      socket.join(res.app_id);
+      console.log('subscribe room:', res.channel_id);
+      socket.join(res.channel_id);
+    });
+    socket.on('unsubscribe', async (res) => {
+      console.log('unsubscribe room', res);
+      socket.leaveAll();
     });
   });
 }
 
 const sendMsg = (room, message) => {
-  console.log('Rooms', room);
+  console.log('Send Message to Room:', room);
   io.in(room).emit('push', message);
 };
 

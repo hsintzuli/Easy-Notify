@@ -40,16 +40,16 @@ const signIn = async (email, password) => {
   try {
     await conn.query('START TRANSACTION');
     const [users] = await conn.query('SELECT * FROM user WHERE email = ? FOR UPDATE', [email]);
-    const user = users[0];
-    if (!bcrypt.compareSync(password, user.password)) {
-      throw new Error('Password is wrong');
+    if (users.length === 0 || !bcrypt.compareSync(password, users[0].password)) {
+      throw new Error('Wrong email or password');
     }
-
+    const user = users[0];
     user.login_at = new Date();
     await conn.query('UPDATE user SET login_at = ? WHERE id = ?', [user.login_at, user.id]);
     await conn.query('COMMIT');
     return { user };
   } catch (error) {
+    console.log('catch error', error);
     await conn.query('ROLLBACK');
     return { error };
   } finally {

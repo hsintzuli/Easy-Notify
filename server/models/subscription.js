@@ -12,13 +12,16 @@ const createClient = async (channel_id, endpoint, expirationTime, keys, client_t
     client_tag: client_tag,
   };
   const [result] = await pool.query('INSERT INTO subscription SET ?', client);
-  console.log(result);
+  console.log('Create Client:', result);
   return id;
 };
 
 const getClients = async (channel_id, users) => {
   if (users) {
-    const [results] = await pool.query('SELECT id, endpoint, `keys` FROM subscription WHERE id in (?) channel_id = ? AND ORDER BY id', [users, channel_id]);
+    const [results] = await pool.query('SELECT id, endpoint, `keys` FROM subscription WHERE id in (?) AND　channel_id = ? AND ORDER BY id', [
+      users,
+      channel_id,
+    ]);
     return results;
   }
   const [results] = await pool.query('SELECT id, endpoint, `keys` FROM subscription WHERE channel_id = ?', channel_id);
@@ -36,9 +39,25 @@ const removeClient = async (endpoint) => {
   return deleted;
 };
 
+const getClientIds = async (channel_id, users) => {
+  if (users) {
+    const [results] = await pool.query('SELECT id FROM subscription WHERE id in (?) AND　channel_id = ? AND ORDER BY id', [users, channel_id]);
+    return results;
+  }
+  const [results] = await pool.query('SELECT id FROM subscription WHERE channel_id = ?', channel_id);
+  return results;
+};
+
+const getClientByIds = async (users) => {
+  const [results] = await pool.query('SELECT id, endpoint, `keys` FROM subscription WHERE id in (?) ORDER BY id', users);
+  return results;
+};
+
 module.exports = {
   createClient,
   updateClient,
   getClients,
   removeClient,
+  getClientIds,
+  getClientByIds,
 };

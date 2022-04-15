@@ -1,49 +1,37 @@
-require('dotenv').config({ path: __dirname + '/.env' });
+require('dotenv').config();
 const socket = require('./mysocket');
 const rabbitmqLib = require('./rabbit');
+const Notification = require('../server/models/notification');
 const Content = require('../server/models/content');
-const mongoose = require('mongoose');
-// const { MONGO_HOST, MONGO_USERNAME, MONGO_PASSWORD, MONGO_DATABASE } = process.env;
-
-// mongoose.connect(`mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOST}:27017/${MONGO_DATABASE}?authSource=admin`);
-
-// const mongodb = mongoose.connection;
-// mongodb.on('error', console.error.bind(console, 'connection error:'));
-// mongodb.once('open', function () {
-//   console.log('Connection Successful!');
-// });
-
 const { WEBSOCKET_QUEUE } = process.env;
 
 async function fnConsumer(msg, callback) {
-  const { contentID, vapidDetails, appID } = JSON.parse(msg.content);
-  // id = ObjectId(contentID);
-  console.log('id', contentID);
+  const { notification_id, channel_id } = JSON.parse(msg.content);
+  console.log('notification_id', notification_id);
 
-  const result = await Content.findById(contentID);
+  const msgContent = await Content.findById(notification_id);
+
   const payload = {
-    title: result.title,
-    body: result.body,
+    title: msgContent.title,
+    body: msgContent.body,
+    notification_id: notification_id,
+    option_content: msgContent.option_content,
+    config: msgContent.config,
   };
-  socket.sendMsg(appID, payload);
-  console.log('send msg!');
-  // we tell rabbitmq that the message was processed successfully
+  socket.sendMsg(channel_id, payload);
+  console.log('send msg to', channel_id);
+  await Notification.updateNotificationStatus(notification_id, { status: 1 });
+
+  //tell rabbitmq that the message was processed successfully
   callback(true);
 }
 
 const initializSocketWorker = () => {
-  // InitConnection of rabbitmq
   rabbitmqLib.initConnection(() => {
-    // start consumer worker when the connection to rabbitmq has been made
-    console.log('Start');
+    // start socket worker when the connection to rabbitmq has been made
+    console.log('Start Socketworker');
     rabbitmqLib.consumeQueue(WEBSOCKET_QUEUE, fnConsumer);
   });
 };
-
-// // InitConnection of rabbitmq
-// rabbitmqLib.initConnection(() => {
-//   // start consumer worker when the connection to rabbitmq has been made
-//   rabbitmqLib.consumeQueue(WEBSOCKET_QUEUE, fnConsumer);
-// });
 
 module.exports = { initializSocketWorker };

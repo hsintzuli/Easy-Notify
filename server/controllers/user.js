@@ -7,13 +7,13 @@ const signUp = async (req, res) => {
   const { name, email, password } = req.body;
 
   if (!name || !email || !password) {
-    res.status(400).send({ error: 'Request Error: name, email and password are required.' });
+    res.status(400).send({ error: 'name, email and password are required.' });
     return;
   }
 
   const result = await User.signUp(name, email, password);
   if (result.error) {
-    res.status(403).send({ error: result.error });
+    res.status(403).send({ error: 'Incorrect input.' });
     return;
   }
 
@@ -36,19 +36,21 @@ const signUp = async (req, res) => {
 };
 
 const signIn = async (req, res) => {
+  console.log('in');
   const { email, password } = req.body;
   if (!email || !password) {
     return { error: 'Request Error: email and password are required.', status: 400 };
   }
   const result = await User.signIn(email, password);
   if (result.error) {
-    res.status(403).send({ error: result.error });
+    res.status(403).send({ error: 'Incorrect email or password.' });
     return;
   }
 
   const user = result.user;
+
   if (!user) {
-    res.status(500).send({ error: 'Database Query Error' });
+    res.status(500).json({ error: 'Database Query Error' });
     return;
   }
   req.session.user = user.id;

@@ -35,9 +35,23 @@ const deleteNotification = async (notification_id) => {
   return deleted;
 };
 
+const updateNotificationStatus = async (notification_id, status) => {
+  const [results] = await pool.query('UPDATE notification SET ? WHERE id = ?', [status, notification_id]);
+  const updated = results.affectedRows > 0;
+  return updated;
+};
+
+const updateNotificationReceived = async (notification_id, receive_num) => {
+  const [results] = await pool.query('UPDATE notification SET receive_num = receive_num + ? WHERE id = ?', [receive_num, notification_id]);
+  const updated = results.affectedRows > 0;
+  return updated;
+};
+
 module.exports = {
   createNotification,
   getNotifications,
   getNotificationBYId,
   deleteNotification,
+  updateNotificationStatus,
+  updateNotificationReceived,
 };

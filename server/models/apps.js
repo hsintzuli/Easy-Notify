@@ -1,8 +1,8 @@
 require('dotenv').config();
 const { pool } = require('./mysqlcon');
 
-const createApp = async (user_id, name) => {
-  const app = { user_id, name };
+const createApp = async (user_id, name, description, contact_email, default_icon) => {
+  const app = { user_id, name, description, contact_email, default_icon };
   const [result] = await pool.query('INSERT INTO app SET ?', app);
   console.log(result);
   return result.insertId;

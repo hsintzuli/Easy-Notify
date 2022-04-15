@@ -1,10 +1,12 @@
-require('dotenv').config();
+require('dotenv').config({ path: __dirname + '/.env' });
 const webpush = require('web-push');
-const rabbitmqLib = require('./utils/rabbit');
+const rabbitmq = require('./utils/rabbit');
+const Cache = require('./utils/cache');
 const Content = require('./server/models/content');
-const subscribe = require('./server/models/subscription');
+const Notification = require('./server/models/notification');
+const Subscription = require('./server/models/subscription');
 const mongoose = require('mongoose');
-const ObjectId = mongoose.Types.ObjectId;
+const { WEBPUSH_QUEUE } = process.env;
 const { MONGO_HOST, MONGO_USERNAME, MONGO_PASSWORD, MONGO_DATABASE } = process.env;
 
 mongoose.connect(`mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOST}:27017/${MONGO_DATABASE}?authSource=admin`);
@@ -15,37 +17,41 @@ mongodb.once('open', function () {
   console.log('Connection Successful!');
 });
 
-const { WEBPUSH_QUEUE } = process.env;
-
 async function fnConsumer(msg, callback) {
-  const { contentID, vapidDetails, appID } = JSON.parse(msg.content);
-  // id = ObjectId(contentID);
-  console.log('id', contentID);
+  const { notification_id, channel_id, vapidDetails, clients } = JSON.parse(msg.content);
+  console.log('NotificationID', notification_id);
 
-  const result = await Content.findById(contentID);
-  const subscribes = await subscribe.getClients(appID);
+  const msgContent = await Content.findById(notification_id);
   const payload = {
-    title: result.title,
-    body: result.body,
+    title: msgContent.title,
+    body: msgContent.body,
+    notification_id: notification_id,
+    option_content: msgContent.option_content,
+    config: msgContent.config,
   };
-  const option = {
+  const pushOption = {
     vapidDetails,
-    TTL: subscribes.ttl,
+    TTL: msgContent.config.ttl,
   };
-  console.log('Received message: ', result);
-  for (let sub of subscribes) {
-    let subscription = {
-      endpoint: sub.endpoint,
-      keys: JSON.parse(sub.keys),
+  console.log('Received message: ', msgContent);
+  const subscriptions = await Subscription.getClientByIds(clients);
+  for (let subscription of subscriptions) {
+    const client = {
+      endpoint: subscription.endpoint,
+      keys: JSON.parse(subscription.keys),
     };
-    await webpush.sendNotification(subscription, JSON.stringify(payload), option).catch((err) => console.error(err));
+    await webpush.sendNotification(client, JSON.stringify(payload), pushOption).catch((err) => console.error(err));
   }
-  // we tell rabbitmq that the message was processed successfully
+
+  const leavingJobs = await Cache.hincrby('pushJobs', notification_id, -1);
+  if (leavingJobs === 0) {
+    await Notification.updateNotificationStatus(notification_id, { status: 1 });
+  }
   callback(true);
 }
 
 // InitConnection of rabbitmq
-rabbitmqLib.initConnection(() => {
+rabbitmq.initConnection(() => {
   // start consumer worker when the connection to rabbitmq has been made
-  rabbitmqLib.consumeQueue(WEBPUSH_QUEUE, fnConsumer);
+  rabbitmq.consumeQueue(WEBPUSH_QUEUE, fnConsumer);
 });

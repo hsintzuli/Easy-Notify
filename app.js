@@ -2,6 +2,7 @@ require('dotenv').config();
 const { PORT, API_VERSION } = process.env;
 const mongoose = require('mongoose');
 const session = require('express-session');
+const Cache = require('./utils/cache');
 const { MONGO_HOST, MONGO_USERNAME, MONGO_PASSWORD, MONGO_DATABASE } = process.env;
 
 mongoose.connect(`mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOST}:27017/${MONGO_DATABASE}?authSource=admin`);
@@ -40,10 +41,9 @@ app.use('/api/' + API_VERSION, [
 const http = require('http');
 const server = http.createServer(app);
 require('./utils/mysocket').config(server);
-require('./utils/websocketWorker').initializSocketWorker();
 
 // Page not found
-app.use(function (req, res, next) {
+app.use((req, res, next) => {
   res.sendStatus(404);
 });
 
@@ -58,6 +58,7 @@ app.use((err, req, res, next) => {
   });
 });
 
-server.listen(PORT, () => {
-  console.log(`Server listening in port ${PORT}`);
+server.listen(PORT, async () => {
+  require('./utils/websocketWorker').initializSocketWorker();
+  console.log(`Listening on port: ${PORT}`);
 });

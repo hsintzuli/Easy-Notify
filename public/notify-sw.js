@@ -11,11 +11,13 @@ self.addEventListener('push', async function (event) {
     return channel.postMessage(data);
   }
   console.log(data);
+  console.log(data.config.icon);
   channel.postMessage(data);
   // Keep the service worker alive until the notification is created.
   event.waitUntil(
     self.registration.showNotification(data.title, {
       body: data.body,
+      icon: data.config.icon,
     })
   );
 });

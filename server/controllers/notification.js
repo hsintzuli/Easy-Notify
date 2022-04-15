@@ -2,35 +2,22 @@ const rabbitmq = require('../../utils/rabbit');
 const Notification = require('../models/notification');
 const Content = require('../models/content');
 const { DELAY_EXCHANGE } = process.env;
+const { genNotificationJob } = require('../../utils/realtimeNotification');
 const SCHEDULED_TYPE = new Set(['realtime', 'scheduled']);
+const SEND_TYPE = new Set(['webpush', 'websocket']);
 const moment = require('moment');
 
 // Push notification
 const pushNotification = async (req, res) => {
+  const { channel } = req.locals;
   const { scheduledType } = req.params;
-  console.log(SCHEDULED_TYPE);
-  if (!SCHEDULED_TYPE.has(scheduledType)) {
+  const { title, body, sendType, optionContent, config, sendTime, client_tags } = req.body;
+
+  console.log('Receive notification');
+  if (!SCHEDULED_TYPE.has(scheduledType) || !SEND_TYPE.has(sendType)) {
     res.status(400).send({ error: 'Wrong Request' });
     return;
   }
-  const { channel } = req.locals;
-  const { title, body, sendType, options, config, sendTime } = req.body;
-  const scheduled = scheduledType === 'scheduled';
-  const type = sendType === 'webpush' ? 'webpush' : 'websocket';
-
-  let delay = 0;
-  let time;
-  if (scheduled) {
-    time = new Date(sendTime);
-    console.log('Scheduled Time', moment(time).format('YYYY-MM-DD HH:mm:ss'));
-    delay = time.getTime() - Date.now();
-  }
-
-  const jobOptions = {
-    headers: { 'x-delay': delay },
-    contentType: 'application/json',
-  };
-
   const vapidDetails = {
     subject: `mailto:${channel.email}`,
     publicKey: channel.public_key,
@@ -40,18 +27,29 @@ const pushNotification = async (req, res) => {
   const content = new Content({
     title: title,
     body: body,
-    option_content: options,
+    option_content: optionContent,
     config: config,
   });
 
   const mongoResult = await content.save();
-  const newJob = { contentID: mongoResult._id, vapidDetails, channel_id: channel.id };
 
-  console.log('Create job', newJob);
-  await Notification.createNotification(mongoResult._id, channel.id, type, time);
-  await rabbitmq.publishMessage(DELAY_EXCHANGE, type, JSON.stringify(newJob), jobOptions);
-  res.status(201).json(mongoResult);
-  return;
+  if (scheduledType === 'scheduled') {
+    const time = new Date(sendTime);
+    const delay = time.getTime() - Date.now();
+    console.log('Scheduled Time', moment(time).format('YYYY-MM-DD HH:mm:ss'));
+    const jobOptions = {
+      headers: { 'x-delay': delay },
+      contentType: 'application/json',
+    };
+    const newJob = { notification_id: mongoResult._id, sendType, vapidDetails, channel_id: channel.id, client_tags };
+    await Notification.createNotification(mongoResult._id, channel.id, sendType, time);
+    await rabbitmq.publishMessage(DELAY_EXCHANGE, sendType, JSON.stringify(newJob), jobOptions);
+    return res.status(200).json(mongoResult);
+  }
+
+  await Notification.createNotification(mongoResult._id, channel.id, sendType);
+  await genNotificationJob(mongoResult._id, sendType, channel.id, vapidDetails, client_tags);
+  return res.status(200).json(mongoResult);
 };
 
 const getNotification = async (req, res) => {
@@ -66,8 +64,8 @@ const getNotification = async (req, res) => {
     return;
   }
 
-  let notifications = await Notification.getNotifications(channel.id);
-  let notification_ids = notifications.map((element) => element.id);
+  const notifications = await Notification.getNotifications(channel.id);
+  const notification_ids = notifications.map((element) => element.id);
   let contents = await Content.find({ _id: { $in: notification_ids } }, '-__v');
   contents = contents.reduce((prev, curr) => {
     let { _id, ...content } = curr._doc;

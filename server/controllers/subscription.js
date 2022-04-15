@@ -1,19 +1,19 @@
 require('dotenv').config();
 const webpush = require('web-push');
 const Subscription = require('../models/subscription');
+const Cache = require('../../utils/cache');
 const Channel = require('../models/channel');
 
 const subscribe = async (req, res) => {
   const { channel_id, subscription } = req.body;
-  console.log('receive subscription', channel_id, subscription);
   const channel = await Channel.getChannelById(channel_id);
-  console.log(channel);
+  console.log('receive subscription', channel);
   if (!channel || !subscription || !subscription.endpoint || !subscription.keys) {
     return res.status(400).json({ error: 'Wrong Request' });
   }
   const id = await Subscription.createClient(channel_id, subscription.endpoint, subscription.expirationTime, JSON.stringify(subscription.keys));
   res.status(200).json({ status: 'success' });
-
+  console.log(id);
   const vapidDetails = {
     subject: `mailto:${channel.email}`,
     publicKey: channel.public_key,
@@ -56,8 +56,21 @@ const cancelSubscription = async (req, res) => {
   return;
 };
 
+const trackNotification = async (req, res) => {
+  const { id } = req.query;
+  if (!id) {
+    res.status(400).json({ error: 'Wrong Request' });
+    return;
+  }
+  await Cache.hincrby('receivedNum', id, 1);
+
+  res.status(200).json({ status: 'success' });
+  return;
+};
+
 module.exports = {
   subscribe,
   verifySubscription,
   cancelSubscription,
+  trackNotification,
 };

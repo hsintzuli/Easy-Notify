@@ -5,9 +5,9 @@ const KET_EXPIRE_S = 60 * 60 * 24 * 60;
 
 const createApp = async (req, res) => {
   const { user } = req.session;
-  const { name } = req.body;
+  const { name, description, contact_email, default_icon } = req.body;
   console.log(user, name);
-  const app_id = await App.createApp(user, name);
+  const app_id = await App.createApp(user, name, description, contact_email, default_icon);
   return res.status(200).json({ data: { app_id } });
 };
 

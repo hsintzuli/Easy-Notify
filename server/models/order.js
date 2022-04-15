@@ -24,7 +24,7 @@ const createOrder = async (order, plan_id, tappayKey, tappayId, prime) => {
   try {
     await conn.query('START TRANSACTION');
     await conn.query('INSERT INTO order_table SET ?', order);
-    await conn.query('UPDATE user SET billing=?, start_date=?, expire_date=? WHERE id = ?', [plan_id, order.start_date, order.end_date, order.user_id]);
+    await conn.query('UPDATE user SET plan_id=?, start_date=?, expire_date=? WHERE id = ?', [plan_id, order.start_date, order.end_date, order.user_id]);
     await conn.query('COMMIT');
     return { order };
   } catch (error) {

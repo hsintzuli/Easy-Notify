@@ -1,3 +1,10 @@
+const tracking = (id) => {
+  axios
+    .get(`api/1.0/subscription/tracking?id=${id}`)
+    .then((res) => console.log(res.data))
+    .catch((err) => console.log(err));
+};
+
 class SubscriptionGenerator {
   constructor(serviceWorkerPath) {
     this.serviceWorkerPath = serviceWorkerPath;
@@ -59,7 +66,8 @@ socket.on('connection', (data) => {
   console.log('Connect socket io server', data);
 });
 socket.on('push', (data) => {
-  console.log('Receive notificatiom from socket:', data);
+  console.log('Receive notification from socket:', data);
+  tracking(data.notification_id);
 });
 
 const newSubscription = new SubscriptionGenerator('notify-sw.js');
@@ -86,14 +94,17 @@ $('#subscribe').click(async function (event) {
         .get(`api/1.0/subscription/verify?code=${event.data.code}`)
         .then((res) => console.log(res.data))
         .catch((err) => console.log(err));
+      return;
     }
+    tracking(event.data.notification_id);
   });
-
   let subscription = await newSubscription.getSubscription();
   if (subscription) {
     return console.log('Subscription already exist\n' + JSON.stringify(subscription));
   }
   subscription = await newSubscription.subscribe(publicKey, true);
+  console.log(publicKey);
+  console.log(channelID);
   try {
     const res = await axios.post('/api/1.0/subscription', { channel_id: channelID, subscription }, { headers: { 'content-type': 'application/json' } });
     return console.log('Successfully subscribe to server' + res.data);
