@@ -3,8 +3,8 @@ const webpush = require('web-push');
 const rabbitmq = require('./utils/rabbit');
 const Cache = require('./utils/cache');
 const Content = require('./server/models/content');
-const Notification = require('./server/models/notification');
-const Subscription = require('./server/models/subscription');
+const Notification = require('./server/models/notifications');
+const Subscription = require('./server/models/subscriptions');
 const mongoose = require('mongoose');
 const { WEBPUSH_QUEUE } = process.env;
 const { MONGO_HOST, MONGO_USERNAME, MONGO_PASSWORD, MONGO_DATABASE } = process.env;
@@ -34,7 +34,7 @@ async function fnConsumer(msg, callback) {
     TTL: msgContent.config.ttl,
   };
   console.log('Received message: ', msgContent);
-  const subscriptions = await Subscription.getClientByIds(clients);
+  const subscriptions = await Subscription.getClientDetailByIds(clients);
   for (let subscription of subscriptions) {
     const client = {
       endpoint: subscription.endpoint,

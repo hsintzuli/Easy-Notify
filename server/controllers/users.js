@@ -1,6 +1,6 @@
 require('dotenv').config();
-const User = require('../models/user');
-const Order = require('../models/order');
+const User = require('../models/users');
+const Order = require('../models/orders');
 const { TAPPAY_PARTNER_KEY, TAPPAY_MERCHANT_ID } = process.env;
 
 const signUp = async (req, res) => {
@@ -22,7 +22,7 @@ const signUp = async (req, res) => {
     res.status(500).send({ error: 'Database Query Error' });
     return;
   }
-  req.session.user = user.id;
+  req.session.user = { id: user.id };
 
   res.status(200).send({
     data: {
@@ -36,7 +36,6 @@ const signUp = async (req, res) => {
 };
 
 const signIn = async (req, res) => {
-  console.log('in');
   const { email, password } = req.body;
   if (!email || !password) {
     return { error: 'Request Error: email and password are required.', status: 400 };
@@ -53,7 +52,7 @@ const signIn = async (req, res) => {
     res.status(500).json({ error: 'Database Query Error' });
     return;
   }
-  req.session.user = user.id;
+  req.session.user = { id: user.id };
 
   res.status(200).send({
     data: {
@@ -67,8 +66,8 @@ const signIn = async (req, res) => {
 };
 
 const createOrder = async (req, res) => {
-  const user_id = req.session.user;
-  const { plan_id, prime } = req.body;
+  const { user } = req.session;
+  const { plan_id, prime, start_date } = req.body;
   if (!plan_id || !prime) {
     res.status(400).send({ error: 'Create Order Error: Wrong Data Format' });
     return;
@@ -77,9 +76,9 @@ const createOrder = async (req, res) => {
   const number = '' + now.getMonth() + now.getDate() + (now.getTime() % (24 * 60 * 60 * 1000)) + Math.floor(Math.random() * 10);
   const orderRecord = {
     id: number,
-    user_id: user_id,
+    user_id: user.id,
     plan_id: plan_id,
-    start_date: now,
+    start_date: start_date || now,
   };
   const result = await Order.createOrder(orderRecord, plan_id, TAPPAY_PARTNER_KEY, TAPPAY_MERCHANT_ID, prime);
   if (result.error) {

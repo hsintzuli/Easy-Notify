@@ -19,6 +19,7 @@
   "homepage": "https://github.com/hsintzuli/Easy-Notify#readme",
   "dependencies": {
     "amqplib": "^0.8.0",
+    "argon2": "^0.28.5",
     "bcrypt": "^5.0.1",
     "dotenv": "^16.0.0",
     "express": "^4.17.3",

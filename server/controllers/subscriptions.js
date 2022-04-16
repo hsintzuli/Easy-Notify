@@ -1,8 +1,8 @@
 require('dotenv').config();
 const webpush = require('web-push');
-const Subscription = require('../models/subscription');
+const Subscription = require('../models/subscriptions');
 const Cache = require('../../utils/cache');
-const Channel = require('../models/channel');
+const Channel = require('../models/channels');
 
 const subscribe = async (req, res) => {
   const { channel_id, subscription } = req.body;
@@ -13,7 +13,7 @@ const subscribe = async (req, res) => {
   }
   const id = await Subscription.createClient(channel_id, subscription.endpoint, subscription.expirationTime, JSON.stringify(subscription.keys));
   res.status(200).json({ status: 'success' });
-  console.log(id);
+  console.log('Create subscribe, id:', id);
   const vapidDetails = {
     subject: `mailto:${channel.email}`,
     publicKey: channel.public_key,
@@ -33,15 +33,13 @@ const subscribe = async (req, res) => {
 };
 
 const verifySubscription = async (req, res) => {
-  console.log('here');
   const { code } = req.query;
   const condition = { status: 1 };
-  const id = await Subscription.updateClient(condition, code);
+  const id = await Subscription.updateClient(code, condition);
   return res.status(200).json({ status: 'success' });
 };
 
 const cancelSubscription = async (req, res) => {
-  console.log(req.body);
   const { endpoint } = req.body;
   console.log('receive cancellation', endpoint);
   if (!endpoint) {
@@ -63,7 +61,6 @@ const trackNotification = async (req, res) => {
     return;
   }
   await Cache.hincrby('receivedNum', id, 1);
-
   res.status(200).json({ status: 'success' });
   return;
 };

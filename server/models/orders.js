@@ -2,13 +2,12 @@ require('dotenv').config();
 const { pool } = require('./mysqlcon');
 
 const createOrder = async (order, plan_id, tappayKey, tappayId, prime) => {
-  const [plans] = await pool.query('SELECT price_m, period FROM plans WHERE id = ?', plan_id);
+  const [plans] = await pool.query('SELECT price_m, notification_limit, subscription_limit FROM plans WHERE id = ?', plan_id);
   if (plans.length === 0) {
     return { error: 'Wrong plan id' };
   }
 
-  const plan = plans[0];
-  order.total = plan.price_m * plan.period;
+  order.total = plans[0].price_m;
 
   if (order.total) {
     const paymentResult = payOrderByPrime(tappayKey, tappayId, prime, order);
@@ -18,13 +17,23 @@ const createOrder = async (order, plan_id, tappayKey, tappayId, prime) => {
   }
 
   const start_date = new Date(order.start_date);
-  order.end_date = new Date(start_date.setMonth(start_date.getMonth() + plan.period));
+  const end_date = new Date(start_date.setMonth(start_date.getMonth() + 1));
+  order.start_date = start_date;
+  order.end_date = end_date;
+
+  const updateUser = {
+    plan_id: plan_id,
+    start_date: start_date,
+    expire_date: end_date,
+    notification_num: 0,
+    subscription_num: 0,
+  };
 
   const conn = await pool.getConnection();
   try {
     await conn.query('START TRANSACTION');
-    await conn.query('INSERT INTO order_table SET ?', order);
-    await conn.query('UPDATE user SET plan_id=?, start_date=?, expire_date=? WHERE id = ?', [plan_id, order.start_date, order.end_date, order.user_id]);
+    await conn.query('INSERT INTO orders SET ?', order);
+    await conn.query('UPDATE users SET ? WHERE id = ?', [updateUser, order.user_id]);
     await conn.query('COMMIT');
     return { order };
   } catch (error) {

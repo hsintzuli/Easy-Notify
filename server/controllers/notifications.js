@@ -1,5 +1,5 @@
 const rabbitmq = require('../../utils/rabbit');
-const Notification = require('../models/notification');
+const Notification = require('../models/notifications');
 const Content = require('../models/content');
 const { DELAY_EXCHANGE } = process.env;
 const { genNotificationJob } = require('../../utils/realtimeNotification');

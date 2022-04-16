@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { subscribe, verifySubscription, cancelSubscription, trackNotification } = require('../controllers/subscription');
+const { subscribe, verifySubscription, cancelSubscription, trackNotification } = require('../controllers/subscriptions');
 const { wrapAsync } = require('../../utils/util');
 
 router.route('/subscription').post(wrapAsync(subscribe));

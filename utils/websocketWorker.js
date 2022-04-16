@@ -1,7 +1,7 @@
 require('dotenv').config();
 const socket = require('./mysocket');
 const rabbitmqLib = require('./rabbit');
-const Notification = require('../server/models/notification');
+const Notification = require('../server/models/notifications');
 const Content = require('../server/models/content');
 const { WEBSOCKET_QUEUE } = process.env;
 

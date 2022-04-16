@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { pushNotification, getNotification, updateNotification, deleteNotification } = require('../controllers/notification');
+const { pushNotification, getNotification, updateNotification, deleteNotification } = require('../controllers/notifications');
 const { wrapAsync, apiAuthentication } = require('../../utils/util');
 
 router.use('/notifications', wrapAsync(apiAuthentication));

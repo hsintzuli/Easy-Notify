@@ -1,4 +1,4 @@
-const Subscription = require('../server/models/subscription');
+const Subscription = require('../server/models/subscriptions');
 const Cache = require('./cache');
 const rabbitmq = require('./rabbit');
 const { REALTIME_EXCHANGE } = process.env;

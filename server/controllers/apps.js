@@ -1,13 +1,13 @@
 require('dotenv').config();
 const App = require('../models/apps');
-const Channel = require('../models/channel');
+const Channel = require('../models/channels');
 const KET_EXPIRE_S = 60 * 60 * 24 * 60;
 
 const createApp = async (req, res) => {
   const { user } = req.session;
   const { name, description, contact_email, default_icon } = req.body;
-  console.log(user, name);
-  const app_id = await App.createApp(user, name, description, contact_email, default_icon);
+  console.log(`${user.id} create app: ${name}`);
+  const app_id = await App.createApp(user.id, name, description, contact_email, default_icon);
   return res.status(200).json({ data: { app_id } });
 };
 
@@ -15,11 +15,11 @@ const getApps = async (req, res) => {
   const { user } = req.session;
   const { app_id } = req.query;
   if (!app_id) {
-    const apps = await App.getApps(user);
+    const apps = await App.getApps(user.id);
     console.log(apps);
     return res.status(200).json({ data: apps });
   }
-  const verified = await App.verifyAppWithUser(user, app_id);
+  const verified = await App.verifyAppWithUser(user.id, app_id);
   if (!verified) {
     return res.status(400).json({ error: 'Incorrect user or app id' });
   }
@@ -30,7 +30,7 @@ const getApps = async (req, res) => {
 const createChannel = async (req, res) => {
   const { user } = req.session;
   const { app_id, name, description } = req.body;
-  const verified = await App.verifyAppWithUser(user, app_id);
+  const verified = await App.verifyAppWithUser(user.id, app_id);
   if (!verified) {
     return res.status(400).json({ error: 'Incorrect user or app id' });
   }
@@ -41,7 +41,7 @@ const createChannel = async (req, res) => {
 const deleteChannel = async (req, res) => {
   const { user } = req.session;
   const { channel_id } = req.query;
-  const verified = await Channel.verifyChannelWithUser(user, channel_id);
+  const verified = await Channel.verifyChannelWithUser(user.id, channel_id);
   if (!verified) {
     return res.status(400).json({ error: 'Incorrect user or channel id' });
   }
@@ -53,7 +53,7 @@ const deleteChannel = async (req, res) => {
 const rotateChannelKey = async (req, res) => {
   const { user } = req.session;
   const { channel_id } = req.query;
-  const verified = await Channel.verifyChannelWithUser(user, channel_id);
+  const verified = await Channel.verifyChannelWithUser(user.id, channel_id);
   if (!verified) {
     return res.status(400).json({ error: 'Incorrect user or channel id' });
   }

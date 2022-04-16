@@ -1,4 +1,4 @@
-const Channel = require('../server/models/channel');
+const Channel = require('../server/models/channels');
 
 // reference: https://thecodebarbarian.com/80-20-guide-to-express-error-handling
 const wrapAsync = (fn) => {
