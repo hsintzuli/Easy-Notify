@@ -18,10 +18,22 @@
 <body>
 <p>Easy-Notify Test Page</p>
 <form>
-  Channel ID: <input id='channel-id' type='text' value='yuGLYmo2FvOeCxF1O5YiZ' size="30"></input>
-  Public Key: <input id='public-key' type='text' value='BEtUGljjQsnAW6Ekm2fhmmnjChwldm0OHgs_4N8ReFGaVO49ws6gEGOQgHJmyfYcPr_-6fAXuxqQbvsF1AHswIA' size="100"></input><br>
+  <p>Initialize notifier with Channel ID</p>
+  Channel ID: <input id='channel-id' type='text' value='' size="30"></input><br>
+  <button id="initial">Initial</button>
+  <button id="unregister">Unregister</button>
+</form>
+
+<form>
+  <p>Subscribe to websocket server and webpush server</p>
+  Public Key: <input id='public-key' type='text' value='' size="100"></input><br>
   <button id="subscribe">subscirbe</button>
   <button id="unsubscribe">unsubscirbe</button>
+</form>
+
+<form>
+  Add User Tag: <input id='user-tag' type='text' value='' size="10"></input><br>
+  <button id="add-tag">Add Tag!</button>
 </form>
 
 <form>
