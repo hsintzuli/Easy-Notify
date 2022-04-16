@@ -65,9 +65,33 @@ const trackNotification = async (req, res) => {
   return;
 };
 
+const addTagForSubscription = async (req, res) => {
+  const { channel_id, endpoint, tag } = req.body;
+  if (!channel_id || !endpoint || !tag) {
+    res.status(400).json({ error: 'Wrong Request' });
+    return;
+  }
+  await Subscription.updateClientTag(channel_id, endpoint, tag);
+  res.status(200).json({ status: 'success' });
+  return;
+};
+
+const removeTagForSubscription = async (req, res) => {
+  const { channel_id, endpoint } = req.body;
+  if (!channel_id || !endpoint) {
+    res.status(400).json({ error: 'Wrong Request' });
+    return;
+  }
+  await Subscription.updateClientTag(channel_id, endpoint, null);
+  res.status(200).json({ status: 'success' });
+  return;
+};
+
 module.exports = {
   subscribe,
   verifySubscription,
   cancelSubscription,
   trackNotification,
+  addTagForSubscription,
+  removeTagForSubscription,
 };

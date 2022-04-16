@@ -16,20 +16,13 @@ const createClient = async (channel_id, endpoint, expirationTime, keys, client_t
   return id;
 };
 
-// const getClientsBytag = async (channel_id, client_tag) => {
-//   if (client_tag) {
-//     const [results] = await pool.query('SELECT id, endpoint, `keys` FROM subscription WHERE channel_id = ? AND clientid in (?) 　 AND ORDER BY id', [
-//       users,
-//       channel_id,
-//     ]);
-//     return results;
-//   }
-//   const [results] = await pool.query('SELECT id, endpoint, `keys` FROM subscriptions WHERE channel_id = ?', channel_id);
-//   return results;
-// };
-
 const updateClient = async (client_id, condition) => {
   const [results] = await pool.query('UPDATE subscriptions SET ? WHERE id = ?', [condition, client_id]);
+  return results;
+};
+
+const updateClientTag = async (channel_id, endpoint, tag) => {
+  const [results] = await pool.query('UPDATE subscriptions SET client_tag = ? WHERE channel_id = ? AND endpoint = ?', [tag, channel_id, endpoint]);
   return results;
 };
 
@@ -41,7 +34,7 @@ const removeClient = async (endpoint) => {
 
 const getClientIds = async (channel_id, client_tag) => {
   if (client_tag) {
-    const [results] = await pool.query('SELECT id FROM subscriptions WHERE channel_id = ? AND client_tag in (?) 　 ORDER BY id', [channel_id, client_tag]);
+    const [results] = await pool.query('SELECT id FROM subscriptions WHERE channel_id = ? AND client_tag in (?) ORDER BY id', [channel_id, client_tag]);
     return results;
   }
   const [results] = await pool.query('SELECT id FROM subscriptions WHERE channel_id = ?', channel_id);
@@ -49,7 +42,8 @@ const getClientIds = async (channel_id, client_tag) => {
 };
 
 const getClientDetailByIds = async (subscription_ids) => {
-  const [results] = await pool.query('SELECT id, endpoint, `keys` FROM subscriptions WHERE id in (?) ORDER BY id', subscription_ids);
+  const [results] = await pool.query('SELECT id, endpoint, `keys` FROM subscriptions WHERE id in (?) ORDER BY id', [subscription_ids]);
+  console.log(results);
   return results;
 };
 
@@ -59,4 +53,5 @@ module.exports = {
   removeClient,
   getClientIds,
   getClientDetailByIds,
+  updateClientTag,
 };

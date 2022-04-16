@@ -34,7 +34,9 @@ async function fnConsumer(msg, callback) {
     TTL: msgContent.config.ttl,
   };
   console.log('Received message: ', msgContent);
+  console.log('clients', clients);
   const subscriptions = await Subscription.getClientDetailByIds(clients);
+  console.log('subscriptions', subscriptions);
   for (let subscription of subscriptions) {
     const client = {
       endpoint: subscription.endpoint,

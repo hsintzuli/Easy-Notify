@@ -22,6 +22,7 @@ const genNotificationJob = async (notification_id, type, channel_id, vapidDetail
     let last = Math.min(subscriptions.length, i + MAX_PUSH_CLIENT);
     console.log(last);
     job.clients = subscriptions.slice(i, last).map((element) => element.id);
+    console.log(job.clients);
     await Cache.hincrby('pushJobs', job.notification_id, 1);
     await rabbitmq.publishMessage(REALTIME_EXCHANGE, type, JSON.stringify(job), jobOptions);
   }

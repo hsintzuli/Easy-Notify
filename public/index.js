@@ -101,7 +101,7 @@ class Notifier {
 
     try {
       const res = await axios.post('/api/1.0/subscription', { channel_id, subscription }, { headers: { 'content-type': 'application/json' } });
-      return console.log('[Webpush] Send subscription to server, ' + res.data);
+      return console.log('[Webpush] Send subscription to server, ', res.data);
     } catch (err) {
       return console.log(err);
     }
@@ -125,7 +125,40 @@ class Notifier {
         { data: { endpoint: subscription.endpoint } },
         { headers: { 'content-type': 'application/json' } }
       );
-      return console.log('[Webpush] Successfully unsubscribe to server,' + res.data);
+      return console.log('[Webpush] Successfully unsubscribe to server,', res.data);
+    } catch (err) {
+      return console.log(err);
+    }
+  }
+  async addTag(tag) {
+    const subscription = await this.getSubscription();
+    if (!subscription) {
+      return console.log('[Webpush] no subscription');
+    }
+    try {
+      const res = await axios.post(
+        '/api/1.0//subscription/tag',
+        { channel_id: this.channelId, endpoint: subscription.endpoint, tag },
+        { headers: { 'content-type': 'application/json' } }
+      );
+      return console.log('[Webpush] Successfully add tag,', res.data);
+    } catch (err) {
+      return console.log(err);
+    }
+  }
+
+  async removeTag() {
+    const subscription = await this.getSubscription();
+    if (!subscription) {
+      return console.log('[Webpush] no subscription');
+    }
+    try {
+      const res = await axios.delete(
+        '/api/1.0//subscription/tag',
+        { data: { channel_id: this.channelId, endpoint: subscription.endpoint } },
+        { headers: { 'content-type': 'application/json' } }
+      );
+      return console.log('[Webpush] Successfully remove tag,', res.data);
     } catch (err) {
       return console.log(err);
     }
@@ -212,17 +245,13 @@ $('#scheduled').click(async function (event) {
 $('#add-tag').click(async function (event) {
   event.preventDefault();
   const user_tag = $('#user-tag').val();
-  try {
-    const res = await axios.post(
-      '/api/1.0/notifications/scheduled',
-      { channel_id: channelID, title, body, sendType, config: { ttl, icon }, sendTime },
-      { headers: { 'content-type': 'application/json' } }
-    );
-    console.log('Push success', res);
-  } catch (err) {
-    console.log(err);
-  }
+  myNotifier.addTag(user_tag);
 });
+$('#remove-tag').click(async function (event) {
+  event.preventDefault();
+  myNotifier.removeTag();
+});
+
 function urlBase64ToUint8Array(base64String) {
   var padding = '='.repeat((4 - (base64String.length % 4)) % 4);
   var base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/');
