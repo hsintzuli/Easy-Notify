@@ -20,7 +20,7 @@ mongodb.once('open', function () {
 async function fnConsumer(msg, callback) {
   const { notification_id, channel_id, vapidDetails, clients } = JSON.parse(msg.content);
   console.log('NotificationID', notification_id);
-
+  await Notification.updateNotificationStatus(notification_id, { status: 1 });
   const msgContent = await Content.findById(notification_id);
   const payload = {
     title: msgContent.title,
@@ -47,7 +47,9 @@ async function fnConsumer(msg, callback) {
 
   const leavingJobs = await Cache.hincrby('pushJobs', notification_id, -1);
   if (leavingJobs === 0) {
-    await Notification.updateNotificationStatus(notification_id, { status: 1 });
+    await Notification.updateNotificationStatus(notification_id, { status: 2 });
+    await Cache.hdel('pushJobs', notification_id);
+    console.log(`Finish ${notification_id}, successfully update mysql & delete redis`);
   }
   callback(true);
 }

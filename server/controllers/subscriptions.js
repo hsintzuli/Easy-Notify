@@ -60,7 +60,10 @@ const trackNotification = async (req, res) => {
     res.status(400).json({ error: 'Wrong Request' });
     return;
   }
-  await Cache.hincrby('receivedNum', id, 1);
+  const now = new Date();
+  const hourToCheck = now.getHours() % 2 === 0 ? 'even' : 'odd';
+  console.log('in');
+  await Cache.hincrby(`receivedNum:${hourToCheck}`, id, 1);
   res.status(200).json({ status: 'success' });
   return;
 };

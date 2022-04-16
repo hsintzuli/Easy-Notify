@@ -40,7 +40,7 @@ const updateNotificationStatus = async (notification_id, status) => {
 };
 
 const updateNotificationReceived = async (notification_id, receive_num) => {
-  const [results] = await pool.query('UPDATE notification SET received_num = received_num + ? WHERE id = ?', [receive_num, notification_id]);
+  const [results] = await pool.query('UPDATE notifications SET received_num = received_num + ? WHERE id = ?', [receive_num, notification_id]);
   const updated = results.affectedRows > 0;
   return updated;
 };

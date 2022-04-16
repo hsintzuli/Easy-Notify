@@ -8,7 +8,7 @@ const { WEBSOCKET_QUEUE } = process.env;
 async function fnConsumer(msg, callback) {
   const { notification_id, channel_id } = JSON.parse(msg.content);
   console.log('notification_id', notification_id);
-
+  await Notification.updateNotificationStatus(notification_id, { status: 1 });
   const msgContent = await Content.findById(notification_id);
 
   const payload = {
@@ -20,7 +20,7 @@ async function fnConsumer(msg, callback) {
   };
   socket.sendMsg(channel_id, payload);
   console.log('send msg to', channel_id);
-  await Notification.updateNotificationStatus(notification_id, { status: 1 });
+  await Notification.updateNotificationStatus(notification_id, { status: 2 });
 
   //tell rabbitmq that the message was processed successfully
   callback(true);
