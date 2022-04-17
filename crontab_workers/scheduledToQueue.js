@@ -40,8 +40,10 @@ const publishToDelayExchange = async () => {
     });
 
     const [channels] = await pool.query(queryOfChannel, channel_ids);
-    const channelsMap = _.groupBy(channels, (c) => c.id);
-    console.log(channelsMap);
+    const channelsMap = channels.reduce((prev, curr) => {
+      prev[curr.id] = curr;
+      return prev;
+    }, {});
 
     for (let notification of notifications) {
       let channel = channelsMap[notification.channel_id];
@@ -61,6 +63,7 @@ const publishToDelayExchange = async () => {
       const clients = await Content.findById(notification.id).select('client_tags');
       const client_tags = clients.client_tags;
       const newJob = { notification_id: notification.id, sendType: notification.type, vapidDetails, channel_id: channel.id, client_tags };
+      console.log('Scheduled to Queue Worker Publish Job', newJob);
       await rabbitmq.publishMessage(DELAY_EXCHANGE, notification.type, JSON.stringify(newJob), jobOptions);
     }
 
