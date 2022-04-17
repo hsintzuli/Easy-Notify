@@ -58,7 +58,8 @@ const publishToDelayExchange = async () => {
         headers: { 'x-delay': delay },
         contentType: 'application/json',
       };
-      const client_tags = await Content.findById(notification.id).select('client_tags');
+      const clients = await Content.findById(notification.id).select('client_tags');
+      const client_tags = clients.client_tags;
       const newJob = { notification_id: notification.id, sendType: notification.type, vapidDetails, channel_id: channel.id, client_tags };
       await rabbitmq.publishMessage(DELAY_EXCHANGE, notification.type, JSON.stringify(newJob), jobOptions);
     }
