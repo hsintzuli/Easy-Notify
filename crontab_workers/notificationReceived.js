@@ -1,5 +1,7 @@
-require('dotenv').config();
+const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 const Cache = require('../utils/cache');
+const { pool } = require('../server/models/mysqlcon');
 const Notification = require('../server/models/notifications');
 const moment = require('moment');
 
@@ -23,8 +25,10 @@ const updateNotificationReceived = async () => {
   } catch (error) {
     console.log(error);
   } finally {
+    await pool.end();
     await Cache.disconnect();
     console.log('End check');
+    return process.exit(0);
   }
 };
 
