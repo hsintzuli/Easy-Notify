@@ -8,6 +8,7 @@ const Subscription = require('./server/models/subscriptions');
 const mongoose = require('mongoose');
 const { WEBPUSH_QUEUE } = process.env;
 const { MONGO_HOST, MONGO_USERNAME, MONGO_PASSWORD, MONGO_DATABASE } = process.env;
+const { NOTIFICATION_STATUS } = Notification;
 
 mongoose.connect(`mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOST}:27017/${MONGO_DATABASE}?authSource=admin`);
 
@@ -20,7 +21,11 @@ mongodb.once('open', function () {
 async function fnConsumer(msg, callback) {
   const { notification_id, channel_id, vapidDetails, clients } = JSON.parse(msg.content);
   console.log('NotificationID', notification_id);
-  await Notification.updateNotificationStatus(notification_id, { status: 1 });
+  const updated = await Notification.updateNotificationStatus(notification_id, { status: NOTIFICATION_STATUS.DELEVERED });
+  if (!updated) {
+    console.log(`Notification ${notification_id} has been deleted before delevered`);
+    return callback(true);
+  }
   const msgContent = await Content.findById(notification_id);
   const payload = {
     title: msgContent.title,
@@ -47,7 +52,7 @@ async function fnConsumer(msg, callback) {
 
   const leavingJobs = await Cache.hincrby('pushJobs', notification_id, -1);
   if (leavingJobs === 0) {
-    await Notification.updateNotificationStatus(notification_id, { status: 2 });
+    await Notification.updateNotificationStatus(notification_id, { status: NOTIFICATION_STATUS.COMPLETE });
     await Cache.hdel('pushJobs', notification_id);
     console.log(`Finish ${notification_id}, successfully update mysql & delete redis`);
   }

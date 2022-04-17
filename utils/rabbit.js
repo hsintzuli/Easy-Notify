@@ -110,9 +110,39 @@ async function closeOnErr(err) {
   return true;
 }
 
+const connectToPublish = async (fnToExecute) => {
+  try {
+    const conn = await amqp.connect(AMQP_URL);
+    conn.on('error', (err) => {
+      console.log('ERROR', err);
+      if (err.message !== 'Connection closing') {
+        console.error('[AMQP] conn error', err.message);
+      }
+    });
+
+    conn.on('close', () => {
+      // Reconnect when connection was closed
+      console.log('[AMQP] close');
+    });
+
+    // Connection OK
+    console.log('[AMQP] connected');
+    amqpConn = conn;
+    startPublish();
+
+    // Execute function
+    await fnToExecute();
+    conn.close();
+    process.exit(0);
+  } catch (err) {
+    return closeOnErr(err);
+  }
+};
+
 module.exports = {
   initConnection,
   consumeQueue,
   publishMessage,
   closeOnErr,
+  connectToPublish,
 };

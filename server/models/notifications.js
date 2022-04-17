@@ -1,16 +1,25 @@
 const { pool } = require('./mysqlcon');
+const NOTIFICATION_STATUS = {
+  RECEIVED: 0,
+  ONQUEUE: 1,
+  DELEVERED: 2,
+  COMPLETE: 3,
+};
 
-const createNotification = async (id, channel_id, send_type, scheduled_time) => {
+const createNotification = async (id, channel_id, send_type, scheduled_time, notPublishToQueue) => {
   const notification = {
     id: id,
     channel_id: channel_id,
     type: send_type,
-    status: 0,
+    status: NOTIFICATION_STATUS.RECEIVED,
     received_num: 0,
   };
 
   if (scheduled_time) {
     notification.scheduled_dt = scheduled_time;
+  }
+  if (!notPublishToQueue) {
+    notification.status = NOTIFICATION_STATUS.ONQUEUE;
   }
 
   const [result] = await pool.query('INSERT INTO notifications SET ?', notification);
@@ -28,7 +37,7 @@ const getNotificationById = async (notification_id) => {
 };
 
 const deleteNotification = async (notification_id) => {
-  const [results] = await pool.query('DELETE FROM notifications WHERE id = ? AND status = 0', notification_id);
+  const [results] = await pool.query('DELETE FROM notifications WHERE id = ? AND status < ?', [notification_id, NOTIFICATION_STATUS.DELEVERED]);
   const deleted = results.affectedRows > 0;
   return deleted;
 };
@@ -46,6 +55,7 @@ const updateNotificationReceived = async (notification_id, receive_num) => {
 };
 
 module.exports = {
+  NOTIFICATION_STATUS,
   createNotification,
   getNotifications,
   getNotificationById,

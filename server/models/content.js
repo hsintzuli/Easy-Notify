@@ -16,7 +16,7 @@ const contentSchema = new Schema({
   config: {
     type: Object,
   },
-  clientIds: {
+  client_tags: {
     type: Array,
   },
 });

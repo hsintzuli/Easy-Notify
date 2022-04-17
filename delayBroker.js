@@ -6,7 +6,7 @@ async function fnConsumer(msg, callback) {
   try {
     const job = JSON.parse(msg.content.toString());
     console.log(job);
-    await genNotificationJob(job.notification_id, job.sendType, job.channel_id, job.vapidDetails, job.clients);
+    await genNotificationJob(job.notification_id, job.sendType, job.channel_id, job.vapidDetails, job.client_tags);
     console.log('Success update notification status');
     return callback(true);
   } catch (error) {

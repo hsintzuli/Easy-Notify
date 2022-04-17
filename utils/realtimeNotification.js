@@ -5,7 +5,7 @@ const { REALTIME_EXCHANGE } = process.env;
 const MAX_PUSH_CLIENT = parseInt(process.env.MAX_PUSH_CLIENT);
 
 const genNotificationJob = async (notification_id, type, channel_id, vapidDetails, client_tags) => {
-  console.log('get job');
+  console.log('get job', client_tags);
   const jobOptions = {
     contentType: 'application/json',
   };

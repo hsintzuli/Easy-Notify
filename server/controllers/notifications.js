@@ -1,11 +1,12 @@
 const rabbitmq = require('../../utils/rabbit');
-const Notification = require('../models/notifications');
 const Content = require('../models/content');
-const { DELAY_EXCHANGE } = process.env;
 const { genNotificationJob } = require('../../utils/realtimeNotification');
+const moment = require('moment');
+const { DELAY_EXCHANGE, SCHEDULED_INTERVAL_HOUR } = process.env;
+const Notification = require('../models/notifications');
+const { NOTIFICATION_STATUS } = Notification;
 const SCHEDULED_TYPE = new Set(['realtime', 'scheduled']);
 const SEND_TYPE = new Set(['webpush', 'websocket']);
-const moment = require('moment');
 
 // Push notification
 const pushNotification = async (req, res) => {
@@ -29,26 +30,33 @@ const pushNotification = async (req, res) => {
     body: body,
     option_content: optionContent,
     config: config,
+    client_tags: client_tags,
   });
 
   const mongoResult = await content.save();
-
-  if (scheduledType === 'scheduled') {
-    const time = new Date(sendTime);
-    const delay = time.getTime() - Date.now();
-    console.log('Scheduled Time', moment(time).format('YYYY-MM-DD HH:mm:ss'));
-    const jobOptions = {
-      headers: { 'x-delay': delay },
-      contentType: 'application/json',
-    };
-    const newJob = { notification_id: mongoResult._id, sendType, vapidDetails, channel_id: channel.id, client_tags };
-    await Notification.createNotification(mongoResult._id, channel.id, sendType, time);
-    await rabbitmq.publishMessage(DELAY_EXCHANGE, sendType, JSON.stringify(newJob), jobOptions);
+  if (scheduledType === 'realtime') {
+    await Notification.createNotification(mongoResult._id, channel.id, sendType);
+    await genNotificationJob(mongoResult._id, sendType, channel.id, vapidDetails, client_tags);
     return res.status(200).json(mongoResult);
   }
 
-  await Notification.createNotification(mongoResult._id, channel.id, sendType);
-  await genNotificationJob(mongoResult._id, sendType, channel.id, vapidDetails, client_tags);
+  const time = new Date(sendTime);
+  const now = new Date();
+  const delay = time.getTime() - now.getTime();
+  const notPublishToQueue = delay > SCHEDULED_INTERVAL_HOUR * 3600 * 1000;
+  await Notification.createNotification(mongoResult._id, channel.id, sendType, time, notPublishToQueue);
+
+  if (notPublishToQueue) {
+    return res.status(200).json(mongoResult);
+  }
+
+  console.log('Scheduled Time', moment(time).format('YYYY-MM-DD HH:mm:ss'));
+  const jobOptions = {
+    headers: { 'x-delay': delay },
+    contentType: 'application/json',
+  };
+  const newJob = { notification_id: mongoResult._id, sendType, vapidDetails, channel_id: channel.id, client_tags };
+  await rabbitmq.publishMessage(DELAY_EXCHANGE, sendType, JSON.stringify(newJob), jobOptions);
   return res.status(200).json(mongoResult);
 };
 
