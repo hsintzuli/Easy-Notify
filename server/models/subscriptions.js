@@ -33,7 +33,7 @@ const removeClient = async (endpoint) => {
 };
 
 const getClientIds = async (channel_id, client_tag) => {
-  if (client_tag) {
+  if (client_tag && client_tag.length > 0) {
     const [results] = await pool.query('SELECT id FROM subscriptions WHERE channel_id = ? AND client_tag in (?) ORDER BY id', [channel_id, client_tag]);
     return results;
   }
