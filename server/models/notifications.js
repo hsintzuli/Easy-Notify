@@ -6,10 +6,11 @@ const NOTIFICATION_STATUS = {
   COMPLETE: 3,
 };
 
-const createNotification = async (id, channel_id, send_type, scheduled_time, notPublishToQueue) => {
+const createNotification = async (id, channel_id, name, send_type, scheduled_time, notPublishToQueue) => {
   const notification = {
     id: id,
     channel_id: channel_id,
+    name: name,
     type: send_type,
     status: NOTIFICATION_STATUS.RECEIVED,
     received_num: 0,

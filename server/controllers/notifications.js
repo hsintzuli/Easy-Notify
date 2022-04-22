@@ -12,7 +12,7 @@ const SEND_TYPE = new Set(['webpush', 'websocket']);
 const pushNotification = async (req, res) => {
   const { channel } = req.locals;
   const { scheduledType } = req.params;
-  const { title, body, sendType, optionContent, config, sendTime, client_tags } = req.body;
+  const { name, title, body, sendType, optionContent, config, sendTime, client_tags } = req.body;
 
   console.log('Receive notification');
   if (!SCHEDULED_TYPE.has(scheduledType) || !SEND_TYPE.has(sendType)) {
@@ -44,7 +44,7 @@ const pushNotification = async (req, res) => {
   const now = new Date();
   const delay = time.getTime() - now.getTime();
   const notPublishToQueue = delay > SCHEDULED_INTERVAL_HOUR * 3600 * 1000;
-  await Notification.createNotification(mongoResult._id, channel.id, sendType, time, notPublishToQueue);
+  await Notification.createNotification(mongoResult._id, channel.id, name, sendType, time, notPublishToQueue);
 
   if (notPublishToQueue) {
     return res.status(200).json(mongoResult);

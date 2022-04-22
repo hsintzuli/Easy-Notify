@@ -9,6 +9,11 @@ const createApp = async (user_id, name, description, contact_email, default_icon
 };
 
 const getApps = async (user_id) => {
+  const [results] = await pool.query('SELECT * FROM apps WHERE user_id = ? AND archived_dt is NULL', user_id);
+  return results;
+};
+
+const getAppsWithArchived = async (user_id) => {
   const [results] = await pool.query('SELECT * FROM apps WHERE user_id = ?', user_id);
   return results;
 };
@@ -24,9 +29,17 @@ const verifyAppWithUser = async (user_id, app_id) => {
   return verified;
 };
 
+const archiveApp = async (app_id) => {
+  const [results] = await pool.query('UPDATE apps SET archived_dt = NOW() WHERE id = ?', app_id);
+  const archived = results.affectedRows > 0;
+  return archived;
+};
+
 module.exports = {
   createApp,
   getApps,
   getAppDetail,
   verifyAppWithUser,
+  archiveApp,
+  getAppsWithArchived,
 };

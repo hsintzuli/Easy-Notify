@@ -1,7 +1,7 @@
 require('dotenv').config();
 const App = require('../models/apps');
 const Channel = require('../models/channels');
-const KET_EXPIRE_S = 60 * 60 * 24 * 60;
+const KET_EXPIRE_S = 60 * 60 * 24 * 7;
 
 const createApp = async (req, res) => {
   const { user } = req.session;
@@ -9,6 +9,19 @@ const createApp = async (req, res) => {
   console.log(`${user.id} create app: ${name}`);
   const app_id = await App.createApp(user.id, name, description, contact_email, default_icon);
   return res.status(200).json({ data: { app_id } });
+};
+
+const archiveApp = async (req, res) => {
+  const { user } = req.session;
+  const { app_id } = req.query;
+  console.log(`${user.id} archive app: ${app_id}`);
+  const verified = await App.verifyAppWithUser(user.id, app_id);
+  if (!verified) {
+    return res.status(400).json({ error: 'Incorrect user or channel id' });
+  }
+
+  const result = await App.archiveApp(app_id);
+  return res.status(200).json({ ok: result });
 };
 
 const getApps = async (req, res) => {
@@ -29,12 +42,12 @@ const getApps = async (req, res) => {
 
 const createChannel = async (req, res) => {
   const { user } = req.session;
-  const { app_id, name, description } = req.body;
+  const { app_id, name } = req.body;
   const verified = await App.verifyAppWithUser(user.id, app_id);
   if (!verified) {
     return res.status(400).json({ error: 'Incorrect user or app id' });
   }
-  const channel = await Channel.createChannel(app_id, name, description);
+  const channel = await Channel.createChannel(app_id, name);
   return res.status(200).json({ data: channel });
 };
 
@@ -60,6 +73,7 @@ const rotateChannelKey = async (req, res) => {
 
   const now = new Date();
   const key_expire_dt = new Date(now.getTime() + KET_EXPIRE_S * 1000);
+  console.log('now', key_expire_dt);
   const channel = await Channel.updateChannelKey(channel_id, key_expire_dt);
   return res.status(200).json({ data: channel });
 };
@@ -67,6 +81,7 @@ const rotateChannelKey = async (req, res) => {
 module.exports = {
   createApp,
   getApps,
+  archiveApp,
   createChannel,
   deleteChannel,
   rotateChannelKey,
