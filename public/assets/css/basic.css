@@ -1,0 +1,83 @@
+:root {
+    --black: #000;
+    --very-light-pink: #d9d9d9;
+    --white: #e8e8e8;
+    --sepia: #8b572a;
+    --white-two: #fff;
+    --charcoal-grey: #313538;
+  }
+
+  @font-face {
+    font-family: NotoSansCJKtc;
+    /* src: local(NotoSansCJKtc-Regular), */
+      /* url(/path/to/NotoSansCJKtc-Regular.woff2) format("woff2"),
+      url(/path/to/NotoSansCJKtc-Regular.woff) format("woff"),
+      url(/path/to/NotoSansCJKtc-Regular.ttf) format("truetype"); */
+    font-weight: normal;
+    font-style: normal;
+    font-stretch: normal;
+  }
+  @font-face {
+    font-family: PingFangTC;
+    /* src: local(PingFangTC-Thin), */
+      /* url(/path/to/PingFangTC-Thin.woff2) format("woff2"),
+      url(/path/to/PingFangTC-Thin.woff) format("woff"),
+      url(/path/to/PingFangTC-Thin.ttf) format("truetype"); */
+    font-weight: 100;
+    font-style: normal;
+    font-stretch: normal;
+  }
+  @font-face {
+    font-family: PingFangTC;
+    /* src: local(PingFangTC-Regular), */
+      /* url(/path/to/PingFangTC-Regular.woff2) format("woff2"),
+      url(/path/to/PingFangTC-Regular.woff) format("woff"),
+      url(/path/to/PingFangTC-Regular.ttf) format("truetype"); */
+    font-weight: normal;
+    font-style: normal;
+    font-stretch: normal;
+  }
+  .Text-Style-4 {
+    font-family: NotoSansCJKtc;
+    font-size: 30px;
+    font-weight: normal;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: normal;
+    letter-spacing: normal;
+    text-align: left;
+    color: #3f3a3a;
+  }
+  .Text-Style {
+    font-family: PingFangTC;
+    font-size: 30px;
+    font-weight: 100;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: 1.9;
+    letter-spacing: normal;
+    text-align: left;
+    color: #070707;
+  }
+  .Text-Style-3 {
+    font-family: NotoSansCJKtc;
+    font-size: 20px;
+    font-weight: normal;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: normal;
+    letter-spacing: 4px;
+    text-align: left;
+    color: #3f3a3a;
+  }
+  .Text-Style-2 {
+    font-family: PingFangTC;
+    font-size: 20px;
+    font-weight: normal;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: normal;
+    letter-spacing: 30px;
+    text-align: left;
+    color: #3f3a3a;
+  }

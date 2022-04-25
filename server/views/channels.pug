@@ -1,0 +1,133 @@
+extends layout.pug
+
+block variables
+    - var userName = user.name
+block content
+  style.
+    .table {
+      table-layout: fixed;
+    }
+    .collapse-table td p{
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+    .list-title {
+        font-size: 2rem;
+        font-weight: 500;
+      }
+  // Content Wrapper. Contains page content
+  .content-wrapper
+    // Content Header (Page header)
+    .content-header
+      .container-fluid
+        .row.justify-content-center.align-items-center
+          .col-10
+            .card
+              .card-header.text-center
+                .row.align-items-center
+                  .col-10
+                    h3.card-title.list-title Channels
+                  .card-tools.col-2
+                    button#create-app.btn.btn-outline-secondary(type='button' data-toggle='modal' data-target='#createChannel') Create
+                  #createChannel.modal.fade(tabindex='-1' role='dialog' aria-labelledby='createChannelLabel' aria-hidden='true')
+                    .modal-dialog(role='document')
+                      .modal-content
+                        .modal-header
+                          h5#createChannelLabel.modal-title Create New Channel
+                          button.close(type='button' data-dismiss='modal' aria-label='Close')
+                            span(aria-hidden='true') ×
+                        .modal-body.mb-0
+                          form
+                            .form-group.mb-sm-1
+                              label.control-label.text-left(for='channel-name') Channel Name
+                              input#channel-name.form-control(type='text')
+                        .modal-footer
+                          button.btn.btn-secondary(type='button' data-dismiss='modal') Close
+                          button#btn-create.btn.btn-primary(type='button') Create!
+              // /.card-header
+              .card-body.table-responsive.p-2
+                table.table.table-hover.table-fixed
+                  thead
+                    tr
+                      th.examine(style='width: 10%') Examine
+                      th.name(style='width: 20%') Name
+                      th.id(style='width: 30%') ID
+                      th.expire-dt(style='width: 20%') Expire Date
+                      th.rotate(style='width: 10%') Rotate
+                      th.remove(style='width: 10%') Remove
+                  tbody
+                    each channel, index in channels
+                      tr 
+                        td.examine.accordion-toggle(data-toggle='collapse' data-target=`#channel${index}`)
+                          button.btn.btn-default.btn-sm
+                            i.fas.fa-chevron-circle-down
+                        td.name=channel.name
+                        td.id
+                          .row.align-items-center
+                            .col-9
+                              p(id=`channel-id-${index}`)=channel.id
+                            .card-tools.col-2
+                              button.btn.btn-sm.btn-copy(onclick=`copyToClipboard('#channel-id-${index}')`)
+                                i.fas.fa-copy
+                        td.expire-dt=channel.key_expire_dt
+                        td.fc-center.rotate
+                          button.btn.btn-default.btn-sm.btn-update
+                            i.fas.fa-sync
+                        td.fc-center.remove
+                          button.btn.btn-default.btn-sm.btn-delete(type='button' data-toggle='modal' data-target='#deleteChannel')
+                            i.fa.fa-trash
+                        tr
+                          td.hiddenRow(colspan='10')
+                            .accordian-body.collapse(id=`channel${index}`)
+                              table.table.table-sm.collapse-table.table-condensed.mb-0
+                                thead(style='position: sticky;top: 0')
+                                  tr#channel-key.info
+                                    th(style='width: 30%') Channel Key
+                                    th(style='width: 40%') Public Key
+                                    th(style='width: 30%') Private Key
+                                tbody
+                                    tr.accordion-toggle(data-toggle='collapse' data-target=`#channel${index}`)
+                                    td.channel-key
+                                      .row.align-items-center
+                                        .col-9
+                                          p(id=`channel-key-${index}`)=channel.channel_key
+                                        .card-tools.col-2
+                                          button.btn.btn-sm.btn-copy(onclick=`copyToClipboard('#channel-key-${index}')`)
+                                            i.fas.fa-copy
+                                    td.public-key
+                                      .row.align-items-center
+                                        .col-9
+                                          p(id=`channel-publickey-${index}`)=channel.public_key
+                                        .card-tools.col-2
+                                          button.btn.btn-sm.btn-copy(onclick=`copyToClipboard('#channel-publickey-${index}')`)
+                                            i.fas.fa-copy
+                                    td.private_key
+                                      .row.align-items-center
+                                        .col-9
+                                          p(id=`channel-privateckey-${index}`)=channel.private_key
+                                        .card-tools.col-2
+                                          button.btn.btn-sm.btn-copy(onclick=`copyToClipboard('#channel-privateckey-${index})'`)
+                                            i.fas.fa-copy
+    #deleteChannel.modal.fade(tabindex='-1' role='dialog' aria-labelledby='deleteChannelLabel' aria-hidden='true')
+      .modal-dialog
+        .modal-content.bg
+          .modal-header
+            h4.modal-title Delete
+            button.close(type='button' data-dismiss='modal' aria-label='Close')
+              span(aria-hidden='true') ×
+          .modal-body
+            p Do You Really Want to Delete this Channel?
+          .modal-footer
+            button.btn.btn-info(type='button' data-dismiss='modal') Close
+            button.btn.btn-danger#delete(type='button') Delete                                                        
+  script.
+    function copyToClipboard(element) {
+    var $temp = $("<input>");
+    $("body").append($temp);
+    $temp.val($(element).text()).select();
+    document.execCommand("copy");
+    $temp.remove();
+    }
+  script(src='https://unpkg.com/axios/dist/axios.min.js')
+  script(src='/assets/js/channels.js')

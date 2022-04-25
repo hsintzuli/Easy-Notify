@@ -1,0 +1,78 @@
+doctype html
+html(lang='en')
+  head
+    meta(charset='utf-8')
+    meta(name='viewport' content='width=device-width, initial-scale=1')
+    title Easy Notify | Sign in
+    // Google Font: Source Sans Pro
+    link(rel='stylesheet' href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback')
+    // Font Awesome
+    link(rel='stylesheet' href='/vendor/plugins/fontawesome-free/css/all.min.css')
+    // icheck bootstrap
+    link(rel='stylesheet' href='/vendor/plugins/icheck-bootstrap/icheck-bootstrap.min.css')
+    // Theme style
+    link(rel='stylesheet' href='/vendor/dist/css/adminlte.min.css')
+  body.hold-transition.login-page
+    .login-box
+      .login-logo
+        a(href='/')
+          b EASY 
+          | NOTIFY
+      // /.login-logo
+      .card
+        .card-body.login-card-body.rounded
+          p.login-box-msg Sign in to start
+          form#signin-form(action='' method='post')
+            .input-group.mb-3
+              input.form-control(type='email' name='email' placeholder='Email')
+              .input-group-append
+                .input-group-text
+                  span.fas.fa-envelope
+            .input-group.mb-1
+              input.form-control(type='password' name='password' placeholder='Password')
+              .input-group-append
+                .input-group-text
+                  span.fas.fa-lock
+            .row.mb-2
+              .col-8
+                .icheck-primary
+                  input#remember(type='checkbox')
+                  label(for='remember')  Remember Me 
+            // /.col
+            .row.justify-content-center.mb-3
+              .col-4
+                button.btn.btn-primary.btn-block(type='submit') Sign In
+              // /.col
+          //- p.mb-1
+          //-   a(href='forgot-password.html') I forgot my password
+          p.mb-1
+            a.text-center(href='register') Create a new account
+        // /.login-card-body
+        // /.login-box
+        // jQuery
+        script(src='/vendor/plugins/jquery/jquery.min.js')
+        // Bootstrap 4
+        script(src='/vendor/plugins/bootstrap/js/bootstrap.bundle.min.js')
+        // AdminLTE App
+        script(src='/vendor/dist/js/adminlte.min.js')
+        script(src='https://unpkg.com/axios/dist/axios.min.js')
+        script.
+          function onLogin(event) {
+            console.log('login')
+            event.preventDefault();
+            let data = new FormData(event.target);
+            // Post to User sign in API
+            // eslint-disable-next-line no-undef
+            axios
+              .post('/api/1.0/user/signin', {
+                email: data.get('email'),
+                password: data.get('password'),
+              })
+              .then((res) => {
+                window.location.href = '/management/dashboard';
+              })
+              .catch((err) => {
+                console.log(err);
+              });
+            }
+          document.querySelector('#signin-form').addEventListener('submit', onLogin);

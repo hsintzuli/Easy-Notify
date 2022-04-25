@@ -1,0 +1,174 @@
+extends layout.pug
+
+block variables
+    - var userName = user.name
+block content
+  link(rel='stylesheet' href='/vendor/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css')
+  
+  // Content Wrapper. Contains page content
+  .content-wrapper
+    // Content Header (Page header)
+    .content-header
+      .container-fluid
+        .row.mb-2
+          .col-sm-6
+            h1.m-0 Notification Report
+          .row.col-12.justify-content-center.align-items-center
+            .col-10
+              .card
+                .card-header.container-fluid
+                  .row.justify-content-center.align-items-center
+                    .col-11.row.justify-content-center.align-items-center
+                      .col-10.d-flex.align-items-center
+                        h3.m-0#notification-name.float-left.font-weightbold Name
+                        span.ml-2.badge.badge-success.h-50#status-badge
+                          h6.m-0 Success
+                      .card-tools.col-2
+                        button#edit-btn.float-right.btn.btn-outline-secondary(type='button') Edit
+                // /.card-header
+                .card-body
+                  .container-fluid
+                    .row.justify-content-center.align-items-center
+                      .col-11.border.rounded
+                        form.p-2(readonly='')
+                          .row
+                            .col-md-6
+                              .form-group
+                                label.col-form-label.col-form-label-lg(for='input-title') Title
+                                input#input-title.form-control(type='text' name='title' value='Black Friday!' disabled='')
+                            .col-md-6
+                              .form-group
+                                label.col-form-label.col-form-label-lg(for='input-body') Body
+                                input#input-body.form-control(type='text' name='body' value='Click to join activity' disabled='')
+                          .row
+                            .col-sm-6
+                              .form-group
+                                label.col-form-label.col-form-label-lg(for='send-type') Send-Type
+                                select#send-type.custom-select.form-control(name='sendType' value='websocket' disabled='')
+                                  option#websocket Websocket
+                                  option#webpush Web-Push
+                            .col-sm-6
+                              .form-group.row
+                                label.col-form-label.float-left.col-form-label-lg(for='input-body') Icon
+                                div.col-4.mx-auto.text-center
+                                  img#icon.img-fluid.img-circle.elevation-2(style='border-radius: 30%; width: 60px')
+                                //- input#input-body.form-control(type='text' name='body' placeholder='Enter Notification Body' disabled='')
+                          .row
+                            .col-sm-6
+                              label.form-inline.col-form-label.col-form-label-lg(for='time-type') Send-Time
+                              .form-check.form-check-inline
+                                input#send-realtime.form-check-input(type='radio' name='sendTimeOpt' value='realtime' checked='' disabled='')
+                                label.form-check-label(for='send-realtime') Realtime
+                              .form-check.form-check-inline
+                                input#send-scheduled.form-check-input(type='radio' name='sendTimeOpt' value='scheduled' disabled='')
+                                label.form-check-label(for='send-scheduled') Scheduled
+                            .col-sm-6
+                              .form-group
+                                label.col-form-label.col-form-label-lg Date and time:
+                                #datetimepicker1.input-group.date(data-target-input='nearest')
+                                  input.form-control.datetimepicker-input(type='text' data-target='#datetimepicker1' disabled='')
+                                  .input-group-append(data-target='#datetimepicker1' data-toggle='datetimepicker')
+                                    .input-group-text
+                                      i.fa.fa-calendar
+                          // /.card-body
+                      #result.col-11.mt-1(style='display: none;')
+                        .p-3
+                          h4
+                            | Results 
+                            a.btn.ml-1.btn-sm.btn-outline-secondary#update-btn
+                              i.fas.fa-sync
+                            small.float-right#updateTime Update Time: 2/10/2014
+                        .container-fluid.mt-2
+                          .row
+                            .col-6
+                              .container
+                                canvas#deliveryRate.chart.donutchart
+                            .col-6
+                              .container
+                                canvas#receivedRate.chart.donutchart
+  script(src='/vendor/plugins/moment/moment.min.js') 
+  script(src='/vendor/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js')
+  script(src='https://unpkg.com/axios/dist/axios.min.js')
+  script(src='/vendor/plugins/chart.js/Chart.min.js')                   
+  script.
+      //- $(function () {
+      //-   $('#datetimepicker1').datetimepicker({ format: 'YYYY-MM-D HH:mm' });
+      //- });
+
+      const LABEL_SIZE = 14;
+      Chart.pluginService.register({
+        beforeDraw: function (chart) {
+          let width = chart.chart.width;
+          let height = chart.chart.height;
+          let ctx = chart.chart.ctx;
+          ctx.restore();
+          let fontSize = (height / 114).toFixed(2);
+          ctx.font = fontSize + "em sans-serif";
+          ctx.textBaseline = "middle";
+          var text = chart.config.options.elements.center.text,
+            textX = Math.round((width - ctx.measureText(text).width) / 2),
+            textY = height / 2 + LABEL_SIZE;
+          ctx.fillText(text, textX, textY);
+          ctx.save();
+        },
+      });
+
+      // chart1
+      var data1 = {
+        labels: ["Delivered", "Target Clients"],
+        datasets: [
+          {
+            data: [],
+            backgroundColor: ["RGB(255, 201, 82, 0.8)"],
+          },
+        ],
+      };
+      let sentChart = new Chart(document.getElementById("deliveryRate"), {
+        type: "doughnut",
+        data: data1,
+        options: {
+          elements: {
+            center: {
+              text: "75%", //set as you wish
+            },
+          },
+          cutoutPercentage: 70,
+          legend: {
+            display: true,
+            labels: {
+              fontSize: LABEL_SIZE,
+            },
+          },
+        },
+      });
+
+      // chart2
+      var data2 = {
+        labels: ["Acked", "Delivered"],
+        datasets: [
+          {
+            data: [],
+            backgroundColor: ["RGB(165, 188, 130)"],
+          },
+        ],
+      };
+      let deliveredChart = new Chart(document.getElementById("receivedRate"), {
+        type: "doughnut",
+        data: data2,
+        options: {
+          elements: {
+            center: {
+              text: "75%",
+            },
+          },
+          cutoutPercentage: 70,
+          legend: {
+            display: true,
+            labels: {
+              fontSize: LABEL_SIZE,
+            },
+          },
+        },
+      });
+
+  script(src='/assets/js/reportNotification.js')

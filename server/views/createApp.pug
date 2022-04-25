@@ -1,0 +1,53 @@
+extends layout.pug
+
+block variables
+    - var userName = user.name
+block content
+  // iCheck for checkboxes and radio inputs
+  link(rel='stylesheet' href='/vendor/plugins/icheck-bootstrap/icheck-bootstrap.min.css')
+  // Select2
+  link(rel='stylesheet' href='/vendor/plugins/select2/css/select2.min.css')
+  link(rel='stylesheet' href='/vendor/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css')
+  // Content Wrapper. Contains page content
+  .content-wrapper
+    // Content Header (Page header)
+    .content-header
+      .container-fluid
+        .row.justify-content-center.align-items-center
+          .col-8
+            .card.card-primary
+              .card-header
+                h2.card-title Create New App
+              // form start
+              form#app-form(action='')
+                .card-body
+                  .form-group
+                    label(for='input-name') Name
+                    input#input-title.form-control(type='text' name='name' placeholder='Enter App Name')
+                  .form-group
+                    label(for='input-description') Description
+                    input#input-body.form-control(type='text' name='description' placeholder='Enter Description of App')
+                  .form-group
+                    label(for='input-email') Contact Email
+                    input#input-email.form-control(type='text' name='email' placeholder='Enter Contact Email For Web-Push')
+                  .form-group
+                    label(for='input-icon') Default Icon
+                    textarea#input-icon.form-control(rows='3' name='icon' placeholder='Enter Icon Url')
+                  .form-group
+                    .row.align-items-center
+                      .col-4
+                        button.btn.btn-default#previewIcon Preview Icon
+                      .col-8
+                        .w-50
+                          img#showIcon.img-fluid.img-circle.elevation-2()
+                .card-footer
+                  button.btn.btn-primary(type='submit') Submit
+  // Select2
+  script(src='/vendor/plugins/select2/js/select2.full.min.js')
+  // InputMask
+  script(src='https://unpkg.com/axios/dist/axios.min.js')
+  script(src='/vendor/plugins/moment/moment.min.js')
+  script(src='/vendor/plugins/inputmask/jquery.inputmask.min.js')
+  // Bootstrap Switch
+  script(src='/vendor/plugins/bootstrap-switch/js/bootstrap-switch.min.js')
+  script(src='/assets/js/createApp.js')

@@ -1,0 +1,75 @@
+doctype html
+html(lang='en')
+  head
+    meta(charset='utf-8')
+    meta(name='viewport' content='width=device-width, initial-scale=1')
+    title Easy Notify | Register
+    // Google Font: Source Sans Pro
+    link(rel='stylesheet' href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback')
+    // Font Awesome
+    link(rel='stylesheet' href='/vendor/plugins/fontawesome-free/css/all.min.css')
+    // icheck bootstrap
+    link(rel='stylesheet' href='/vendor/plugins/icheck-bootstrap/icheck-bootstrap.min.css')
+    // Theme style
+    link(rel='stylesheet' href='/vendor/dist/css/adminlte.min.css')
+  body.hold-transition.register-page
+    .register-box
+      .register-logo
+        a(href='/')
+          b EASY 
+          | NOTIFY
+      .card
+        .card-body.register-card-body.rounded
+          p.login-box-msg Create a new account
+          form#signup-form(action='' method='post')
+            .input-group.mb-3
+              input.form-control(type='text' name='name' placeholder='Full name')
+              .input-group-append
+                .input-group-text
+                  span.fas.fa-user
+            .input-group.mb-3
+              input.form-control(type='email' name='email' placeholder='Email')
+              .input-group-append
+                .input-group-text
+                  span.fas.fa-envelope
+            .input-group.mb-3
+              input.form-control(type='password' name='password' placeholder='Password')
+              .input-group-append
+                .input-group-text
+                  span.fas.fa-lock
+            .input-group.mb-1
+              input.form-control(type='password' name='checkPassword' placeholder='Retype password')
+              .input-group-append
+                .input-group-text
+                  span.fas.fa-lock
+            .row.justify-content-center.mt-3.mb-3
+              .col-4
+                button.btn.btn-primary.btn-block(type='submit') Register
+          a.text-center(href='/signin') Already have an account? Log In
+        // jQuery
+        script(src='/vendor/plugins/jquery/jquery.min.js')
+        // Bootstrap 4
+        script(src='/vendor/plugins/bootstrap/js/bootstrap.bundle.min.js')
+        // AdminLTE App
+        script(src='/vendor/dist/js/adminlte.min.js')
+        script(src='https://unpkg.com/axios/dist/axios.min.js')
+        script.
+          function onSignUp(event) {
+            event.preventDefault();
+            let data = new FormData(event.target);
+            // Post to User sign up API
+            // eslint-disable-next-line no-undef
+            axios
+            .post('/api/1.0/user/signup', {
+            name: data.get('name'),
+            email: data.get('email'),
+            password: data.get('password'),
+            })
+            .then((res) => {
+            window.location.href = '/management/dashboard';
+            })
+            .catch((err) => {
+            console.log(err);
+            });
+          }
+          document.querySelector('#signup-form').addEventListener('submit', onSignUp);

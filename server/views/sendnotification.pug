@@ -1,0 +1,133 @@
+extends layout.pug
+
+block variables
+    - var userName = user.name
+block content
+  // daterange picker
+  link(rel='stylesheet' href='/vendor/plugins/daterangepicker/daterangepicker.css')
+  // iCheck for checkboxes and radio inputs
+  link(rel='stylesheet' href='/vendor/plugins/icheck-bootstrap/icheck-bootstrap.min.css')
+  // Tempusdominus Bootstrap 4
+  link(rel='stylesheet' href='/vendor/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css')
+  // Select2
+  link(rel='stylesheet' href='/vendor/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css')
+  link(rel='stylesheet' href='/vendor/plugins/select2/css/select2.min.css')
+  link(rel='stylesheet' href='/vendor/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css')
+  // Content Wrapper. Contains page content
+  .content-wrapper
+    // Content Header (Page header)
+    .content-header
+      .container-fluid
+        .row.justify-content-center.align-items-center
+          .col-8
+            .card.card-primary
+              .card-header
+                h3.card-title Send Notification
+              // /.card-header
+              // form start
+              form#notification-form(action='')
+                .card-body
+                  .row
+                    .col-sm-6
+                      .form-group
+                        label APP
+                        select#app-select.form-control(name='app' onchange='changeApp()')
+                          each app in apps
+                            option=app
+                    .col-sm-6
+                      .form-group
+                        label Channel
+                        select#channel-select.form-control(name='channel')
+                          //- each channel in channels
+                          //-   option=channel.name
+                  .row
+                    .col-sm-6                  
+                      .form-group
+                        label(for='input-name') Name
+                        input#input-title.form-control(type='text' name='name' placeholder='Name For Notification')
+                    .col-sm-6                  
+                      .form-group
+                        label(for='input-title') Title
+                        input#input-title.form-control(type='text' name='title' placeholder='Enter Notification Title')
+                  .form-group
+                    label(for='input-body') Body
+                    input#input-body.form-control(type='text' name='body' placeholder='Enter Notification Body')
+                  .form-group
+                    label(for='send-type') Send-Type
+                    select#send-type.custom-select.form-control-border(name='sendType')
+                      option websocket
+                      option webpush
+                  .form-group
+                    label.mr-sm-2(for='time-type') Send-Time
+                    .form-check.form-check-inline
+                      input#send-realtime.form-check-input(type='radio' name='sendTimeOpt' value='realtime')
+                      label.form-check-label(for='send-realtime') Realtime
+                    .form-check.form-check-inline
+                      input#send-scheduled.form-check-input(type='radio' name='sendTimeOpt' value='scheduled')
+                      label.form-check-label(for='send-scheduled') Scheduled
+                  // Date and time
+                  .form-group
+                    label Date and time:
+                    #reservationdatetime.input-group.date(data-target-input='nearest')
+                      input.form-control.datetimepicker-input(type='text' name='sendTime' data-target='#reservationdatetime')
+                      .input-group-append(data-target='#reservationdatetime' data-toggle='datetimepicker')
+                        .input-group-text
+                          i.fa.fa-calendar
+                  // /.form group
+                .card-footer
+                  button.btn.btn-primary(type='submit') Submit
+    //- #exampleModal.modal.fade(tabindex='-1' role='dialog' aria-labelledby='exampleModalLabel' aria-hidden='true')
+    //-   .modal-dialog(role='document')
+    //-     .modal-content
+    //-       .modal-body
+    //-         | Successfully create a notification!
+    //-       .modal-footer
+    //-         button.btn.btn-secondary(type='button' data-dismiss='modal') Close
+    //-         button.btn.btn-primary#view-report-btn(type='button') View Report
+  // Select2
+  script(src='/vendor/plugins/select2/js/select2.full.min.js')
+  // InputMask
+  script(src='https://unpkg.com/axios/dist/axios.min.js')
+  script(src='/vendor/plugins/moment/moment.min.js')
+  script(src='/vendor/plugins/inputmask/jquery.inputmask.min.js')
+  // date-range-picker
+  script(src='/vendor/plugins/daterangepicker/daterangepicker.js')
+  // Tempusdominus Bootstrap 4
+  script(src='/vendor/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js')
+  // Bootstrap Switch
+  script(src='/vendor/plugins/bootstrap-switch/js/bootstrap-switch.min.js')
+  // SweetAlert2
+  script(src='/vendor/plugins/sweetalert2/sweetalert2.min.js')
+  script.
+    $(function () {
+      //Datemask dd/mm/yyyy
+      $("#datemask").inputmask("dd/mm/yyyy", { placeholder: "dd/mm/yyyy" });
+      //Datemask2 mm/dd/yyyy
+      $("#datemask2").inputmask("mm/dd/yyyy", { placeholder: "mm/dd/yyyy" });
+      //Money Euro
+      $("[data-mask]").inputmask();
+
+      //Date and time picker
+      $("#reservationdatetime").datetimepicker({ format: 'YYYY-MM-D HH:mm', icons: { time: "far fa-clock" } });
+
+    });
+
+    function pushSuccess(notification_id) {
+            Swal.fire({
+              icon: 'success',
+              title: 'Create Notification successfully',
+              text: 'Click to view notification report.',
+              showCancelButton: true
+            }).then(function() {
+              window.location = `/management/reports/notifications?id=${notification_id}`;
+            });
+        }
+    function pushFail() {
+            Swal.fire({
+              icon: 'error',
+              title: 'Create Notification failed',
+            })
+    }
+  script. 
+    var channelGroupByApp = JSON.parse('!{JSON.stringify(channelGroupByApp)}');
+  script(src='/assets/js/notification.js')

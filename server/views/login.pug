@@ -1,0 +1,26 @@
+extends layout.pug
+
+block content
+    link(rel='stylesheet' href='/assets/css/login.css')
+    .main-content
+      .container
+        .signup Sign Up
+        .login Log In
+        .signup-form
+          form.form
+            input.input(type='text' name='name' placeholder='Name')
+            br
+            input.input(type='text' name='email' placeholder='Email')
+            br
+            input.input(type='password' name='password' placeholder='Password')
+            br
+            button.btn.btn-signup(type='submit') Create account
+        .login-form
+          form.form
+            input.input(type='text' name='email' placeholder='Email')
+            br
+            input.input(type='password' name='password' placeholder='Password')
+            br
+            button.btn.btn-login(type='submit') log in
+    script(src='/assets/js/login.js')
+    

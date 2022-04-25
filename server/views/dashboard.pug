@@ -1,0 +1,198 @@
+extends layout.pug
+
+block variables
+    - var userName = user.name
+block content
+  // daterange picker
+  link(rel='stylesheet' href='/vendor/plugins/daterangepicker/daterangepicker.css')
+  // Content Wrapper. Contains page content
+  .content-wrapper
+    // Content Header (Page header)
+    .content-header
+      .container-fluid
+        .row.mb-2
+          .col-sm-6
+            h1.m-0 Dashboard
+          // Main content
+          section.content
+            .container-fluid
+              // Small boxes (Stat box)
+              .row
+                .col-lg-3.col-6
+                  // small box
+                  .small-box.bg-info
+                    .inner
+                      h3=dashboardData.subscribers
+                      p SUBSCRIBERS
+                    .icon
+                      i.fas.fa-user-plus
+                // ./col
+                .col-lg-3.col-6
+                  // small box
+                  .small-box.bg-success
+                    .inner
+                      h3=dashboardData.subscribers
+                      p MAX ONLINE USERS
+                    .icon
+                      i.fas.fa-users
+                // ./col
+                .col-lg-3.col-6
+                  // small box
+                  .small-box.bg-warning
+                    .inner
+                      h3=dashboardData.notificationSent
+                      p NOTIFICATION SENT
+                    .icon
+                      i.fas.fa-paper-plane
+                // ./col
+                .col-lg-3.col-6
+                  // small box
+                  .small-box.bg-danger
+                    .inner
+                      h3=dashboardData.deleveredRate
+                        sup(style='font-size: 20px') %
+                      p DELEVERED RATE
+                    .icon
+                      i.fas.fa-thumbs-up
+                // ./col
+                // /.row
+                // Main row
+                .row.col-12 
+                  .col-lg-8.connectedSortable
+                    // LINE CHART
+                    .card
+                      .card-header
+                        h3.card-title User Statistics
+                        .card-tools
+                          #reportrange(style='background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: 100%')
+                            i.fa.fa-calendar
+                            span
+                            i.fa.fa-caret-down
+                      .card-body
+                        .chart
+                          canvas#userChart(style='min-height: 300px; height: 300px; max-height: 300px; max-width: 100%')
+                      // /.card-body
+                      .card-footer
+                        .row
+                          .col-sm-4.border-right
+                            .description-block
+                              h5.description-header 3,200
+                              span.description-text Lastly 1 Week Subscribers
+                          .col-sm-4.border-right
+                            .description-block
+                              h5.description-header 13,000
+                              span.description-text FOLLOWERS
+                          .col-sm-4
+                            .description-block
+                              h5.description-header 35
+                              span.description-text PRODUCTS
+  script(src='/vendor/plugins/chart.js/Chart.min.js')
+  script(src='/vendor/plugins/moment/moment.min.js')
+  script(src='/vendor/plugins/select2/js/select2.full.min.js')
+  script(src='/vendor/plugins/daterangepicker/daterangepicker.js')
+  script.
+        function loadData(start_date, end_date, chart) {
+          axios.post("/api/1.0/user/subscriptions", { start_date, end_date})
+                .then((res) => {
+                  let label, data;
+                  console.log('Received sunscriptions', res);
+                  label = res.data.data.map((element) => element.dates)
+                  data = res.data.data.map((element) => element.subscription)
+                  console.log(label, data)
+                  chart.config.data.labels = label;
+                  chart.config.data.datasets[0].data = data;
+                  chart.update();
+                  })
+                  .catch((err) => {
+                    console.log(err);
+                  });
+        }
+      $(function () {
+        let start = moment().subtract(7, "days");
+        let end = moment();
+
+        $("#reportrange").daterangepicker(
+          {
+            startDate: start,
+            endDate: end,
+            maxDate: end,
+            ranges: {
+              Today: [moment(), moment()],
+              Yesterday: [moment().subtract(1, "days"), moment().subtract(1, "days")],
+              "Last 7 Days": [moment().subtract(6, "days"), moment()],
+              "Last 30 Days": [moment().subtract(29, "days"), moment()],
+              "This Month": [moment().startOf("month"), moment().endOf("month")],
+              "This Year": [moment().subtract(1, "year").startOf("year"),  moment().endOf("year")],
+            },
+          },
+          cb
+        );
+
+
+        function cb(start, end) {
+          $("#reportrange span").html(start.format("YYYY/MM/DD") + " - " + end.format("YYYY/MM/DD"));
+          $("#reportrange span").trigger("change");
+        }
+
+        const areaChartCanvas = $("#userChart").get(0).getContext("2d");
+        const areaChartData = {
+          labels: [],
+          datasets: [
+              {
+            label: "Digital Goods",
+            backgroundColor: "rgba(60,141,188,0.9)",
+            borderColor: "rgba(60,141,188,0.8)",
+            pointRadius: false,
+            pointColor: "#3b8bba",
+            pointStrokeColor: "rgba(60,141,188,1)",
+            pointHighlightFill: "#fff",
+            pointHighlightStroke: "rgba(60,141,188,1)",
+            data: '',
+          },
+          ],
+        };
+
+        var areaChartOptions = {
+          maintainAspectRatio: false,
+          responsive: true,
+          legend: {
+            display: false,
+          },
+          scales: {
+            x : {
+              type: 'time'
+            }, 
+            xAxes: [
+              {
+                gridLines: {
+                  display: false,
+                },
+              },
+            ],
+            yAxes: [
+              {
+                gridLines: {
+                  display: true,
+                },
+              },
+            ],
+          },
+        };
+        // This will get the first returned node in the jQuery collection.
+        const mychart = new Chart(areaChartCanvas, {
+          type: "line",
+          data: areaChartData,
+          options: areaChartOptions,
+        });
+
+        cb(start, end);
+        loadData(start, end, mychart);
+
+        $("#reportrange span").change(() => {
+          let dates = $("#reportrange span").text();
+          let [start_date, end_date] = dates.split(" - ");
+          start_date = (new Date(start_date));
+          end_date = (new Date(end_date));
+          loadData(start_date, end_date, mychart);
+        });
+      })
