@@ -30,7 +30,13 @@ const sendMsg = (room, message) => {
   io.in(room).emit('push', message);
 };
 
+const getSocketsList = (room_id) => {
+  const room = io.sockets.adapter.rooms.get(room_id);
+  return room;
+};
+
 module.exports = {
   config,
   sendMsg,
+  getSocketsList,
 };

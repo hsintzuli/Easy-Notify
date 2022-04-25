@@ -18,7 +18,6 @@ const createOrder = async (order, plan_id, tappayKey, tappayId, prime) => {
 
   const start_date = new Date(order.start_date);
   const end_date = new Date(start_date.setMonth(start_date.getMonth() + 1));
-  order.start_date = start_date;
   order.end_date = end_date;
 
   const updateUser = {

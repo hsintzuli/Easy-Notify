@@ -47,6 +47,26 @@ const getClientDetailByIds = async (subscription_ids) => {
   return results;
 };
 
+const getClientCountByUser = async (user_id) => {
+  const [results] = await pool.query(
+    `SELECT COUNT(s.id) AS total_client FROM users AS u INNER Join apps AS a
+    ON a.user_id = u.id  INNER Join channels AS c ON a.id=c.app_id INNER Join subscriptions AS s ON s.channel_id = c.id
+    WHERE u.id = ?;`,
+    user_id
+  );
+  return results[0];
+};
+
+const getClientGroupByDate = async (user_id, start_date, end_date, interval) => {
+  const [results] = await pool.query(
+    `SELECT DATE_FORMAT(s.created_dt, ?) AS dates, COUNT(s.id) AS subscription FROM subscriptions AS s
+    INNER JOIN channels AS c ON s.channel_id = c.id INNER JOIN apps AS a ON c.app_id = a.id INNER JOIN users AS u ON a.user_id = u.id
+    WHERE s.created_dt > ? AND s.created_dt < ? AND u.id = ? GROUP BY dates ORDER BY dates;`,
+    [interval, start_date, end_date, user_id]
+  );
+  return results;
+};
+
 module.exports = {
   createClient,
   updateClient,
@@ -54,4 +74,6 @@ module.exports = {
   getClientIds,
   getClientDetailByIds,
   updateClientTag,
+  getClientCountByUser,
+  getClientGroupByDate,
 };

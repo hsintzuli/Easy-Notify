@@ -8,7 +8,7 @@ const moment = require('moment');
 const updateNotificationReceived = async () => {
   const now = new Date();
   const hourToCheck = now.getHours() % 2 === 0 ? 'odd' : 'even';
-  const key = `receivedNum:${hourToCheck}`;
+  const key = `receivedNum:even`;
   console.log(moment(now).format('YYYY-MM-DD HH:mm'), 'Start check receivedNumber in', hourToCheck);
   try {
     const receivedNum = await Cache.hgetall(key);

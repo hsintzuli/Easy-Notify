@@ -44,6 +44,7 @@ const deleteNotification = async (notification_id) => {
 };
 
 const updateNotificationStatus = async (notification_id, status) => {
+  console.log(status);
   const [results] = await pool.query('UPDATE notifications SET ? WHERE id = ?', [status, notification_id]);
   const updated = results.affectedRows > 0;
   return updated;
@@ -51,6 +52,42 @@ const updateNotificationStatus = async (notification_id, status) => {
 
 const updateNotificationReceived = async (notification_id, receive_num) => {
   const [results] = await pool.query('UPDATE notifications SET received_num = received_num + ? WHERE id = ?', [receive_num, notification_id]);
+  const updated = results.affectedRows > 0;
+  return updated;
+};
+
+const getMaxOnlineClient = async (user_id) => {
+  const [results] = await pool.query(
+    `SELECT MAX(n.targets_num) AS max_online_clients FROM users AS u INNER Join apps AS a ON  a.user_id = u.id  
+    INNER Join channels AS c ON a.id=c.app_id = c.id INNER Join notifications AS n ON n.channel_id = c.id  AND n.type = 'websocket'
+  WHERE u.id = ?;`,
+    user_id
+  );
+  return results[0];
+};
+
+const getNotificationSent = async (user_id) => {
+  const [results] = await pool.query(
+    `SELECT SUM(n.targets_num) AS notification_sent, AVG(n.sent_num / n.targets_num) AS delivered_rate FROM users AS u INNER Join apps AS a
+    ON a.user_id = u.id  INNER Join channels AS c ON a.id=c.app_id INNER Join notifications AS n ON n.channel_id = c.id
+    WHERE u.id = ?;`,
+    user_id
+  );
+  return results[0];
+};
+
+const getNotificationByApp = async (app_id, start_dt, end_dt) => {
+  const [results] = await pool.query(
+    `SELECT n.id, c.name AS channel, n.name AS name, n.status, n.scheduled_dt, n.type, n.created_dt FROM notifications AS n INNER JOIN channels AS c 
+  ON n.channel_id = c.id WHERE c.app_id = ? AND n.created_dt > ? AND n.created_dt < ? 
+  ORDER BY n.created_dt DESC`,
+    [app_id, start_dt, end_dt]
+  );
+  return results;
+};
+
+const updateNotificationSentNum = async (notification_id) => {
+  const [results] = await pool.query('UPDATE notifications SET ? WHERE id = ?', [status, notification_id]);
   const updated = results.affectedRows > 0;
   return updated;
 };
@@ -63,4 +100,7 @@ module.exports = {
   deleteNotification,
   updateNotificationStatus,
   updateNotificationReceived,
+  getMaxOnlineClient,
+  getNotificationSent,
+  getNotificationByApp,
 };

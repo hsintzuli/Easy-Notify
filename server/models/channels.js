@@ -13,7 +13,6 @@ const createChannel = async (app_id, name, description) => {
     id: id,
     app_id: app_id,
     name: name,
-    description: description,
     channel_key: channelKey,
     public_key: pushKey.publicKey,
     private_key: pushKey.privateKey,
@@ -54,7 +53,7 @@ const updateChannelKey = async (channel_id, key_expire_dt) => {
 };
 
 const deleteChannel = async (channel_id) => {
-  const [results] = await pool.query('DELETE FROM channels WHERE id = ?', channel_id);
+  const [results] = await pool.query('UPDATE channels SET deleted_dt = NOW() WHERE id = ?', channel_id);
   const deleted = results.affectedRows > 0;
   return deleted;
 };
@@ -84,6 +83,19 @@ const getChannelById = async (channel_id) => {
   return results[0];
 };
 
+const getChannels = async (app_id) => {
+  const [results] = await pool.query(`SELECT * FROM channels WHERE app_id = ? AND deleted_dt is NULL ORDER BY created_dt DESC`, app_id);
+  return results;
+};
+
+const getChannelsByUser = async (user_id) => {
+  const [results] = await pool.query(
+    `SELECT c.id, c.name, a.id AS app_id, a.name  AS app_name FROM notify.channels AS c LEFT JOIN notify.apps AS a on c.app_id = a.id WHERE a.user_id = ?; `,
+    user_id
+  );
+  return results;
+};
+
 module.exports = {
   createChannel,
   deleteChannel,
@@ -91,4 +103,6 @@ module.exports = {
   getChannelDetail,
   verifyChannelWithUser,
   getChannelById,
+  getChannels,
+  getChannelsByUser,
 };

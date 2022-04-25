@@ -19,6 +19,18 @@ const userAuthentication = async function (req, res, next) {
 };
 
 const apiAuthentication = async (req, res, next) => {
+  const { user } = req.session;
+  const { channel_id } = req.body;
+  if (user && user.id) {
+    if (!channel_id) {
+      return next();
+    }
+    const channel = await Channel.getChannelById(channel_id);
+    console.log(channel);
+    req.locals = { channel };
+    return next();
+  }
+
   let accessToken = req.get('Authorization');
   console.log(accessToken);
   if (!accessToken) {

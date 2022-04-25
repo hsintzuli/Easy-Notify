@@ -4,6 +4,7 @@ const rabbitmqLib = require('./rabbit');
 const Notification = require('../server/models/notifications');
 const { NOTIFICATION_STATUS } = Notification;
 const Content = require('../server/models/content');
+const Cache = require('./cache');
 const { WEBSOCKET_QUEUE } = process.env;
 
 async function fnConsumer(msg, callback) {
@@ -25,6 +26,10 @@ async function fnConsumer(msg, callback) {
   };
   socket.sendMsg(channel_id, payload);
   console.log('send msg to', channel_id);
+  const room = socket.getSocketsList(channel_id);
+  let len = room ? room.size : 0;
+  await Cache.hincrby('sentNums', notification_id, len);
+
   await Notification.updateNotificationStatus(notification_id, { status: NOTIFICATION_STATUS.COMPLETE });
 
   //tell rabbitmq that the message was processed successfully

@@ -36,7 +36,7 @@ async function fnConsumer(msg, callback) {
   };
   const pushOption = {
     vapidDetails,
-    TTL: msgContent.config.ttl,
+    TTL: 5,
   };
   console.log('Received message: ', msgContent);
   console.log('clients', clients);
@@ -47,7 +47,12 @@ async function fnConsumer(msg, callback) {
       endpoint: subscription.endpoint,
       keys: JSON.parse(subscription.keys),
     };
-    await webpush.sendNotification(client, JSON.stringify(payload), pushOption).catch((err) => console.error(err));
+    try {
+      await webpush.sendNotification(client, JSON.stringify(payload), pushOption);
+      await Cache.hincrby('sentNums', notification_id, 1);
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   const leavingJobs = await Cache.hincrby('pushJobs', notification_id, -1);

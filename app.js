@@ -28,6 +28,10 @@ app.use(
     resave: false,
   })
 );
+app.set('view engine', 'pug');
+app.set('views', './server/views');
+app.use(require('./server/routes/home'));
+app.use(require('./server/routes/management'));
 
 // API routes
 app.use('/api/' + API_VERSION, [
