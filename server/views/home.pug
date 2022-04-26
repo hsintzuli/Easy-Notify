@@ -1,16 +1,12 @@
 doctype html
 html(lang='en')
   head
-    style.
-      #header {
-      background-image: url("/assets/img/mountains.jpg"), linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6));
-      background-blend-mode: overlay;
-      }
+
     meta(charset='utf-8')
     meta(name='viewport' content='width=device-width, initial-scale=1, shrink-to-fit=no')
     meta(name='description' content='')
     meta(name='author' content='')
-    title Modern Business - Start Bootstrap Template
+    title Easy Notify
     // Favicon
     link(rel='icon' type='image/x-icon' href='assets/favicon.ico')
     // Bootstrap icons
@@ -46,15 +42,17 @@ html(lang='en')
       // Header
       header#header.py-5
         .container.px-5
-          .row.justify-content-center
-            .col-lg-8.col-xxl-6
-              .text-center.my-5
-                h1.fw-bolder.text-white.mb-3 Push Notification Service for Developers and Business
-                p.lead.fw-normal.text-white-50.mb-4
-                  | Bring back lost visitors through webpush notification, a more efficient and effective way than email. Provide powerful alternative plan - Websocket, for users do
-                  | not authorize webpush.
-                a.btn.btn-primary.btn-lg(href='/register') Get Start!
-                a.btn.btn-secondary.btn-lg(href='#') Demo
+          .row.gx-5.align-items-center.justify-content-center
+            .col-lg-8.col-xl-7.col-xxl-6
+              .my-5.text-center.text-xl-start
+                h1.display-5.fw-bolder.text-black.mb-2 Push Notification Service for Developers and Business
+                p.lead.fw-normal.text-black-50.mb-4
+                  | Bring back lost visitors through webpush notification. Alternative plan - Websocket, for users do not authorize webpush.
+                .d-grid.gap-3.d-sm-flex.justify-content-sm-center.justify-content-xl-start
+                  a.btn.btn-primary.btn-lg.px-4.me-sm-3(href='/register') Get Started
+                  a.btn.btn-outline-secondary.btn-lg.px-4(href='/demo.html' target='_blank') Demo
+            .col-xl-5.col-xxl-6.d-none.d-xl-block.text-center
+              img.img-fluid.rounded-3.my-5(src='/assets/img/push-notifications.gif')
       // Features section
       section#features.py-5
         .container.px-5.my-5
