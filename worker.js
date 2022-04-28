@@ -5,43 +5,39 @@ const Cache = require('./utils/cache');
 const Content = require('./server/models/content');
 const Notification = require('./server/models/notifications');
 const Subscription = require('./server/models/subscriptions');
-const mongoose = require('mongoose');
+const Mongo = require('./server/models/mongoconn');
 const { WEBPUSH_QUEUE } = process.env;
-const { MONGO_HOST, MONGO_USERNAME, MONGO_PASSWORD, MONGO_DATABASE } = process.env;
 const { NOTIFICATION_STATUS } = Notification;
+const DEFAULT_TTL = 5;
 
-mongoose.connect(`mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOST}:27017/${MONGO_DATABASE}?authSource=admin`);
+async function fnConsumer(msg, ack) {
+  Mongo.connect();
 
-const mongodb = mongoose.connection;
-mongodb.on('error', console.error.bind(console, 'connection error:'));
-mongodb.once('open', function () {
-  console.log('Connection Successful!');
-});
+  const { notificationId, channelId, clients } = JSON.parse(msg.content);
+  console.log('Webpush worker receive job', notificationId);
 
-async function fnConsumer(msg, callback) {
-  const { notification_id, channel_id, vapidDetails, clients } = JSON.parse(msg.content);
-  console.log('NotificationID', notification_id);
-  const updated = await Notification.updateNotificationStatus(notification_id, { status: NOTIFICATION_STATUS.DELEVERED });
+  // TODO: if this worker is the first one to process the notification, update status
+  const updated = await Notification.updateNotificationStatus(notificationId, { status: NOTIFICATION_STATUS.DELEVERED });
   if (!updated) {
-    console.log(`Notification ${notification_id} has been deleted before delevered`);
-    return callback(true);
+    console.log(`Notification ${notificationId} has been deleted before delevered`);
+    return ack(true);
   }
-  const msgContent = await Content.findById(notification_id);
+  const msgContent = await Content.findById(notificationId);
   const payload = {
+    notification_id: notificationId,
     title: msgContent.title,
     body: msgContent.body,
-    notification_id: notification_id,
-    option_content: msgContent.option_content,
+    icon: msgContent.icon,
     config: msgContent.config,
   };
+  console.log('MongoContent', msgContent);
   const pushOption = {
-    vapidDetails,
-    TTL: 5,
+    vapidDetails: msgContent.vapid_detail,
+    TTL: DEFAULT_TTL,
   };
-  console.log('Received message: ', msgContent);
-  console.log('clients', clients);
+  console.log('Start to push notification through webpush:', payload);
   const subscriptions = await Subscription.getClientDetailByIds(clients);
-  console.log('subscriptions', subscriptions);
+  console.log('Target clients', subscriptions);
   for (let subscription of subscriptions) {
     const client = {
       endpoint: subscription.endpoint,
@@ -49,19 +45,19 @@ async function fnConsumer(msg, callback) {
     };
     try {
       await webpush.sendNotification(client, JSON.stringify(payload), pushOption);
-      await Cache.hincrby('sentNums', notification_id, 1);
+      await Cache.hincrby('sentNums', notificationId, 1);
     } catch (error) {
       console.error(error);
     }
   }
 
-  const leavingJobs = await Cache.hincrby('pushJobs', notification_id, -1);
+  const leavingJobs = await Cache.hincrby('pushJobs', notificationId, -1);
   if (leavingJobs === 0) {
-    await Notification.updateNotificationStatus(notification_id, { status: NOTIFICATION_STATUS.COMPLETE });
-    await Cache.hdel('pushJobs', notification_id);
-    console.log(`Finish ${notification_id}, successfully update mysql & delete redis`);
+    await Notification.updateNotificationStatus(notificationId, { status: NOTIFICATION_STATUS.COMPLETE });
+    await Cache.hdel('pushJobs', notificationId);
+    console.log(`Finish ${notificationId}, successfully update mysql & delete redis`);
   }
-  callback(true);
+  ack(true);
 }
 
 // InitConnection of rabbitmq

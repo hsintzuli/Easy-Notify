@@ -1,70 +1,48 @@
-const rabbitmq = require('../../utils/rabbit');
 const Content = require('../models/content');
-const { genNotificationJob } = require('../../utils/realtimeNotification');
 const moment = require('moment');
-const { DELAY_EXCHANGE, SCHEDULED_INTERVAL_HOUR } = process.env;
 const Notification = require('../models/notifications');
-const { NOTIFICATION_STATUS } = Notification;
 const SCHEDULED_TYPE = new Set(['realtime', 'scheduled']);
 const SEND_TYPE = new Set(['webpush', 'websocket']);
 const App = require('../models/apps');
 const Cache = require('../../utils/cache');
+const NotificationJobs = require('../../utils/notificationJobs');
 
-// Push notification
 const pushNotification = async (req, res) => {
   const { channel } = req.locals;
   const { scheduledType } = req.params;
-  const { name, title, body, sendType, optionContent, config, sendTime, client_tags } = req.body;
+  const { name, title, body, sendType, icon, config, sendTime } = req.body;
+  console.log('Receive push notification:', name);
 
-  console.log('Receive notification');
+  // Check scheduledType & sendType are valid types
   if (!SCHEDULED_TYPE.has(scheduledType) || !SEND_TYPE.has(sendType)) {
-    res.status(400).send({ error: 'Wrong Request' });
+    res.status(400).send({ error: 'Wrong ScheduledType or SendType' });
     return;
   }
-  const vapidDetails = {
-    subject: `mailto:${channel.email}`,
-    publicKey: channel.public_key,
-    privateKey: channel.private_key,
-  };
 
+  // Save notification content to Mongo DB and use _id of Mongo as notification id
   const content = new Content({
     title: title,
     body: body,
-    option_content: optionContent,
     config: config,
-    client_tags: client_tags,
+    icon: icon || channel.icon, // use channel icon as default icon
   });
-
   const mongoResult = await content.save();
   const id = mongoResult._id.toString();
 
+  // Let NotificationJobs to handle realtime notification & scheduled notification respectively
   const notification = {
-    id: id,
-    name: name,
+    id,
+    name,
+    sendType,
+    scheduledType,
+    sendTime,
   };
   if (scheduledType === 'realtime') {
-    await Notification.createNotification(id, channel.id, name, sendType);
-    await genNotificationJob(id, sendType, channel.id, vapidDetails, client_tags);
-    return res.status(200).json({ data: notification });
+    NotificationJobs.handleRealtimeRequest(notification, channel);
+  } else {
+    NotificationJobs.handleScheduledRequest(notification, channel);
   }
 
-  const time = new Date(sendTime);
-  const now = new Date();
-  const delay = time.getTime() - now.getTime();
-  const notPublishToQueue = delay > SCHEDULED_INTERVAL_HOUR * 3600 * 1000;
-  await Notification.createNotification(mongoResult._id, channel.id, name, sendType, time, notPublishToQueue);
-
-  if (notPublishToQueue) {
-    return res.status(200).json({ data: notification });
-  }
-
-  console.log('Scheduled Time', moment(time).format('YYYY-MM-DD HH:mm:ss'));
-  const jobOptions = {
-    headers: { 'x-delay': delay },
-    contentType: 'application/json',
-  };
-  const newJob = { notification_id: mongoResult._id, sendType, vapidDetails, channel_id: channel.id, client_tags };
-  await rabbitmq.publishMessage(DELAY_EXCHANGE, sendType, JSON.stringify(newJob), jobOptions);
   return res.status(200).json({ data: notification });
 };
 

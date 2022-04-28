@@ -7,33 +7,34 @@ const Content = require('../server/models/content');
 const Cache = require('./cache');
 const { WEBSOCKET_QUEUE } = process.env;
 
-async function fnConsumer(msg, callback) {
-  const { notification_id, channel_id } = JSON.parse(msg.content);
-  console.log('notification_id', notification_id);
-  const updated = await Notification.updateNotificationStatus(notification_id, { status: NOTIFICATION_STATUS.DELEVERED });
+async function fnConsumer(msg, ack) {
+  const { notificationId, channelId } = JSON.parse(msg.content);
+  console.log('Websocket worker receive job', notificationId);
+
+  // Update notification status in ,ysql
+  const updated = await Notification.updateNotificationStatus(notificationId, { status: NOTIFICATION_STATUS.DELEVERED });
   if (!updated) {
-    console.log(`Notification ${notification_id} has been deleted before delevered`);
+    console.log(`Notification ${notificationId} has been deleted before delevered`);
     return callback(true);
   }
-  const msgContent = await Content.findById(notification_id);
-
+  const msgContent = await Content.findById(notificationId);
   const payload = {
+    notification_id: notificationId,
     title: msgContent.title,
     body: msgContent.body,
-    notification_id: notification_id,
-    option_content: msgContent.option_content,
+    icon: msgContent.icon,
     config: msgContent.config,
   };
-  socket.sendMsg(channel_id, payload);
-  console.log('send msg to', channel_id);
-  const room = socket.getSocketsList(channel_id);
-  let len = room ? room.size : 0;
-  await Cache.hincrby('sentNums', notification_id, len);
+  socket.sendMsg(channelId, payload);
+  console.log('send msg to', channelId);
+  const clients = socket.getSocketsList(channelId);
+  const sentNum = clients ? clients.size : 0;
+  await Cache.hincrby('sentNums', channelId, sentNum);
 
-  await Notification.updateNotificationStatus(notification_id, { status: NOTIFICATION_STATUS.COMPLETE });
+  await Notification.updateNotificationStatus(channelId, { status: NOTIFICATION_STATUS.COMPLETE });
 
   //tell rabbitmq that the message was processed successfully
-  callback(true);
+  ack(true);
 }
 
 const initializSocketWorker = () => {

@@ -1,17 +1,23 @@
 require('dotenv').config({ path: __dirname + '/.env' });
-const { genNotificationJob } = require('./utils/realtimeNotification');
+const NotificationJobs = require('./utils/notificationJobs');
 const rabbitmq = require('./utils/rabbit');
 const { DELAY_QUEUE } = process.env;
-async function fnConsumer(msg, callback) {
+
+async function fnConsumer(msg, ack) {
   try {
     const job = JSON.parse(msg.content.toString());
-    console.log(job);
-    await genNotificationJob(job.notification_id, job.sendType, job.channel_id, job.vapidDetails, job.client_tags);
-    console.log('Success update notification status');
-    return callback(true);
+    console.log('Transfer delayed job from delayed exchange to realtime exchange', job);
+    if (job.sendType === 'websocket') {
+      await NotificationJobs.genWebsocketJob(job.notificationId, job.channelId);
+    } else {
+      await NotificationJobs.genWebpushJob(job.notificationId, job.channelId);
+    }
+
+    console.log('Successfully Transfer!');
+    return ack(true);
   } catch (error) {
     console.log(error);
-    callback(false);
+    ack(false);
   }
 }
 

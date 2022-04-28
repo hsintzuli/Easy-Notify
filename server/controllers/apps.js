@@ -66,8 +66,10 @@ const deleteChannel = async (req, res) => {
 const rotateChannelKey = async (req, res) => {
   const { user } = req.session;
   const { channel_id } = req.query;
+  console.log('rotate', user, channel_id);
   const verified = await Channel.verifyChannelWithUser(user.id, channel_id);
   if (!verified) {
+    console.log('error');
     return res.status(400).json({ error: 'Incorrect user or channel id' });
   }
 

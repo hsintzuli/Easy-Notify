@@ -13,7 +13,7 @@ self.addEventListener('push', async function (event) {
   event.waitUntil(
     self.registration.showNotification(data.title, {
       body: data.body,
-      icon: data.config.icon,
+      icon: data.icon,
     })
   );
 });

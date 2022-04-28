@@ -10,14 +10,14 @@ const contentSchema = new Schema({
     type: String,
     required: true,
   },
-  optionMsg: {
-    type: Object,
+  icon: {
+    type: String,
   },
   config: {
-    type: Object,
+    type: String,
   },
-  client_tags: {
-    type: Array,
+  vapid_detail: {
+    type: Object,
   },
 });
 

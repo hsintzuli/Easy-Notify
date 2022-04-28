@@ -31,16 +31,16 @@ const channels = async (req, res) => {
 };
 
 const sendNotificaton = async (req, res) => {
-  console.log('in');
   const { user } = req.session;
   if (!user) {
     return res.redirect('/signin');
   }
   const channels = await Channel.getChannelsByUser(user.id);
   const channelGroupByApp = channels.reduce((prev, curr) => {
-    let app = `${curr.app_name}::${curr.app_id}`;
-    if (!prev.hasOwnProperty(app)) prev[app] = [];
-    prev[app].push(`${curr.name}::${curr.id}`);
+    let app = `[${curr.app_name}]-${curr.app_id}`;
+    if (!prev.hasOwnProperty(app)) prev[app] = { icon: curr.icon, channels: [] };
+    console.log(prev);
+    prev[app]['channels'].push(`[${curr.name}]-${curr.id}`);
     return prev;
   }, {});
   console.log(channelGroupByApp);
