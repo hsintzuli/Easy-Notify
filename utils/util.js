@@ -1,4 +1,5 @@
 const Channel = require('../server/models/channels');
+const moment = require('moment');
 
 // reference: https://thecodebarbarian.com/80-20-guide-to-express-error-handling
 const wrapAsync = (fn) => {
@@ -70,10 +71,24 @@ const diffFromNow = (time) => {
   return (targetTime.getTime() - now.getTime()) / 1000;
 };
 
+const generateValidDatetimeRange = (startDate, endDate) => {
+  const now = new Date();
+  startDate = startDate < endDate ? new Date(startDate) : new Date(endDate);
+  endDate = startDate < endDate ? new Date(endDate) : new Date(startDate);
+  if (moment(endDate).format('YYYY-MM-DD') >= moment(now).format('YYYY-MM-DD')) {
+    endDate = now;
+  } else {
+    endDate = new Date(endDate.getTime() + (23 * 3600 + 59 * 60) * 1000);
+  }
+
+  return [startDate, endDate];
+};
+
 module.exports = {
   wrapAsync,
   userAuthentication,
   apiAuthentication,
   setChannelDataToReq,
   diffFromNow,
+  generateValidDatetimeRange,
 };

@@ -11,51 +11,64 @@ block content
     // Content Header (Page header)
     .content-header
       .container-fluid
-        .row.mb-2
           .col-sm-6
             h1.m-0 Reports
           // Main content
-        section.content
-          .container-fluid
-            .row
-              .col-12
-                .card
-                  .card-header(style='border-bottom: none')
-                    .container-fluid
-                      .row.mb-1
-                        .col-10.col-lg-4
-                          .input-group.mb-1
-                            label.mr-2 APP
-                            select#app-select.form-control(style="width:auto;" name='app')
-                              each app, index in apps
-                                if index === 0
-                                  option(data-id=app.id selected="selected")=app.name
-                                else
-                                  option(data-id=app.id)=app.name
-                        .col-10.col-lg-4
-                          .input-group
-                            label.mr-2 Time
-                            #reportrange.form-control.d-inline-block(style='background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc')
-                              i.fa.fa-calendar.float-left
-                              span.ml-1
-                              i.fa.fa-caret-down.float-right
-                        .col-4.col-lg-2
-                          button#reload-data.btn.btn-default.float-right(type="button")='Send'
-                  // /.card-header
-                  .card-body
-                    .container-fluid
-                      .row.justify-content-center.align-items-center
-                        .col-12
-                          .table-responsive
-                            table#report-table.table.table-compact.dt-responsive.nowrap(cellspacing="0")
-                              thead
-                                tr
-                                  th Channel
-                                  th Name
-                                  th Status
-                                  th Delivered Time
-                                  th Type
-                                  th Create Time
+    section.content
+      .container-fluid
+        .card.shadow-sm
+          .card-header(style='border-bottom: none')
+            .container-fluid
+              .row.mb-1
+                from.form-inline
+                  .form-group.mx-2
+                    label.mr-2 APP
+                    select.form-control#app-select.p-0(style="width:auto;" name='app')
+                      each app, index in apps
+                        if index === 0
+                          option(data-id=app.id selected="selected")=app.name
+                        else
+                          option(data-id=app.id)=app.name
+                  .form-group.mx-2
+                    label.mr-2 Time
+                    .form-control#reportrange.d-flex.align-items-center(style='background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc')
+                      i.fa.fa-calendar.float-left
+                      span.m-1
+                      i.fa.fa-caret-down.float-right
+                  .btn#reload-data.btn.btn-default(type="button")='Explore'
+                //- .col-10.col-lg-4
+                //-   .input-group.mb-1
+                //-     label.mr-2 APP
+                //-     select.form-control#app-select(style="width:auto;" name='app')
+                //-       each app, index in apps
+                //-         if index === 0
+                //-           option(data-id=app.id selected="selected")=app.name
+                //-         else
+                //-           option(data-id=app.id)=app.name
+                //- .col-10.col-lg-4
+                //-   .input-group
+                //-     label.mr-2 Time
+                //-     #reportrange.form-control.d-inline-block(style='background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc')
+                //-       i.fa.fa-calendar.float-left
+                //-       span.ml-1
+                //-       i.fa.fa-caret-down.float-right
+                //- .col-4.col-lg-2
+                //-   button#reload-data.btn.btn-default.float-right(type="button")='Send'
+              // /.card-header
+          .card-body
+            .container-fluid
+              .row.justify-content-center.align-items-center
+                .col-12
+                  .table-responsive
+                    table#report-table.table.table-compact.dt-responsive.nowrap(cellspacing="0")
+                      thead
+                        tr
+                          th Channel
+                          th Name
+                          th Status
+                          th Delivered Time
+                          th Type
+                          th Create Time
   script(src='/vendor/plugins/moment/moment.min.js')
   script(src='/vendor/plugins/select2/js/select2.full.min.js')
   script(src='/vendor/plugins/daterangepicker/daterangepicker.js')
@@ -69,6 +82,9 @@ block content
   script(src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js')
   script.
       $(document).ready(function() {
+
+        $('.nav-sidebar a').removeClass('active')
+        $('#reporting-nav').addClass('active')
         let start = moment().subtract(1, 'months');
         let end = moment();
         let app_id = $('#app-select').children(":selected").attr("data-id");
@@ -87,6 +103,7 @@ block content
               "This Month": [moment().startOf("month"), moment().endOf("month")],
               "This Year": [moment().subtract(1, "year").startOf("year"),  moment().endOf("year")],
             },
+            
           },
           cb
         );
@@ -99,17 +116,18 @@ block content
            "responsive": true,
             "processing": true,
             "language": {
-               processing:'<img src="/assets/img/loading.gif" alt="Processing"/>'
+              processing:'<img src="/assets/img/loading.gif" alt="Processing"/>',
+              emptyTable: "No data available. Create a notification now."
             },
             "serverSide": false,
             "rowId": 'id',
             "ajax":  {
-                url: `/api/1.0/notifications?app_id=${app_id}&start_date=${start}&end_date=${end}`,
+                url: `/management/notifications?app_id=${app_id}&start_date=${start}&end_date=${end}`,
                 type: "GET",
                 dataType: 'json',
-                error: function(){
-                    alert("Request Data Error");
-
+                error: function(error){
+                  console.log(error)
+                    alert(error);
                     }
             },
             "columns": [
@@ -162,6 +180,9 @@ block content
           })
 
           $('#report-table').on( 'click', 'tr', function () {
+            if ( table.rows().count() === 0) {
+              return;
+            }
             let id = table.row( this ).id();
             window.location.href = `/management/reports/notifications?id=${id}`;
          });

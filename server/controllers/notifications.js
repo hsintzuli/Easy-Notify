@@ -1,11 +1,11 @@
 const Content = require('../models/content');
-const moment = require('moment');
 const Notification = require('../models/notifications');
 const SCHEDULED_TYPE = new Set(['realtime', 'scheduled']);
 const SEND_TYPE = new Set(['webpush', 'websocket']);
 const App = require('../models/apps');
 const Cache = require('../../utils/cache');
 const NotificationJobs = require('../../utils/notificationJobs');
+const { generateValidDatetimeRange } = require('../../utils/util');
 
 const pushNotification = async (req, res) => {
   const { channel } = req.locals;
@@ -129,34 +129,25 @@ const deleteNotification = async (req, res) => {
 };
 
 const getNotificationsByApp = async (req, res, next) => {
-  console.log(req.query);
-  if (!req.query.app_id) {
-    return next();
-  }
   const { user } = req.session;
   let { app_id, start_date, end_date } = req.query;
-  const verified = await App.verifyAppWithUser(user.id, app_id);
-  if (!verified) {
-    return res.status(400).json({ error: 'Incorrect user or channel id' });
+  if (!app_id) {
+    return next();
   }
 
   if (!start_date || !end_date) {
-    res.status(400).send({ error: 'Get New Subscribers Error: Wrong Data Format' });
+    res.status(400).send({ error: 'Get Notifications Error: Wrong Data Format' });
     return;
   }
-  start_date = new Date(start_date);
-  end_date = new Date(end_date);
-  let now = new Date();
-  console.log(start_date);
-  console.log(end_date);
-  if (moment(end_date).format('YYYY-MM-DD') === moment(now).format('YYYY-MM-DD')) {
-    end_date = now;
-  } else {
-    end_date = new Date(end_date.getTime() + (23 * 3600 + 59 * 60) * 1000);
+
+  const verified = await App.verifyAppWithUser(user.id, app_id);
+  if (!verified) {
+    return res.status(400).json({ error: 'Incorrect app_id' });
   }
 
+  [start_date, end_date] = generateValidDatetimeRange(start_date, end_date);
   const data = await Notification.getNotificationByApp(app_id, start_date, end_date);
-  console.log(data);
+  console.log('select data', data);
   res.status(200).send({
     data,
   });

@@ -38,8 +38,18 @@ head
     }
     .btn-primary:hover {
     color: #fff;
-    background-color: #3c8dbc;
-    border-color: #3c8dbc;
+    background-color: #1A3B64;
+    border-color: #1A3B64;
+    }
+    .btn-primary:active {
+    color: #fff;
+    background-color: #1A3B64;
+    border-color: #1A3B64;
+    }
+    .btn-primary:focus {
+    color: #fff;
+    background-color: #1A3B64;
+    border-color: #1A3B64;
     }
     .sidebar-dark-primary .nav-sidebar > .nav-item > .nav-link.active,
     .sidebar-light-primary .nav-sidebar > .nav-item > .nav-link.active {
@@ -69,10 +79,6 @@ body.sidebar-mini(style='height: auto')
       li.nav-item
         a.nav-link(data-widget='fullscreen' href='#' role='button')
           i.fas.fa-expand-arrows-alt
-      li.nav-item
-        a.nav-link(data-widget='control-sidebar' data-slide='true' href='#' role='button')
-          i.fas.fa-th-large
-  // /.navbar
   // Main Sidebar Container
   aside.main-sidebar.sidebar-dark-primary.elevation-4
     // Brand Logo
@@ -103,15 +109,15 @@ body.sidebar-mini(style='height: auto')
             a.nav-link#reporting-nav(href='/management/reports')
               i.nav-icon.fas.fa-chart-area
               p Reporting
-          li.nav-item.menu-open
-            a.nav-link.active#sending-nav(href='#')
+          li.nav-item#sending-li
+            a.nav-link#sending-nav(href='#')
               i.nav-icon.fas.fa-paper-plane
               p
                 | Sending
                 i.right.fas.fa-angle-left
             ul.nav.nav-treeview
               li.nav-item 
-                a.nav-link.active#app-nav(href='/management/apps')
+                a.nav-link#app-nav(href='/management/apps')
                   i.far.fa-circle.nav-icon
                   p Apps
               li.nav-item
@@ -121,12 +127,6 @@ body.sidebar-mini(style='height: auto')
       // /.sidebar-menu
     // /.sidebar
   block content
-  // Control Sidebar
-  aside.control-sidebar.control-sidebar-dark
-    // Control sidebar content goes here
-    .p-3
-      h5 Title
-      p Sidebar content
   // /.control-sidebar
   // Main Footer
   footer.main-footer

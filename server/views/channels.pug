@@ -7,15 +7,25 @@ block content
     .table {
       table-layout: fixed;
     }
-    .collapse-table td p{
-      overflow: hidden;
+    td span{
+      display: inline-block;
+      width: 100%;
+      overflow: hidden !important;
+      //- overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
     }
+
     .list-title {
         font-size: 2rem;
         font-weight: 500;
       }
+
+    .copy-row {
+      background-color: rgb(191, 170, 147, 0.3);
+      border-radius: 10px;
+      padding: 0; 
+    }
   script(src='/vendor/plugins/moment/moment.min.js')
 
   // Content Wrapper. Contains page content
@@ -56,8 +66,7 @@ block content
                       th.name(style='width: 20%') Name
                       th.id(style='width: 30%') ID
                       th.expire-dt(style='width: 20%') Expire Date
-                      th.rotate(style='width: 10%') Rotate
-                      th.remove(style='width: 10%') Remove
+                      th.action(style='width: 20%') Action
                   tbody
                     each channel, index in channels
                       tr 
@@ -65,20 +74,24 @@ block content
                           button.btn.btn-default.btn-sm
                             i.fas.fa-chevron-circle-down
                         td.name=channel.name
-                        td.id
-                          .row.align-items-center
-                            .col-9
-                              p(id=`channel-id-${index}`)=channel.id
-                            .card-tools.col-2
-                              button.btn.btn-sm.btn-copy(onclick=`copyToClipboard('#channel-id-${index}')`)
-                                i.fas.fa-copy
-                        td.expire-dt=channel.key_expire_dt
-                        td.fc-center.rotate
-                          button.btn.btn-default.btn-sm.btn-update
-                            i.fas.fa-sync
-                        td.fc-center.remove
-                          button.btn.btn-default.btn-sm.btn-delete(type='button' data-toggle='modal' data-target='#deleteChannel')
+                        td.id.d-flex.justify-content-start
+                          .row.col-10.align-items-center.justify-content-around.copy-row
+                              .col-9
+                                span(id=`channel-id-${index}`)=channel.id
+                              .card-tools.col-2
+                                button.btn.btn-sm.btn-copy(onclick=`copyToClipboard('#channel-key-${index}')`)
+                                            i.fas.fa-copy
+                        if channel.key_expire_dt
+                          td.expire-dt=moment(channel.key_expire_dt).format('MMMM Do YYYY, h:mm:ss ')
+                        else
+                          td.expire-dt 
+                        td.actions
+                          a.btn.btn-primary.btn-sm.btn-update.m-1
+                            i.fas.fa-sync 
+                            |                               Rotate
+                          a.btn.btn-danger.btn-sm.btn-delete.m-1(type='button' data-toggle='modal' data-target='#deleteChannel')
                             i.fa.fa-trash
+                            |                               Delete
                         tr
                           td.hiddenRow(colspan='10')
                             .accordian-body.collapse(id=`channel${index}`)
@@ -90,26 +103,26 @@ block content
                                     th(style='width: 30%') Private Key
                                 tbody
                                     tr.accordion-toggle(data-toggle='collapse' data-target=`#channel${index}`)
-                                    td.channel-key
-                                      .row.align-items-center
+                                    td.channel-key.justify-content-start
+                                      .row.col-10.align-items-center.justify-content-around.copy-row
                                         .col-9
-                                          p(id=`channel-key-${index}`)=channel.channel_key
+                                          span(id=`channel-id-${index}`)=channel.channel_key
                                         .card-tools.col-2
                                           button.btn.btn-sm.btn-copy(onclick=`copyToClipboard('#channel-key-${index}')`)
                                             i.fas.fa-copy
-                                    td.public-key
-                                      .row.align-items-center
+                                    td.public-key.justify-content-start
+                                      .row.col-10.align-items-center.justify-content-around.copy-row
                                         .col-9
-                                          p(id=`channel-publickey-${index}`)=channel.public_key
+                                          span(id=`channel-publickey-${index}`)=channel.public_key
                                         .card-tools.col-2
                                           button.btn.btn-sm.btn-copy(onclick=`copyToClipboard('#channel-publickey-${index}')`)
                                             i.fas.fa-copy
-                                    td.private_key
-                                      .row.align-items-center
+                                    td.private_key.justify-content-start
+                                      .row.col-10.align-items-center.justify-content-around.copy-row
                                         .col-9
-                                          p(id=`channel-privateckey-${index}`)=channel.private_key
+                                          span(id=`channel-privateckey-${index}`)=channel.private_key
                                         .card-tools.col-2
-                                          button.btn.btn-sm.btn-copy(onclick=`copyToClipboard('#channel-privateckey-${index})'`)
+                                          button.btn.btn-sm.btn-copy(onclick=`copyToClipboard('#channel-privateckey-${index})`)
                                             i.fas.fa-copy
     #deleteChannel.modal.fade(tabindex='-1' role='dialog' aria-labelledby='deleteChannelLabel' aria-hidden='true')
       .modal-dialog
@@ -124,11 +137,10 @@ block content
             button.btn.btn-info(type='button' data-dismiss='modal') Close
             button.btn.btn-danger#delete(type='button') Delete                                                        
   script.
-    function copyToClipboard(element) {
-    var $temp = $("<input>");
-    $("body").append($temp);
-    $temp.val($(element).text()).select();
-    document.execCommand("copy");
-    $temp.remove();
-    }
+    $(document).ready(function() {
+        $('.nav-sidebar a').removeClass('active')
+        $('#sending-li').addClass('menu-open')
+        $('#sending-nav').addClass('active')
+        $('#app-nav').addClass('active')
+    })
   script(src='/assets/js/channels.js')

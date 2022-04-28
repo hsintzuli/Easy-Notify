@@ -9,7 +9,11 @@ const createApp = async (user_id, name, description, contact_email, default_icon
 };
 
 const getApps = async (user_id) => {
-  const [results] = await pool.query('SELECT * FROM apps WHERE user_id = ? AND archived_dt is NULL', user_id);
+  const [results] = await pool.query(
+    `SELECT apps.*, COUNT(channels.id) AS channels FROM apps 
+    INNER JOIN channels ON apps.id = channels.app_id  WHERE user_id = ? AND archived_dt is NULL GROUP BY id`,
+    user_id
+  );
   return results;
 };
 
@@ -25,6 +29,7 @@ const getAppDetail = async (app_id) => {
 
 const verifyAppWithUser = async (user_id, app_id) => {
   const [results] = await pool.query('SELECT * FROM apps WHERE id = ? and user_id = ?', [app_id, user_id]);
+  console.log('Verify', results);
   const verified = results.length > 0;
   return verified;
 };

@@ -108,6 +108,8 @@ block content
                   });
         }
       $(function () {
+        $('.nav-sidebar a').removeClass('active')
+        $('#dashboard-nav').addClass('active')
         let start = moment().subtract(7, "days");
         let end = moment();
 

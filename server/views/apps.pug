@@ -52,13 +52,13 @@ block content
                         td=app.contact_email
                         td.text-center
                           img.img-fluid.img-circle.elevation-2(style='width: 80%' src=app.default_icon)
-                        td.text-center 2
+                        td.text-center=app.channels
                         td.project-actions.text-center
                           div.id(style='display:none')=app.id 
-                          a.btn.btn-primary.btn-sm(href=`/management/channels?app_id=${app.id}`)
+                          a.btn.btn-primary.btn-sm.m-1(href=`/management/channels?app_id=${app.id}`)
                             i.fas.fa-folder  
                             |                               View
-                          a.btn.btn-danger.btn-sm.btn-archive(type='button' data-toggle='modal' data-target='#archiveApp')
+                          a.btn.btn-danger.btn-sm.btn-archive.m-1(type='button' data-toggle='modal' data-target='#archiveApp')
                             i.fa-solid.fa-box-archive
                             |                               Archive
     #archiveApp.modal.fade(tabindex='-1' role='dialog' aria-labelledby='archiveAppLabel' aria-hidden='true')
@@ -73,6 +73,13 @@ block content
           .modal-footer
             button.btn.btn-info(type='button' data-dismiss='modal') Close
             button.btn.btn-danger#archive(type='button') Archive
-  
+  script.
+    $(document).ready(function() {
+        $('.nav-sidebar a').removeClass('active')
+        $('#sending-li').addClass('menu-open')
+        $('#sending-nav').addClass('active')
+        $('#app-nav').addClass('active')
+    }) 
   script(src='/assets/js/apps.js')
+
 

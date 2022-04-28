@@ -1,6 +1,14 @@
 let searchParams = new URLSearchParams(window.location.search);
 const app_id = searchParams.get('app_id');
 
+function copyToClipboard(element) {
+  var $temp = $('<input>');
+  $('body').append($temp);
+  $temp.val($(element).text()).select();
+  document.execCommand('copy');
+  $temp.remove();
+}
+
 function channelUpdate(event) {
   event.preventDefault();
   console.log($(event.target).parents('tr').children('.id').text());

@@ -27,7 +27,7 @@ const channels = async (req, res) => {
   }
   const channels = await Channel.getChannels(app_id);
   console.log(channels);
-  return res.render('channels', { user, channels });
+  return res.render('channels', { user, channels, moment: require('moment') });
 };
 
 const sendNotificaton = async (req, res) => {

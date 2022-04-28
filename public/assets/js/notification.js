@@ -1,7 +1,10 @@
+let selectedApp;
+
 function changeApp() {
   const app = $('#app-select').val();
   $('#channel-select').empty();
-  const channels = channelGroupByApp[app];
+  selectedApp = channelGroupByApp[app];
+  const channels = selectedApp['channels'];
   console.log(channels);
   channels.forEach((element) => {
     $('#channel-select').append(
@@ -24,17 +27,15 @@ function onSubmmit(event) {
 
   const sendTimeOpt = data.get('sendTimeOpt');
   axios
-    .post(`/api/1.0/notifications/${sendTimeOpt}`, {
+    .post(`/management/notifications/${sendTimeOpt}`, {
       channel_id: channel_id,
       name: data.get('name'),
       title: data.get('title'),
       body: data.get('body'),
       sendType: data.get('sendType'),
       sendTime: time,
-      config: {
-        icon: 'https://media-exp1.licdn.com/dms/image/C560BAQGioWrn1Pib-Q/company-logo_200_200/0/1588649799420?e=2147483647&v=beta&t=s1pR7nw3HwGYnT-cxC74jc3_HdJbK0OyAgHfIEdZzuo',
-      },
-      clients_tag: [],
+      icon: data.get('icon'),
+      config: data.get('config'),
     })
     .then((res) => {
       console.log(res.data);
@@ -48,3 +49,36 @@ function onSubmmit(event) {
 
 // document.querySelector('#notification-form').addEventListener('submit', onSubmmit);
 $('#notification-form').on('submit', onSubmmit);
+
+$('#json-btn').click((event) => {
+  event.preventDefault();
+  let text = $('#input-config').val();
+  let textedJson;
+  try {
+    text = JSON.parse($('#input-config').val());
+    console.log(text);
+    textedJson = JSON.stringify(text, undefined, 2);
+    $('#input-config').val(textedJson);
+  } catch (error) {
+    alert('Invalid JSON Format');
+  }
+});
+
+$('#icon-btn').click((event) => {
+  event.preventDefault();
+  let default_icon = selectedApp.icon;
+  $('#input-icon').val(default_icon);
+});
+
+$('#send-realtime').on('checked', function () {
+  alert(this.value);
+});
+
+$('.form-check-inline').change(function () {
+  let text = jQuery(this).children('input').val();
+  if (text === 'realtime') {
+    $('.datetimepicker-input').prop('disabled', true);
+  } else {
+    $('.datetimepicker-input').prop('disabled', false);
+  }
+});
