@@ -11,7 +11,7 @@ const createClient = async (channel_id, endpoint, expirationTime, keys, client_t
     keys: keys,
     client_tag: client_tag,
   };
-  const [result] = await pool.query('INSERT INTO subscriptions SET ?', client);
+  const [result] = await pool.query('INSERT INTO subscriptions SET ? ON DUPLICATE KEY UPDATE id = ?, updated_dt = NOW(), status = 0', [client, id]);
   console.log('Create Client:', result);
   return id;
 };
