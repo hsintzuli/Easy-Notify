@@ -16,7 +16,7 @@ const io = new Server(httpServer, {
 const getRoomByChannel = (channelId) => {
   const room = io.sockets.adapter.rooms.get(channelId) || new Set();
   return room;
-}
+};
 
 io.adapter(redis({ host: CACHE_HOST, port: CACHE_PORT, user: CACHE_USER, password: CACHE_PASSWORD }));
 serverId = io.engine.generateId();
@@ -44,10 +44,9 @@ io.on('connection', async (socket) => {
       let { roomId, payload } = data;
       io.in(roomId).emit('push', payload);
 
-      const room =  getRoomByChannel(roomId);
+      const room = getRoomByChannel(roomId);
       socket.emit('ack', { notificationId: payload.notification_id, clientsNum: room.size });
     });
-
   } else {
     socket.emit('connection', 'Hello client, ' + socket.id);
     socket.on('subscribe', async (data) => {
@@ -55,14 +54,14 @@ io.on('connection', async (socket) => {
         const { channel_id } = data;
         console.log('Socket client subscribe room:', channel_id);
         socket.join(channel_id);
-        const room =  getRoomByChannel(channel_id);
+        const room = getRoomByChannel(channel_id);
         await Cache.hset(`clientNums{${channel_id}}`, serverId, room.size);
       } catch (error) {
-        console.log('[error]','join room :', error);
-        socket.emit('error','couldnt perform requested action');
+        console.log('[error]', 'join room :', error);
+        socket.emit('error', 'couldnt perform requested action');
       }
     });
-    
+
     socket.on('unsubscribe', async (data) => {
       const { channel_id } = data;
       console.log('Socket client unsubscribe room', channel_id);
@@ -70,7 +69,7 @@ io.on('connection', async (socket) => {
       await Cache.hset(`clientNums{${channel_id}}`, serverId, getRoomByChannel(room).size);
     });
 
-    socket.on('disconnecting', (reason) => {
+    socket.on('disconnecting', async (reason) => {
       const rooms = socket.rooms.slice();
       for (let room of rooms) {
         if (Cache.hget(`clientNums{${room}}`, serverId)) {
