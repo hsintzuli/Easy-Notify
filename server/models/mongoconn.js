@@ -10,6 +10,11 @@ const connect = () => {
   });
 };
 
+const disconnect = () => {
+  mongoose.disconnect();
+};
+
 module.exports = {
   connect,
+  disconnect,
 };
