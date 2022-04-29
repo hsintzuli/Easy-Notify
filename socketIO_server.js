@@ -11,6 +11,13 @@ const io = new Server(httpServer, {
     origin: '*',
   },
 });
+
+// get the numbers of clients in channel
+const getRoomByChannel = (channelId) => {
+  const room = io.sockets.adapter.rooms.get(channelId) || new Set();
+  return room;
+}
+
 io.adapter(redis({ host: CACHE_HOST, port: CACHE_PORT, user: CACHE_USER, password: CACHE_PASSWORD }));
 serverId = io.engine.generateId();
 console.log('Socket Server Initialize!, ID:', serverId);
@@ -29,29 +36,48 @@ io.use((socket, next) => {
 });
 
 io.on('connection', async (socket) => {
-  if (socket.role) {
+  if (socket.role === 1) {
     console.log('Connect with websocket worker!!!!! \n');
     socket.emit('connection', 'Hello worker, ' + socket.id);
     socket.on('push', (data) => {
-      console.log('Receive push', data);
+      console.log('Receive push event from websocket worker', data);
       let { roomId, payload } = data;
       io.in(roomId).emit('push', payload);
 
-      const room = io.sockets.adapter.rooms.get(roomId) || new Set();
+      const room =  getRoomByChannel(roomId);
       socket.emit('ack', { notificationId: payload.notification_id, clientsNum: room.size });
     });
+
   } else {
     socket.emit('connection', 'Hello client, ' + socket.id);
     socket.on('subscribe', async (data) => {
-      const { channel_id } = data;
-      console.log('subscribe room:', channel_id);
-      socket.join(channel_id);
-      const room = io.sockets.adapter.rooms.get(channel_id) || new Set();
-      await Cache.hset(`clientNums{${channel_id}}`, serverId, room.size);
+      try {
+        const { channel_id } = data;
+        console.log('Socket client subscribe room:', channel_id);
+        socket.join(channel_id);
+        const room =  getRoomByChannel(channel_id);
+        await Cache.hset(`clientNums{${channel_id}}`, serverId, room.size);
+      } catch (error) {
+        console.log('[error]','join room :', error);
+        socket.emit('error','couldnt perform requested action');
+      }
     });
-    socket.on('unsubscribe', async (res) => {
-      console.log('unsubscribe room', res);
-      socket.leaveAll();
+    
+    socket.on('unsubscribe', async (data) => {
+      const { channel_id } = data;
+      console.log('Socket client unsubscribe room', channel_id);
+      socket.leave(channel_id);
+      await Cache.hset(`clientNums{${channel_id}}`, serverId, getRoomByChannel(room).size);
+    });
+
+    socket.on('disconnecting', (reason) => {
+      const rooms = socket.rooms.slice();
+      for (let room of rooms) {
+        if (Cache.hget(`clientNums{${room}}`, serverId)) {
+          socket.leave(room);
+          await Cache.hset(`clientNums{${channel_id}}`, serverId, getRoomByChannel(room).size);
+        }
+      }
     });
   }
 });

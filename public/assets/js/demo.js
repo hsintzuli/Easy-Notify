@@ -116,7 +116,8 @@ class Notifier {
   }
   async unsubscribe() {
     // Unsubscribe to websocket server
-    this.socket.emit('unsubscribe', 'Socket unsubscribe');
+    const channel_id = this.channelId;
+    this.socket.emit('unsubscribe', { channel_id });
 
     // Unsubscribe to websocket server
     if (!this.sw) {

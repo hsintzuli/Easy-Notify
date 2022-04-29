@@ -4,13 +4,12 @@ const Notification = require('./server/models/notifications');
 const { NOTIFICATION_STATUS } = Notification;
 const Content = require('./server/models/content');
 const Cache = require('./utils/cache');
-const { WEBSOCKET_QUEUE, SOCKET_TOKEN, SOCKETIO_PORT } = process.env;
+const { WEBSOCKET_QUEUE, SOCKET_TOKEN } = process.env;
 const { io } = require('socket.io-client');
-const Mongo = require('./server/models/mongoconn');
 const { getCheckHour } = require('./utils/util');
-Mongo.connect();
+require('./server/models/mongoconn').connect();
 // Initialize socketIO client
-const socket = io(`http://localhost:${SOCKETIO_PORT}`, {
+const socket = io('https://notify.easynotify.site', {
   auth: {
     token: SOCKET_TOKEN,
   },
@@ -50,7 +49,7 @@ async function fnConsumer(msg, ack) {
     const updated = await Notification.updateNotificationStatus(notificationId, { status: NOTIFICATION_STATUS.DELEVERED });
     if (!updated) {
       console.log(`Notification ${notificationId} has been deleted before delevered`);
-      return callback(true);
+      return ack(true);
     }
     const msgContent = await Content.findById(notificationId);
     const payload = {
@@ -77,4 +76,3 @@ const initializSocketWorker = () => {
   });
 };
 initializSocketWorker();
-// module.exports = { initializSocketWorker };
