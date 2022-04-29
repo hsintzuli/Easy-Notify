@@ -27,8 +27,9 @@ const updateNotificationReceived = async () => {
         console.log(`[Error] Update notification, ID: ${notification['id']}`);
       }
     }
-    // await Cache.del(`receivedNum:${hourToCheck}`);
-    // await Cache.del(`sentNum:${hourToCheck}`);
+
+    await Cache.del(`receivedNum:${hourToCheck}`);
+    await Cache.del(`sentNum:${hourToCheck}`);
   } catch (error) {
     console.log(error);
   } finally {
