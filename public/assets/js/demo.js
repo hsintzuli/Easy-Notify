@@ -32,7 +32,7 @@ class Notifier {
       this.socket.connect();
       console.log('[Websocket] Websocket client connect');
     } else {
-      const socket = io('http://localhost:5000', { transports: ['websocket', 'polling'] });
+      const socket = io('https://notify.easynotify.site', { transports: ['websocket', 'polling'] });
       socket.on('connection', (data) => {
         console.log('[Websocket] Receive:', data);
       });
