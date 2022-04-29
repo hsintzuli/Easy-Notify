@@ -79,7 +79,7 @@ block content
                               .col-9
                                 span(id=`channel-id-${index}`)=channel.id
                               .card-tools.col-2
-                                button.btn.btn-sm.btn-copy(onclick=`copyToClipboard('#channel-key-${index}')`)
+                                button.btn.btn-sm.btn-copy(onclick=`copyToClipboard('#channel-id-${index}')`)
                                             i.fas.fa-copy
                         if channel.key_expire_dt
                           td.expire-dt=moment(channel.key_expire_dt).format('MMMM Do YYYY, h:mm:ss ')
@@ -106,7 +106,7 @@ block content
                                     td.channel-key.justify-content-start
                                       .row.col-10.align-items-center.justify-content-around.copy-row
                                         .col-9
-                                          span(id=`channel-id-${index}`)=channel.channel_key
+                                          span(id=`#channel-key-${index}`)=channel.channel_key
                                         .card-tools.col-2
                                           button.btn.btn-sm.btn-copy(onclick=`copyToClipboard('#channel-key-${index}')`)
                                             i.fas.fa-copy
@@ -120,9 +120,9 @@ block content
                                     td.private_key.justify-content-start
                                       .row.col-10.align-items-center.justify-content-around.copy-row
                                         .col-9
-                                          span(id=`channel-privateckey-${index}`)=channel.private_key
+                                          span(id=`channel-privatekey-${index}`)=channel.private_key
                                         .card-tools.col-2
-                                          button.btn.btn-sm.btn-copy(onclick=`copyToClipboard('#channel-privateckey-${index})`)
+                                          button.btn.btn-sm.btn-copy(onclick=`copyToClipboard('#channel-privatekey-${index})`)
                                             i.fas.fa-copy
     #deleteChannel.modal.fade(tabindex='-1' role='dialog' aria-labelledby='deleteChannelLabel' aria-hidden='true')
       .modal-dialog

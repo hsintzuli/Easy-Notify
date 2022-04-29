@@ -8,6 +8,7 @@ const Subscription = require('./server/models/subscriptions');
 const Mongo = require('./server/models/mongoconn');
 const { WEBPUSH_QUEUE } = process.env;
 const { NOTIFICATION_STATUS } = Notification;
+const { getCheckHour } = require('./utils/util');
 const DEFAULT_TTL = 5;
 
 async function fnConsumer(msg, ack) {
@@ -45,7 +46,8 @@ async function fnConsumer(msg, ack) {
     };
     try {
       await webpush.sendNotification(client, JSON.stringify(payload), pushOption);
-      await Cache.hincrby('sentNums', notificationId, 1);
+      let hourToCheck = getCheckHour(false);
+      await Cache.hincrby(`sentNum:${hourToCheck}`, notificationId, 1);
     } catch (error) {
       console.error(error);
     }

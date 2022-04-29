@@ -12,6 +12,7 @@ const wrapAsync = (fn) => {
 
 // Authentication fo User Session
 const userAuthentication = function (req, res, next) {
+  console.log('session', req.session);
   if (!req.session.user) {
     res.status(401).send({ error: 'Unauthorized' });
     return;
@@ -24,7 +25,7 @@ const setChannelDataToReq = async (req, res, next) => {
   const { channel_id } = req.body;
   const verified = await Channel.verifyChannelWithUser(user.id, channel_id);
   if (!verified) {
-    res.status(403).send({ error: 'Forbidden' });
+    return res.status(403).send({ error: 'Forbidden' });
   }
   const channel = await Channel.getChannelDetail(channel_id);
   console.log('setChannelDataToReq', channel);
@@ -73,8 +74,10 @@ const diffFromNow = (time) => {
 
 const generateValidDatetimeRange = (startDate, endDate) => {
   const now = new Date();
-  startDate = startDate < endDate ? new Date(startDate) : new Date(endDate);
-  endDate = startDate < endDate ? new Date(endDate) : new Date(startDate);
+  startDate = new Date(startDate);
+  endDate = new Date(endDate);
+  startDate = startDate < endDate ? startDate : endDate;
+  endDate = startDate < endDate ? endDate : startDate;
   if (moment(endDate).format('YYYY-MM-DD') >= moment(now).format('YYYY-MM-DD')) {
     endDate = now;
   } else {
@@ -84,6 +87,13 @@ const generateValidDatetimeRange = (startDate, endDate) => {
   return [startDate, endDate];
 };
 
+const getCheckHour = (delay) => {
+  const now = new Date();
+  console.log('delay', +delay);
+  const hourToCheck = now.getHours() % 2 === +delay ? 'even' : 'odd';
+  return hourToCheck;
+};
+
 module.exports = {
   wrapAsync,
   userAuthentication,
@@ -91,4 +101,5 @@ module.exports = {
   setChannelDataToReq,
   diffFromNow,
   generateValidDatetimeRange,
+  getCheckHour,
 };

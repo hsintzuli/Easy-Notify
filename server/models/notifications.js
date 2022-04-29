@@ -50,8 +50,12 @@ const updateNotificationStatus = async (notification_id, status) => {
   return updated;
 };
 
-const updateNotificationReceived = async (notification_id, receive_num) => {
-  const [results] = await pool.query('UPDATE notifications SET received_num = received_num + ? WHERE id = ?', [receive_num, notification_id]);
+const updateNotificationNum = async (notification_id, sent_num, receive_num) => {
+  const [results] = await pool.query('UPDATE notifications SET sent_num = sent_num + ?, received_num = received_num + ? WHERE id = ?', [
+    sent_num,
+    receive_num,
+    notification_id,
+  ]);
   const updated = results.affectedRows > 0;
   return updated;
 };
@@ -86,12 +90,6 @@ const getNotificationByApp = async (app_id, start_dt, end_dt) => {
   return results;
 };
 
-const updateNotificationSentNum = async (notification_id) => {
-  const [results] = await pool.query('UPDATE notifications SET ? WHERE id = ?', [status, notification_id]);
-  const updated = results.affectedRows > 0;
-  return updated;
-};
-
 module.exports = {
   NOTIFICATION_STATUS,
   createNotification,
@@ -99,7 +97,7 @@ module.exports = {
   getNotificationById,
   deleteNotification,
   updateNotificationStatus,
-  updateNotificationReceived,
+  updateNotificationNum,
   getMaxOnlineClient,
   getNotificationSent,
   getNotificationByApp,

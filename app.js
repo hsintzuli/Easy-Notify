@@ -42,9 +42,9 @@ app.use('/api/' + API_VERSION, [
 ]);
 
 // Initialize Socket IO
-const http = require('http');
-const server = http.createServer(app);
-require('./utils/mysocket').config(server);
+// const http = require('http');
+// const server = http.createServer(app);
+// require('./utils/mysocket').config(server);
 
 // Page not found
 app.use((req, res, next) => {
@@ -62,7 +62,7 @@ app.use((err, req, res, next) => {
   });
 });
 
-server.listen(PORT, async () => {
-  require('./utils/websocketWorker').initializSocketWorker();
+app.listen(PORT, async () => {
+  // require('./utils/websocketWorker').initializSocketWorker();
   console.log(`Listening on port: ${PORT}`);
 });

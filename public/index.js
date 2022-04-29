@@ -30,7 +30,7 @@ class Notifier {
       this.socket.connect();
       console.log('[Websocket] Websocket client connect');
     } else {
-      const socket = io({ transports: ['websocket', 'polling'] });
+      const socket = io('http://localhost:5000', { transports: ['websocket', 'polling'] });
       socket.on('connection', (data) => {
         console.log('[Websocket] Receive:', data);
       });

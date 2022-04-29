@@ -31,15 +31,18 @@ const statusMap = {
 function loadPage() {
   console.log('Get API: ', `/api/1.0/notifications?id=${notification_id}`);
   axios
-    .get(`/api/1.0/notifications?id=${notification_id}`)
+    .get(`/management/notifications?id=${notification_id}`)
     .then((res) => {
       let notification = res.data.data;
       updateForm(notification);
       updateStatus(notification.status);
       updateChart(notification);
+      $('#report-card').show();
     })
     .catch((err) => {
       console.log(err);
+      alert(err);
+      window.location.href = '/management/reports';
     });
 }
 

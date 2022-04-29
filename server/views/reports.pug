@@ -36,24 +36,6 @@ block content
                       span.m-1
                       i.fa.fa-caret-down.float-right
                   .btn#reload-data.btn.btn-default(type="button")='Explore'
-                //- .col-10.col-lg-4
-                //-   .input-group.mb-1
-                //-     label.mr-2 APP
-                //-     select.form-control#app-select(style="width:auto;" name='app')
-                //-       each app, index in apps
-                //-         if index === 0
-                //-           option(data-id=app.id selected="selected")=app.name
-                //-         else
-                //-           option(data-id=app.id)=app.name
-                //- .col-10.col-lg-4
-                //-   .input-group
-                //-     label.mr-2 Time
-                //-     #reportrange.form-control.d-inline-block(style='background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc')
-                //-       i.fa.fa-calendar.float-left
-                //-       span.ml-1
-                //-       i.fa.fa-caret-down.float-right
-                //- .col-4.col-lg-2
-                //-   button#reload-data.btn.btn-default.float-right(type="button")='Send'
               // /.card-header
           .card-body
             .container-fluid
@@ -125,6 +107,9 @@ block content
                 url: `/management/notifications?app_id=${app_id}&start_date=${start}&end_date=${end}`,
                 type: "GET",
                 dataType: 'json',
+                complete: function (data) {
+                        console.log(data);
+                    },
                 error: function(error){
                   console.log(error)
                     alert(error);

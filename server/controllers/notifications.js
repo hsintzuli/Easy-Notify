@@ -12,6 +12,7 @@ const pushNotification = async (req, res) => {
   const { scheduledType } = req.params;
   const { name, title, body, sendType, icon, config, sendTime } = req.body;
   console.log('Receive push notification:', name);
+  console.log(channel);
 
   // Check scheduledType & sendType are valid types
   if (!SCHEDULED_TYPE.has(scheduledType) || !SEND_TYPE.has(sendType)) {
@@ -35,7 +36,7 @@ const pushNotification = async (req, res) => {
     name,
     sendType,
     scheduledType,
-    sendTime,
+    sendTime: new Date(sendTime),
   };
   if (scheduledType === 'realtime') {
     NotificationJobs.handleRealtimeRequest(notification, channel);
@@ -83,13 +84,12 @@ const getNotificationById = async (req, res) => {
   const now = new Date();
 
   if (now.getTime() - sentTime.getTime() <= 60 * 60 * 2 * 1000) {
-    const sent_num = await Cache.hget('sentNums', id);
+    const sent_odd = await Cache.hget('sentNum:odd', id);
+    const sent_even = await Cache.hget('sentNum:even', id);
     const received_odd = await Cache.hget('receivedNum:odd', id);
     const received_even = await Cache.hget('receivedNum:even', id);
-    const targets_num = await Cache.hget('receivedNum:even', id);
-    notification.sent_num += parseInt(sent_num || 0);
+    notification.sent_num += parseInt(sent_odd || 0) + parseInt(sent_even || 0);
     notification.received_num += parseInt(received_odd || 0) + parseInt(received_even || 0);
-    notification.targets_num += parseInt(targets_num || 0);
     notification.updated_dt = now;
   }
 
@@ -144,8 +144,9 @@ const getNotificationsByApp = async (req, res, next) => {
   if (!verified) {
     return res.status(400).json({ error: 'Incorrect app_id' });
   }
-
+  console.log('date:', start_date, end_date);
   [start_date, end_date] = generateValidDatetimeRange(start_date, end_date);
+  console.log('date:', start_date, end_date);
   const data = await Notification.getNotificationByApp(app_id, start_date, end_date);
   console.log('select data', data);
   res.status(200).send({

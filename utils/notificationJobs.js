@@ -3,11 +3,15 @@ const Cache = require('./cache');
 const rabbitmq = require('./rabbit');
 const { REALTIME_EXCHANGE, DELAY_EXCHANGE, SCHEDULED_INTERVAL_HOUR } = process.env;
 const MAX_PUSH_CLIENT = parseInt(process.env.MAX_PUSH_CLIENT);
-const socket = require('./mysocket');
+// const socket = require('./mysocket');
 const Notification = require('../server/models/notifications');
 const { diffFromNow } = require('./util');
 const Content = require('../server/models/content');
 const moment = require('moment');
+
+rabbitmq.initConnection(() => {
+  console.log('Connect rabbitmq');
+});
 
 const handleRealtimeRequest = async (notification, channel) => {
   await Notification.createNotification(notification.id, channel.id, notification.name, notification.sendType);
@@ -90,8 +94,9 @@ const genWebsocketJob = async (notificationId, channelId) => {
     contentType: 'application/json',
   };
 
-  const clients = socket.getSocketsList(channelId);
-  const targets_num = clients ? clients.size : 0;
+  const clients = await Cache.hgetall(`clientNums{${channelId}}`);
+  const targets = Object.values(clients);
+  const targets_num = targets.reduce((prev, curr) => prev + parseInt(curr), 0);
   console.log(`Update notfication ${notificationId} from websocket with targets_num: `, targets_num);
   await Notification.updateNotificationStatus(notificationId, { targets_num });
 
