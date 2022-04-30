@@ -1,0 +1,107 @@
+extends home-layout.pug
+
+block content
+  link(rel='stylesheet' href='/vendor/plugins/ion-rangeslider/css/ion.rangeSlider.min.css')
+  style.
+      .irs--round .irs-handle>i:first-child {
+          background-color: #F7CA69!important;
+      }
+
+      .irs--round .irs-handle {
+          border: 4px solid #F7CA69!important;
+          cursor: grab;
+      }
+      .irs--round .irs-bar {
+          background-color: #AC7B40!important;
+      }
+      .irs--round .irs-from, .irs--round .irs-to, .irs--round .irs-single {
+          background-color: #F7CA69!important;
+      }
+      .irs--round .irs-from:before, .irs--round .irs-to:before, .irs--round .irs-single:before {
+          border-top-color: #F7CA69!important;
+      }
+      .section-title {
+        margin-left: auto;
+        margin-right:auto
+      }
+      .bg-custom {
+        background-color: #D8A553
+      }
+      .text-custom {
+        color: #AC7B40
+      }
+    .btn-choose {
+      background: #ebc68b;
+      color: #ffffff !important;
+      }
+    .btn-choose:hover{
+      background: #FFBF00;
+      color: #ffffff !important;
+      }
+  .container.px-5.py-5
+    .col-12.row.gx-5.align-items-center.justify-content-center.ml-5.mb-5
+      .col-10.justify-content-center.px-5
+        .section-title.text-center
+          h2 Choose the plan that's right for your business
+          p
+            | How many notifications do you want to push per month?
+          input#range_1(type='text' name='range_1' value='' style='display:none')
+    .pricing.card-deck.flex-column.flex-md-row.mb-3
+      each plan, index in plans
+        .card.card-pricing.text-center.px-3.mb-4(id=index, data-sent=plan.notification_limit)
+          span.h6.w-60.mx-auto.px-4.py-1.rounded-bottom.bg-custom.text-white.shadow-sm=plan.name
+          .bg-transparent.card-header.pt-4.border-0
+            h1.h1.font-weight-normal.text-custom.text-center.mb-0
+              | $
+              span.price=plan.price_m
+              span.h6.text-muted.ml-2 / per month
+          .card-body.pt-0
+            ul.list-unstyled.mb-4
+              li.font-italic=plan.description
+              li=`${plan.notification_limit} notifications/month`
+              li=`Up to ${plan.subscription_limit} subscribers`
+              li Free cancelation
+            a.btn.custom-btn.mb-3(href='/register' target='_blank') Get Started
+
+  // Ion Slider
+  script(src='/vendor/plugins/ion-rangeslider/js/ion.rangeSlider.min.js')
+  script.
+    $(function () {
+      let nowRange = 0
+      let ranges = [0];
+      $('.card-pricing').each(function(i, obj) { ranges.push($(obj).data('sent'))})
+      console.log(ranges)
+      var $d1 = $("#range_1");
+      /* ION SLIDER */
+      $('#range_1').ionRangeSlider({
+        skin: "round",
+        min     : ranges[0],
+        max     : ranges.at(-1),
+        from    : 0,
+        step    : 100,
+        prettify: true,
+        hasGrid : true
+      })
+      $('#range_1').show()
+      function getRange(val) {
+        for (let i = 0; i < ranges.length; i++) {
+          if (val >= ranges[i] && val < ranges[i + 1]) {
+            return i
+          }
+        }
+        return ranges.length - 2;
+      }
+
+      $d1.on("change", function () {
+        let $inp = $(this);
+        let val = $inp.prop("value"); // reading input value
+        console.log(val)
+        let id = getRange(val);
+        console.log('new id', id)
+        $(`.card-pricing`).removeClass( "popular shadow-lg" );
+        $(`.card-pricing .card-body a`).removeClass( "btn-choose" );
+        $(`#${id}`).addClass( "popular shadow-lg" );
+        $(`#${id} .card-body a`).addClass( "btn-choose" );
+      });
+    })
+  

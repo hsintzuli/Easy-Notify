@@ -68,7 +68,13 @@ const payOrderByPrime = async function (tappayKey, tappayId, prime, order) {
   return res.body;
 };
 
+const getPlans = async function () {
+  const [plans] = await pool.query('SELECT * FROM plans ORDER BY price_m');
+  return plans;
+};
+
 module.exports = {
   createOrder,
   payOrderByPrime,
+  getPlans,
 };

@@ -1,0 +1,164 @@
+doctype html
+html(lang='en')
+  head
+
+    meta(charset='utf-8')
+    meta(name='viewport' content='width=device-width, initial-scale=1, shrink-to-fit=no')
+    meta(name='description' content='')
+    meta(name='author' content='')
+    title Easy Notify
+    // Favicon
+    link(rel='icon' type='image/x-icon' href='assets/favicon.ico')
+    // Bootstrap icons
+    link(href='https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css' rel='stylesheet')
+    // Core theme CSS (includes Bootstrap)
+    link(rel='stylesheet' href='/vendor/dist/css/adminlte.min.css')
+    link(href='/vendor/dist/css/home.css' rel='stylesheet')
+  style.
+    .navbar-home {
+      background-color: rgb(252, 250, 225, 0.4);
+      border-bottom-left-radius:30px;
+      border-bottom-right-radius:30px;
+    }
+    .navbar-home .nav-link {
+    color: rgba(0,0,0,.5);
+    font-weight: bold;
+    }
+    .navbar-home .nav-link:hover {
+    color: #FFBF00;
+    }
+    .logo {
+      max-width: 80%;
+    }
+    body {
+    font-family: "Source Sans Pro",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
+    }
+    .custom-btn {
+      background: #f0eeec;
+      color: #5b5b5b;
+      font-weight: bold;
+      border-radius: 30px;
+      padding: 10px 20px;
+      line-height: normal;
+      overflow: hidden;
+      transition: all 0.4s ease;
+    }
+    .custom-btn.custom-btn-bg {
+    background: #474559;
+    color: #ffffff;
+    }
+    .custom-btn:hover {
+    color: #FFBF00;
+    }
+    .custom-btn.custom-btn-bg:hover {
+    background: #FFBF00;
+    color: #ffffff !important;
+    }
+    .login {
+    background: #ebc68b;
+    color: #ffffff !important;
+    padding: 0px 5px;
+    margin-left: 30px;
+    border-radius: 10px;
+    }
+
+    .navbar .login:hover, .navbar .login:focus:hover {
+    background: #FFBF00;
+    color: #ffffff !important;
+    }
+
+    .navbar-expand .navbar-nav .nav-link {
+    font-size: 1.1rem;
+    }
+  body.d-flex.flex-column.h-100
+    main.flex-shrink-0
+      // Navigation
+      nav.navbar.navbar-expand.navbar.bg.navbar-home.shadow-sm.mx-2.pb-1
+        .container.px-5
+          //- a.navbar-brand(href='index.html') Easy Notify
+          a.navbar-brand.col-3(href='index.html')
+            img.img-fluid.logo(src='assets/img/easy-notify-h.png' alt='logo')
+          button.navbar-toggler(type='button' data-bs-toggle='collapse' data-bs-target='#navbarSupportedContent' aria-controls='navbarSupportedContent' aria-expanded='false' aria-label='Toggle navigation')
+            span.navbar-toggler-icon
+          #navbarSupportedContent.collapse.navbar-collapse
+            ul.navbar-nav.ms-auto.mb-3.mb-lg-0
+              li.nav-item
+                a.nav-link(href='#') Home
+              li.nav-item
+                a.nav-link(href='#features') About
+              li.nav-item
+                a.nav-link(href='#') Pricing
+              li.nav-item.dropdown
+                a#navbarDropdownBlog.nav-link.dropdown-toggle(href='#' role='button' data-bs-toggle='dropdown' aria-expanded='false') Document
+                ul.dropdown-menu.dropdown-menu-end(aria-labelledby='navbarDropdownBlog')
+                  li
+                    a.dropdown-item(href='#') Web Push QuickStart
+                  li
+                    a.dropdown-item(href='#') Server REST API
+              li.nav-item.login
+                a.nav-link(href='/signin') Sign In
+      // Header
+      header#header.py-4
+        .container.px-5
+          .row.gx-5.align-items-center.justify-content-center.ml-0
+            .col-lg-8.col-xl-7.col-xxl-6.m-0
+              .my-5.text-center.text-xl-start
+                h2.display-5.fw-bolder.text-black.mb-2 Push Notification Service for Developers and Business
+                p.lead.fw-normal.text-black-50.mb-4
+                  | Bring back lost visitors through webpush notification.   
+                  | Alternative plan - Websocket, for users do not authorize webpush.
+                .d-grid.gap-3.d-sm-flex.justify-content-sm-center.justify-content-xl-start
+                  a.btn.btn-lg.px-4.me-sm-3.custom-btn(href='/register') Get Started
+                  a.btn.btn-lg.px-4.custom-btn.custom-btn-bg(href='/demo.html' target='_blank') Demo
+            .col-xl-5.col-xxl-6.d-none.d-xl-block.text-center
+              img.img-fluid.rounded-3.my-5(src='/assets/img/push-notifications.gif')
+      // Features section
+      section#features.py-5
+        .container.px-5.my-5
+          .row.gx-5
+            .col-lg-4.mb-5.mb-lg-0
+              h2.fw-bolder.mb-0 A better way to start building.
+            .col-lg-8
+              .row.gx-5.row-cols-1.row-cols-md-2
+                .col.mb-5.h-100
+                  .feature.bg-primary.bg-gradient.text-white.rounded-3.mb-3
+                    i.bi.bi-collection
+                  h2.h5 Featured title
+                  p.mb-0
+                    | Paragraph of text beneath the heading to explain the heading. Here is just a bit more text.
+                .col.mb-5.h-100
+                  .feature.bg-primary.bg-gradient.text-white.rounded-3.mb-3
+                    i.bi.bi-building
+                  h2.h5 Featured title
+                  p.mb-0
+                    | Paragraph of text beneath the heading to explain the heading. Here is just a bit more text.
+                .col.mb-5.mb-md-0.h-100
+                  .feature.bg-primary.bg-gradient.text-white.rounded-3.mb-3
+                    i.bi.bi-toggles2
+                  h2.h5 Featured title
+                  p.mb-0
+                    | Paragraph of text beneath the heading to explain the heading. Here is just a bit more text.
+                .col.h-100
+                  .feature.bg-primary.bg-gradient.text-white.rounded-3.mb-3
+                    i.bi.bi-toggles2
+                  h2.h5 Featured title
+                  p.mb-0
+                    | Paragraph of text beneath the heading to explain the heading. Here is just a bit more text.
+    // Footer
+    footer.bg-dark.py-4.mt-auto
+      .container.px-5
+        .row.align-items-center.justify-content-between.flex-column.flex-sm-row
+          .col-auto
+            .small.m-0.text-white Copyright © Your Website 2022
+          .col-auto
+            a.link-light.small(href='#!') Privacy
+            span.text-white.mx-1 ·
+            a.link-light.small(href='#!') Terms
+            span.text-white.mx-1 ·
+            a.link-light.small(href='#!') Contact
+    // Bootstrap core JS
+    //- script(src='/vendor/plugins/jquery/jquery.min.js')
+    //- script(src='/vendor/plugins/bootstrap/js/bootstrap.bundle.min.js')
+    script(src='https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js')
+    // Core theme JS
+    script(src='/vendor/dist/js/scripts.js')
