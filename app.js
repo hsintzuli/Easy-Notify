@@ -1,17 +1,10 @@
 require('dotenv').config();
 const { PORT, API_VERSION } = process.env;
-const mongoose = require('mongoose');
 const session = require('express-session');
+const cors = require('cors');
 const Cache = require('./utils/cache');
-const { MONGO_HOST, MONGO_USERNAME, MONGO_PASSWORD, MONGO_DATABASE } = process.env;
-
-mongoose.connect(`mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOST}:27017/${MONGO_DATABASE}?authSource=admin`);
-
-const mongodb = mongoose.connection;
-mongodb.on('error', console.error.bind(console, 'connection error:'));
-mongodb.once('open', function () {
-  console.log('Connection Successful!');
-});
+const Mongo = require('./server/models/mongoconn');
+Mongo.connect();
 
 // Express Initialization
 const express = require('express');
@@ -34,6 +27,7 @@ app.use(require('./server/routes/home'));
 app.use(require('./server/routes/management'));
 
 // API routes
+app.use(cors());
 app.use('/api/' + API_VERSION, [
   require('./server/routes/subscription'),
   require('./server/routes/notification'),
