@@ -139,14 +139,14 @@ block content
                 }
                 },
                 {data: null,
-                render: function (data, type, full) {
+                render: function (data, type, row) {
                   let date = '';
-                  if (full.scheduled_dt) {
-                    date = full.scheduled_dt
+                  if (row['scheduled_dt'] === null) {
+                    date = row['created_dt']
                   } else {
-                    date = full.created_dt
+                    date = row['scheduled_dt']
                   }
-                  return moment(data).format("YYYY-MM-DD HH:mm")}
+                  return moment(date).format("YYYY-MM-DD HH:mm")}
                 },
                 {data: 'type'},
                 {data: 'created_dt',

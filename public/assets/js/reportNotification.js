@@ -88,15 +88,14 @@ function updateChart(notification) {
     return;
   }
   console.log('Update Chart', notification);
-  console.log(deliveredChart.data.options);
   $('#updateTime').text('Update Time: ' + moment(notification.updated_dt).format('YYYY-MM-D HH:mm:ss'));
-  console.log(notification.targets_num);
-  console.log(notification.sent_num);
-  console.log(notification.received_num);
+  console.log('targets_num', notification.targets_num);
+  console.log('sents_num', notification.sent_num);
+  console.log('received_num', notification.received_num);
   console.log(moment(notification.updated_dt).format('YYYY-MM-D HH:mm:ss'));
-  sentChart.data.datasets[0].data[0] = notification.targets_num;
+  sentChart.data.datasets[0].data[0] = notification.sent_num;
   sentChart.data.datasets[0].data[1] = notification.targets_num - notification.sent_num || 0;
-  deliveredChart.data.datasets[0].data[0] = notification.sent_num;
+  deliveredChart.data.datasets[0].data[0] = notification.received_num;
   deliveredChart.data.datasets[0].data[1] = notification.sent_num - notification.received_num || 0;
   sentChart.options.elements.center.text = Math.floor((notification.sent_num / notification.targets_num) * 100) + '%';
   deliveredChart.options.elements.center.text = Math.floor((notification.received_num / notification.sent_num) * 100) + '%';

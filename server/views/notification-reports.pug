@@ -15,21 +15,21 @@ block content
             h1.m-0 Notification Report
           .row.col-12.justify-content-center.align-items-center
             .col-10
-              .card
+              .card#report-card(style='display:none')
                 .card-header.container-fluid
                   .row.justify-content-center.align-items-center
                     .col-11.row.justify-content-center.align-items-center
                       .col-10.d-flex.align-items-center
-                        h3.m-0#notification-name.float-left.font-weightbold Name
+                        h3.m-0#notification-name.float-left.font-weightbold
                         span.ml-2.badge.badge-success.h-50#status-badge
-                          h6.m-0 Success
+                          h6.m-0
                       .card-tools.col-2
                         button#edit-btn.float-right.btn.btn-outline-secondary(type='button') Edit
                 // /.card-header
                 .card-body
                   .container-fluid
                     .row.justify-content-center.align-items-center
-                      .col-11.border.rounded#report-card(style='display:none')
+                      .col-11.border.rounded
                         form.p-2(readonly='')
                           .row
                             .col-md-6

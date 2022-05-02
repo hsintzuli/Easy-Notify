@@ -29,7 +29,7 @@ const updateChannelKey = async (channel_id, key_expire_dt) => {
   const conn = await pool.getConnection();
   try {
     await conn.query('START TRANSACTION');
-    const [channels] = await conn.query('SELECT id, app_id, name, public_key, private_key FROM channels WHERE id = ?', channel_id);
+    const [channels] = await conn.query('SELECT id, app_id, name, public_key, private_key FROM channels WHERE id = ? AND deleted_dt IS NULL', channel_id);
     const channel = channels[0];
     if (!channel) {
       console.log('no channel');
@@ -64,8 +64,8 @@ const deleteChannel = async (channel_id) => {
 const verifyChannelWithUser = async (user_id, channel_id) => {
   console.log(user_id, channel_id);
   const [results] = await pool.query(
-    'SELECT apps.user_id AS user_id FROM channels LEFT JOIN apps ON channels.app_id = apps.id WHERE channels.id = ? and apps.user_id = ?',
-    [channel_id, user_id]
+    'SELECT apps.user_id AS user_id FROM channels INNER JOIN apps ON channels.app_id = apps.id AND apps.user_id = ? WHERE channels.id = ? and channels.deleted_dt IS NULL',
+    [user_id, channel_id]
   );
   const verified = results.length > 0;
   return verified;
@@ -75,14 +75,14 @@ const getChannelDetail = async (channel_id) => {
   const [results] = await pool.query(
     `SELECT c.id, c.app_id, c.channel_key, c.public_key, c.private_key, 
     apps.name AS app_name, apps.default_icon AS icon, apps.contact_email AS email 
-    FROM channels AS c INNER JOIN apps ON c.app_id = apps.id WHERE c.id = ?`,
+    FROM channels AS c INNER JOIN apps ON c.app_id = apps.id WHERE c.id = ? AND c.deleted_dt IS NULL`,
     channel_id
   );
   return results[0];
 };
 
 const getChannelById = async (channel_id) => {
-  const [results] = await pool.query(`SELECT * FROM channels WHERE id = ?`, channel_id);
+  const [results] = await pool.query(`SELECT * FROM channels WHERE id = ? AND deleted_dt IS NULL`, channel_id);
   return results[0];
 };
 
@@ -93,7 +93,7 @@ const getChannels = async (app_id) => {
 
 const getChannelsByUser = async (user_id) => {
   const [results] = await pool.query(
-    `SELECT c.id, c.name, a.id AS app_id, a.name AS app_name, a.default_icon AS icon FROM notify.channels AS c LEFT JOIN notify.apps AS a on c.app_id = a.id WHERE a.user_id = ?; `,
+    `SELECT c.id, c.name, a.id AS app_id, a.name AS app_name, a.default_icon AS icon FROM notify.channels AS c INNER JOIN notify.apps AS a on c.app_id = a.id  WHERE a.user_id = ? AND c.deleted_dt iS NULL `,
     user_id
   );
   return results;
