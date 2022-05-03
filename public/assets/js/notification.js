@@ -13,6 +13,7 @@ function changeApp() {
         .text(element)
     );
   });
+  $('.selectpicker').selectpicker('refresh');
 }
 changeApp();
 function onSubmmit(event) {
