@@ -51,6 +51,7 @@ function updateForm(notification) {
   $('#notification-name').text(notification.name);
   $('#input-title').val(notification.content.title);
   $('#input-body').val(notification.content.body);
+  $('#input-icon').val(notification.content.icon);
   $('#' + notification.type).prop('selected', true);
   // $('#icon').attr('src', notification.content.config.icon);
   if (notification.scheduled_dt) {
@@ -79,6 +80,7 @@ function updateStatus(status) {
   $('#status-badge').addClass(statusObj.bg);
   $('#status-badge h6').text(statusObj.bgString);
   $('#edit-btn').prop('disabled', statusObj.edit_disabled);
+  $('.form-unput').prop('disabled', statusObj.edit_disabled);
   $('#update-btn').prop('disabled', statusObj.update_disabled);
 }
 

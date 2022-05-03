@@ -35,11 +35,6 @@ app.use('/api/' + API_VERSION, [
   require('./server/routes/apps'),
 ]);
 
-// Initialize Socket IO
-// const http = require('http');
-// const server = http.createServer(app);
-// require('./utils/mysocket').config(server);
-
 // Page not found
 app.use((req, res, next) => {
   res.sendStatus(404);

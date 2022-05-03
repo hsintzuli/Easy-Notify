@@ -35,38 +35,36 @@ block content
                             .col-md-6
                               .form-group
                                 label.col-form-label.col-form-label-lg(for='input-title') Title
-                                input#input-title.form-control(type='text' name='title' value='Black Friday!' disabled='')
+                                input#input-title.form-control.form-input(type='text' name='title' value='' disabled='')
                             .col-md-6
                               .form-group
                                 label.col-form-label.col-form-label-lg(for='input-body') Body
-                                input#input-body.form-control(type='text' name='body' value='Click to join activity' disabled='')
+                                input#input-body.form-control.form-input(type='text' name='body' value='' disabled='')
                           .row
                             .col-sm-6
                               .form-group
                                 label.col-form-label.col-form-label-lg(for='send-type') Send-Type
-                                select#send-type.custom-select.form-control(name='sendType' value='websocket' disabled='')
+                                select#send-type.custom-select.form-control.form-input(name='sendType' value='websocket' disabled='')
                                   option#websocket Websocket
                                   option#webpush Web-Push
                             .col-sm-6
                               .form-group.row
                                 label.col-form-label.float-left.col-form-label-lg(for='input-body') Icon
-                                div.col-4.mx-auto.text-center
-                                  img#icon.img-fluid.img-circle.elevation-2(style='border-radius: 30%; width: 60px')
-                                //- input#input-body.form-control(type='text' name='body' placeholder='Enter Notification Body' disabled='')
+                                textarea#input-icon.form-control.form-input(name='icon' disabled='')
                           .row
                             .col-sm-6
                               label.form-inline.col-form-label.col-form-label-lg(for='time-type') Send-Time
                               .form-check.form-check-inline
-                                input#send-realtime.form-check-input(type='radio' name='sendTimeOpt' value='realtime' checked='' disabled='')
+                                input#send-realtime.form-check-input.form-input(type='radio' name='sendTimeOpt' value='realtime' checked='' disabled='')
                                 label.form-check-label(for='send-realtime') Realtime
                               .form-check.form-check-inline
-                                input#send-scheduled.form-check-input(type='radio' name='sendTimeOpt' value='scheduled' disabled='')
+                                input#send-scheduled.form-check-input.form-input(type='radio' name='sendTimeOpt' value='scheduled' disabled='')
                                 label.form-check-label(for='send-scheduled') Scheduled
                             .col-sm-6
                               .form-group
                                 label.col-form-label.col-form-label-lg Date and time:
                                 #datetimepicker1.input-group.date(data-target-input='nearest')
-                                  input.form-control.datetimepicker-input(type='text' data-target='#datetimepicker1' disabled='')
+                                  input.form-control.datetimepicker-input.form-input(type='text' data-target='#datetimepicker1' disabled='')
                                   .input-group-append(data-target='#datetimepicker1' data-toggle='datetimepicker')
                                     .input-group-text
                                       i.fa.fa-calendar
