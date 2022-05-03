@@ -23,7 +23,7 @@ block content
                   .small-box.bg-info
                     .inner
                       h3=dashboardData.subscribers
-                      p SUBSCRIBERS
+                      p TOTAL SUBSCRIBERS
                     .icon
                       i.fas.fa-user-plus
                 // ./col
@@ -62,12 +62,12 @@ block content
                     // LINE CHART
                     .card
                       .card-header
-                        h3.card-title User Statistics
+                        h3.card-title New Users
                         .card-tools
-                          #reportrange(style='background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: 100%')
-                            i.fa.fa-calendar
-                            span
-                            i.fa.fa-caret-down
+                          #reportrange.d-flex.align-items-center(style='background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: 100%')
+                            i.fa.fa-calendar.float-left
+                            span.px-2
+                            i.fa.fa-caret-down.float-right
                       .card-body
                         .chart
                           canvas#userChart(style='min-height: 300px; height: 300px; max-height: 300px; max-width: 100%')
@@ -76,16 +76,16 @@ block content
                         .row
                           .col-sm-4.border-right
                             .description-block
-                              h5.description-header 3,200
+                              h5.description-header=dashboardData.newClients
                               span.description-text Lastly 1 Week Subscribers
                           .col-sm-4.border-right
                             .description-block
-                              h5.description-header 13,000
-                              span.description-text FOLLOWERS
+                              h5.description-header=dashboardData.activatedClients
+                              span.description-text Activated Users 
                           .col-sm-4
                             .description-block
-                              h5.description-header 35
-                              span.description-text PRODUCTS
+                              h5.description-header=dashboardData.apps
+                              span.description-text Numbers of APPs
   script(src='/vendor/plugins/chart.js/Chart.min.js')
   script(src='/vendor/plugins/moment/moment.min.js')
   script(src='/vendor/plugins/select2/js/select2.full.min.js')

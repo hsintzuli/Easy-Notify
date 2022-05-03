@@ -86,16 +86,14 @@ html(lang='en')
           #navbarSupportedContent.collapse.navbar-collapse
             ul.navbar-nav.ms-auto.mb-3.mb-lg-0
               li.nav-item
-                a.nav-link(href='#') Home
-              li.nav-item
-                a.nav-link(href='#features') About
+                a.nav-link(href='#about') About
               li.nav-item
                 a.nav-link(href='/pricing') Pricing
               li.nav-item.dropdown
-                a#navbarDropdownBlog.nav-link.dropdown-toggle(href='#' role='button' data-bs-toggle='dropdown' aria-expanded='false') Document
-                ul.dropdown-menu.dropdown-menu-end(aria-labelledby='navbarDropdownBlog')
+                a#dropdownMenuLinkropdownBlog.nav-link.dropdown-toggle(href='#' role='button' data-toggle="dropdown" aria-expanded='false') Document
+                ul.dropdown-menu.dropdown-menu-end(aria-labelledby='dropdownMenuLink')
                   li
-                    a.dropdown-item(href='#') Web Push QuickStart
+                    a.dropdown-item(href='https://github.com/hsintzuli/EasyNotify-Client') Client Library
                   li
                     a.dropdown-item(href='#') Server REST API
               li.nav-item.login

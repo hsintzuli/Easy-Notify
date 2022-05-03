@@ -72,7 +72,7 @@ const getMaxOnlineClient = async (user_id) => {
 
 const getNotificationSent = async (user_id) => {
   const [results] = await pool.query(
-    `SELECT SUM(n.targets_num) AS notification_sent, AVG(n.sent_num / n.targets_num) AS delivered_rate FROM users AS u INNER Join apps AS a
+    `SELECT SUM(n.targets_num) AS notification_sent, AVG(n.sent_num / n.targets_num) AS delivered_rate, COUNT(DISTINCT a.id) AS apps FROM users AS u INNER Join apps AS a
     ON a.user_id = u.id  INNER Join channels AS c ON a.id=c.app_id INNER Join notifications AS n ON n.channel_id = c.id
     WHERE u.id = ?;`,
     user_id

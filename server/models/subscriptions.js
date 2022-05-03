@@ -57,6 +57,16 @@ const getClientCountByUser = async (user_id) => {
   return results[0];
 };
 
+const getLastlyClientByUser = async (user_id) => {
+  const [results] = await pool.query(
+    `SELECT COUNT(s.id) AS activated_user, SUM(if(s.updated_dt = s.created_dt, 1, 0)) AS new_clients FROM users AS u INNER Join apps AS a
+    ON a.user_id = u.id  INNER Join channels AS c ON a.id=c.app_id INNER Join subscriptions AS s ON s.channel_id = c.id
+    WHERE u.id = ? AND s.updated_dt >= DATE(NOW() - INTERVAL 7 DAY);`,
+    user_id
+  );
+  return results[0];
+};
+
 const getClientGroupByDate = async (user_id, start_date, end_date, interval) => {
   const [results] = await pool.query(
     `SELECT DATE_FORMAT(s.created_dt, ?) AS dates, COUNT(s.id) AS subscription FROM subscriptions AS s
@@ -76,4 +86,5 @@ module.exports = {
   updateClientTag,
   getClientCountByUser,
   getClientGroupByDate,
+  getLastlyClientByUser,
 };

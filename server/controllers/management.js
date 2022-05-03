@@ -64,12 +64,15 @@ const dashboard = async (req, res) => {
   const notificationSent = await Notification.getNotificationSent(user.id);
   const clientCount = await Subscription.getClientCountByUser(user.id);
   const onlineClient = await Notification.getMaxOnlineClient(user.id);
-  console.log(clientCount);
+  const newClient = await Subscription.getLastlyClientByUser(user.id);
   const dashboardData = {
     subscribers: clientCount && clientCount.total_client ? clientCount.total_client.toLocaleString() : 0,
     maxOnlineClients: onlineClient && onlineClient.max_online_clients ? onlineClient.max_online_clients.toLocaleString() : 0,
     notificationSent: notificationSent && notificationSent.notification_sent ? notificationSent.notification_sent.toLocaleString() : 0,
     deleveredRate: notificationSent && notificationSent.delivered_rate ? Math.floor(notificationSent.delivered_rate * 100) : 0,
+    newClients: newClient && newClient.new_clients ? newClient.new_clients : 0,
+    activatedClients: newClient && newClient.activated_user ? newClient.activated_user : 0,
+    apps: notificationSent && notificationSent.apps ? notificationSent.apps : 0,
   };
   console.log('user:', user);
   console.log(dashboardData);
