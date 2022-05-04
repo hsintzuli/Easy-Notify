@@ -6,8 +6,8 @@ const {
   trackNotification,
   addTagForSubscription,
   removeTagForSubscription,
-} = require('../controllers/subscriptions');
-const { wrapAsync } = require('../../utils/util');
+} = require('../../controllers/subscriptions');
+const { wrapAsync } = require('../../../utils/util');
 
 router.route('/subscription').post(wrapAsync(subscribe));
 router.route('/subscription/verify').get(wrapAsync(verifySubscription));

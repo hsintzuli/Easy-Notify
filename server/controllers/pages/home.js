@@ -1,5 +1,5 @@
 require('dotenv').config();
-const Order = require('../models/orders');
+const Order = require('../../models/orders');
 
 const homePage = async (req, res) => {
   res.render('home');

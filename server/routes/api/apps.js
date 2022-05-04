@@ -1,6 +1,6 @@
 const router = require('express').Router();
-const { createApp, getApps, archiveApp, createChannel, deleteChannel, rotateChannelKey } = require('../controllers/apps');
-const { userAuthentication, wrapAsync } = require('../../utils/util');
+const { createApp, getApps, archiveApp, createChannel, deleteChannel, rotateChannelKey } = require('../../controllers/apps');
+const { userAuthentication, wrapAsync } = require('../../../utils/util');
 
 router.use('/apps', userAuthentication);
 router.route('/apps/channels').post(wrapAsync(createChannel));

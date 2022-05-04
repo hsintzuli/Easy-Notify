@@ -23,17 +23,19 @@ app.use(
 );
 app.set('view engine', 'pug');
 app.set('views', './server/views');
-app.use(require('./server/routes/home'));
-app.use(require('./server/routes/management'));
 
-// API routes
+// Routes for server side render
+app.use([require('./server/routes/pages/home'), require('./server/routes/pages/management')]);
+
+// API routes for user operation on webpage
+app.use('/api/' + API_VERSION, [require('./server/routes/api/subscription'), require('./server/routes/api/user'), require('./server/routes/api/apps')]);
+
 app.use(cors());
-app.use('/api/' + API_VERSION, [
-  require('./server/routes/subscription'),
-  require('./server/routes/notification'),
-  require('./server/routes/user'),
-  require('./server/routes/apps'),
-]);
+// API route for client side library
+app.use('/api/' + API_VERSION, require('./server/routes/api/notification'));
+
+// API route for operations on notification using channelID & channelKey
+app.use('/notifier/api/' + API_VERSION, [require('./server/routes/notifier')]);
 
 // Page not found
 app.use((req, res, next) => {

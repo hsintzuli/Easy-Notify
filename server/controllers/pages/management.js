@@ -1,8 +1,8 @@
 require('dotenv').config();
-const App = require('../models/apps');
-const Channel = require('../models/channels');
-const Notification = require('../models/notifications');
-const Subscription = require('../models/subscriptions');
+const App = require('../../models/apps');
+const Channel = require('../../models/channels');
+const Notification = require('../../models/notifications');
+const Subscription = require('../../models/subscriptions');
 
 const apps = async (req, res) => {
   const { user } = req.session;

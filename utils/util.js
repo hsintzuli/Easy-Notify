@@ -36,15 +36,17 @@ const setChannelDataToReq = async (req, res, next) => {
 // Authentication for API Key
 const apiAuthentication = async (req, res, next) => {
   // check Authorization header
-  const accessToken = req.get('Authorization');
-  console.log(accessToken);
-  if (!accessToken) {
-    res.status(401).send({ error: 'Unauthorized' });
-    return;
-  }
+  const channelId = req.get('X-CHANNEL-ID');
+  const channelKey = req.get('X-API-KEY');
+  // const accessToken = req.get('Authorization');
+  // console.log(accessToken);
+  // if (!channelId || !channelKey) {
+  //   res.status(401).json({ error: 'No channel key' });
+  //   return;
+  // }
 
   // check authorization header is correct format
-  const [channelId, channelKey] = accessToken.split(':');
+  // const [channelId, channelKey] = accessToken.split(':');
   console.log(channelId, channelKey);
   if (!channelId || !channelKey) {
     res.status(401).send({ error: 'Unauthorized' });

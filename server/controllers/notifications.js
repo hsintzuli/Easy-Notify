@@ -5,7 +5,8 @@ const SEND_TYPE = new Set(['webpush', 'websocket']);
 const App = require('../models/apps');
 const Cache = require('../../utils/cache');
 const NotificationJobs = require('../../utils/notificationJobs');
-const { generateValidDatetimeRange } = require('../../utils/util');
+const { generateValidDatetimeRange, diffFromNow } = require('../../utils/util');
+const UPDATE_LIMITE_INTERVAL = 60 * 3; // only notification that is scheduled exceed 3 minutes from now can be update
 
 const pushNotification = async (req, res) => {
   const { channel } = req.locals;
@@ -15,8 +16,14 @@ const pushNotification = async (req, res) => {
   console.log(channel);
 
   // Check scheduledType & sendType are valid types
-  if (!SCHEDULED_TYPE.has(scheduledType) || !SEND_TYPE.has(sendType)) {
+  if (!scheduledType || !sendType || !SCHEDULED_TYPE.has(scheduledType) || !SEND_TYPE.has(sendType)) {
     res.status(400).send({ error: 'Wrong ScheduledType or SendType' });
+    return;
+  }
+
+  // Check inputs
+  if (!name || !title || !body) {
+    res.status(400).send({ error: 'Wrong input' });
     return;
   }
 
@@ -44,9 +51,10 @@ const pushNotification = async (req, res) => {
     NotificationJobs.handleScheduledRequest(notification, channel);
   }
 
-  return res.status(200).json({ data: notification });
+  return res.status(200).json({ data: { id, status: 'success' } });
 };
 
+// Get all notifications
 const getNotifications = async (req, res, next) => {
   const { id } = req.query;
   if (id) {
@@ -69,14 +77,19 @@ const getNotifications = async (req, res, next) => {
   return;
 };
 
+// Get notification by specific ID
 const getNotificationById = async (req, res) => {
   const { id } = req.query;
-  const notification = await Notification.getNotificationById(id);
-  if (!notification) {
-    return res.status(400).json({ error: 'Wrong Request' });
+  if (!id) {
+    return res.status(400).json({ error: 'Wrong ID' });
   }
 
-  const content = await Content.findById(id, '-_id -__v');
+  const notification = await Notification.getNotificationById(id);
+  if (!notification) {
+    return res.status(404).json({ error: 'Notification not found' });
+  }
+
+  const content = await Content.findById(id, '-_id -__v -vapid_detail');
   notification.content = content;
   delete content._id;
   let sentTime = notification.scheduled_dt ? notification.scheduled_dt : notification.created_dt;
@@ -97,25 +110,38 @@ const getNotificationById = async (req, res) => {
   return;
 };
 
-const updateNotification = async (req, res) => {
+// Check whether the notification could be update
+// To update the notification, delete the origin one and create then new one
+const checkUpdateAndDelete = async (req, res, next) => {
   const { id } = req.query;
-  const { title, body, options, config } = req.body;
-  const content = {
-    title: title,
-    body: body,
-    option_content: options,
-    config: config,
-  };
-  const updateSuccess = await Content.findByIdAndUpdate({ _id: id }, content);
-  console.log(updateSuccess);
-  res.status(200).json({ status: 'success' });
-  return;
+  if (!id) {
+    res.status(400).json({ error: 'Wrong ID' });
+    return;
+  }
+  const notification = await Notification.getNotificationById(id);
+  if (!notification) {
+    res.status(404).json({ error: 'Notification not found' });
+    return;
+  }
+  console.log();
+  if (!notification.scheduled_dt || diffFromNow(notification.scheduled_dt) < UPDATE_LIMITE_INTERVAL) {
+    res.status(400).json({ error: 'Notification can not be update' });
+    return;
+  }
+
+  const deleteSuccess = await Notification.deleteNotification(id);
+  if (deleteSuccess) {
+    await Content.deleteOne({ _id: id });
+  }
+  req.params.scheduledType = 'scheduled';
+  return next();
 };
 
+// Delete notification
 const deleteNotification = async (req, res) => {
   const { id } = req.query;
   if (!id) {
-    res.status(400).json({ error: 'Wrong Request' });
+    res.status(400).json({ error: 'Wrong ID' });
     return;
   }
   const deleteSuccess = await Notification.deleteNotification(id);
@@ -124,10 +150,11 @@ const deleteNotification = async (req, res) => {
     res.status(200).json({ status: 'success' });
     return;
   }
-  res.status(201).json({ status: 'failed' });
+  res.status(404).json({ error: 'Notification not found' });
   return;
 };
 
+// Get notifications by app_id
 const getNotificationsByApp = async (req, res, next) => {
   const { user } = req.session;
   let { app_id, start_date, end_date } = req.query;
@@ -136,20 +163,20 @@ const getNotificationsByApp = async (req, res, next) => {
   }
 
   if (!start_date || !end_date) {
-    res.status(400).send({ error: 'Get Notifications Error: Wrong Data Format' });
+    res.status(400).json({ error: 'Get Notifications Error: Wrong Data Format' });
     return;
   }
 
   const verified = await App.verifyAppWithUser(user.id, app_id);
   if (!verified) {
-    return res.status(400).json({ error: 'Incorrect app_id' });
+    return res.status(400).json({ error: 'Wrong app_id' });
   }
   console.log('date:', start_date, end_date);
   [start_date, end_date] = generateValidDatetimeRange(start_date, end_date);
   console.log('date:', start_date, end_date);
   const data = await Notification.getNotificationByApp(app_id, start_date, end_date);
   console.log('select data', data);
-  res.status(200).send({
+  res.status(200).json({
     data,
   });
 };
@@ -157,7 +184,7 @@ const getNotificationsByApp = async (req, res, next) => {
 module.exports = {
   pushNotification,
   getNotifications,
-  updateNotification,
+  checkUpdateAndDelete,
   deleteNotification,
   getNotificationsByApp,
   getNotificationById,

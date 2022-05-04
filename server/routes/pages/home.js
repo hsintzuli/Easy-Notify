@@ -1,6 +1,6 @@
 const router = require('express').Router();
-const { homePage, signIn, register, pricing } = require('../controllers/home');
-const { wrapAsync } = require('../../utils/util');
+const { homePage, signIn, register, pricing } = require('../../controllers/pages/home');
+const { wrapAsync } = require('../../../utils/util');
 
 router.route('/').get(wrapAsync(homePage));
 router.route('/signin').get(wrapAsync(signIn));
