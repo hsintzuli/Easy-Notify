@@ -1,7 +1,7 @@
 extends layout.pug
 
 block variables
-    - var userName = 'judy'
+    - var userName = user.name
 block content
   style.
     .table {
@@ -73,13 +73,9 @@ block content
           .modal-footer
             button.btn.btn-info(type='button' data-dismiss='modal') Close
             button.btn.btn-danger#archive(type='button') Archive
-  script.
-    $(document).ready(function() {
-        $('.nav-sidebar a').removeClass('active')
-        $('#sending-li').addClass('menu-open')
-        $('#sending-nav').addClass('active')
-        $('#app-nav').addClass('active')
-    }) 
   script(src='/assets/js/apps.js')
+
+
+
 
 

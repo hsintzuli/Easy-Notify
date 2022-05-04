@@ -62,6 +62,9 @@ function onLogin(event) {
     })
     .catch((err) => {
       console.log(err);
+      $('#errorModal .modal-body').val(err.err);
+      $('#errorModal').modal('show');
+      console.log(err);
     });
 }
 document.querySelector('.signup-form').addEventListener('submit', onSignUp);

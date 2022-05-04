@@ -10,7 +10,7 @@ function onSubmmit(event) {
     })
     .then((res) => {
       console.log(res.data);
-      window.location.href = '/management/apps';
+      // window.location.href = '/management/apps';
     })
     .catch((err) => {
       console.log(err);

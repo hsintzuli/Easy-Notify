@@ -1,3 +1,79 @@
+const LABEL_SIZE = 14;
+Chart.pluginService.register({
+  beforeDraw: function (chart) {
+    let width = chart.chart.width;
+    let height = chart.chart.height;
+    let ctx = chart.chart.ctx;
+    ctx.restore();
+    let fontSize = (height / 114).toFixed(2);
+    ctx.font = fontSize + 'em sans-serif';
+    ctx.textBaseline = 'middle';
+    var text = chart.config.options.elements.center.text,
+      textX = Math.round((width - ctx.measureText(text).width) / 2),
+      textY = height / 2 + LABEL_SIZE;
+    ctx.fillText(text, textX, textY);
+    ctx.save();
+  },
+});
+
+// chart1
+var data1 = {
+  labels: ['Delivered', 'Target Clients'],
+  datasets: [
+    {
+      data: [],
+      backgroundColor: ['RGB(255, 201, 82, 0.8)'],
+    },
+  ],
+};
+let sentChart = new Chart(document.getElementById('deliveryRate'), {
+  type: 'doughnut',
+  data: data1,
+  options: {
+    elements: {
+      center: {
+        text: '75%', //set as you wish
+      },
+    },
+    cutoutPercentage: 70,
+    legend: {
+      display: true,
+      labels: {
+        fontSize: LABEL_SIZE,
+      },
+    },
+  },
+});
+
+// chart2
+var data2 = {
+  labels: ['Acked', 'Delivered'],
+  datasets: [
+    {
+      data: [],
+      backgroundColor: ['RGB(165, 188, 130)'],
+    },
+  ],
+};
+let deliveredChart = new Chart(document.getElementById('receivedRate'), {
+  type: 'doughnut',
+  data: data2,
+  options: {
+    elements: {
+      center: {
+        text: '75%',
+      },
+    },
+    cutoutPercentage: 70,
+    legend: {
+      display: true,
+      labels: {
+        fontSize: LABEL_SIZE,
+      },
+    },
+  },
+});
+
 let searchParams = new URLSearchParams(window.location.search);
 const notification_id = searchParams.get('id');
 const status = 0;
@@ -31,7 +107,7 @@ const statusMap = {
 function loadPage() {
   console.log('Get API: ', `/api/1.0/notifications?id=${notification_id}`);
   axios
-    .get(`/management/notifications?id=${notification_id}`)
+    .get(`/api/1.0/notifications?id=${notification_id}`)
     .then((res) => {
       let notification = res.data.data;
       updateForm(notification);
@@ -109,6 +185,8 @@ function updateChart(notification) {
 $(document).ready(function () {
   $('#datetimepicker1').datetimepicker({ format: 'YYYY-MM-D HH:mm' });
   loadPage();
+  $('.nav-sidebar a').removeClass('active');
+  $('#reporting-nav').addClass('active');
 });
 
 // document.querySelector('#notification-form').addEventListener('submit', onSubmmit);

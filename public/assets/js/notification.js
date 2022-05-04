@@ -28,7 +28,7 @@ function onSubmmit(event) {
 
   const sendTimeOpt = data.get('sendTimeOpt');
   axios
-    .post(`/management/notifications/${sendTimeOpt}`, {
+    .post(`/api/1.0/notifications/${sendTimeOpt}`, {
       channel_id: channel_id,
       name: data.get('name'),
       title: data.get('title'),

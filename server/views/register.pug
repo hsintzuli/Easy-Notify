@@ -30,11 +30,60 @@ html(lang='en')
     background: #FFBF00;
     color: #ffffff !important;
     }
+    .custom-btn {
+    background: #405057;
+    color: #ffffff;
+    }
+    .custom-btn:hover {
+    background: #FFBF00;
+    color: #ffffff !important;
+    }
     .bottom-text {
       color:#405057
     }
     .bottom-text:hover {
       color:#FFBF00
+    }
+    /* Adjusting the shadow of the modal content - also removing border radius */
+    .modal-content{
+      box-shadow: 0 0 5px rgba(0, 0, 0, .5);
+      border-radius: 0;
+    }
+
+    /* Removing the border radius on btns just in modal */
+    .modal-content .btn{
+      border-radius: 0;
+    }
+
+    /* Adjusting  the close button */
+    .close{
+      font-size: 30px;
+      font-weight: 300;
+    }
+
+    .modal-header .close{
+      margin-top: -10px;
+    }
+
+    .modal .btn-primary {
+    color: #fff;
+    background-color: #1266f1;
+    }
+
+    .modal .btn-primary.focus, .modal .btn-primary:focus, .modal .btn-primary:hover {
+    color: #fff;
+    background-color: #0c56d0;
+    }
+
+    .modal .btn {
+        text-transform: uppercase;
+        vertical-align: bottom;
+        border: 0;
+        box-shadow: 0 2px 5px 0 rgb(0 0 0 / 20%), 0 2px 10px 0 rgb(0 0 0 / 10%);
+        font-weight: 500;
+        padding: 0.625rem 1.5rem 0.5rem;
+        font-size: .75rem;
+        line-height: 1.5;
     }
   body.hold-transition.register-page
     .register-box
@@ -69,6 +118,17 @@ html(lang='en')
               .col-4
                 button.btn.custom-btn.custom-btn-bg.btn-block(type='submit') Register
           a.text-center.bottom-text(href='/signin') Already have an account? Log In
+        #errorModal.modal.fade.bd-example-modal-sm(role='dialog')
+          .modal-dialog.modal-dialog-centered.modal-sm
+            .modal-content
+              .modal-header
+                h4.modal-title(style='color: #BA3240; font-weight:800;') Error
+                button.close(type='button' data-dismiss='modal') ×
+              .modal-body.justify-content-center.align-items-center
+                p#errorMessage.login-box.py-0
+              // Footer
+              .modal-footerd.row.justify-content-center
+                button.btn.custom-btn(type='button' data-dismiss='modal') Close
         // jQuery
         script(src='/vendor/plugins/jquery/jquery.min.js')
         // Bootstrap 4
@@ -80,8 +140,11 @@ html(lang='en')
           function onSignUp(event) {
             event.preventDefault();
             let data = new FormData(event.target);
-            // Post to User sign up API
-            // eslint-disable-next-line no-undef
+            if( data.get('password') != data.get('checkPassword')) {
+                $('.modal-body p').text('Confirm Password is Not Correct');
+                $('#errorModal').modal('show');   
+                return      
+            }
             axios
             .post('/api/1.0/user/signup', {
             name: data.get('name'),
@@ -92,7 +155,10 @@ html(lang='en')
             window.location.href = '/management/dashboard';
             })
             .catch((err) => {
-            console.log(err);
+                const {response} = err
+                console.log(response.data.error)
+                $('.modal-body p').text(response.data.error);
+                $('#errorModal').modal('show');
             });
           }
           document.querySelector('#signup-form').addEventListener('submit', onSignUp);

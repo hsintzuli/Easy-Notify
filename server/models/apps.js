@@ -11,7 +11,7 @@ const createApp = async (user_id, name, description, contact_email, default_icon
 const getApps = async (user_id) => {
   const [results] = await pool.query(
     `SELECT apps.*, COUNT(channels.id) AS channels FROM apps 
-    INNER JOIN channels ON apps.id = channels.app_id WHERE user_id = ? AND apps.archived_dt is NULL AND channels.deleted_dt is NULL GROUP BY id`,
+    LEFT JOIN channels ON apps.id = channels.app_id And channels.deleted_dt is NULL WHERE user_id = ? AND apps.archived_dt is NULL GROUP BY apps.id`,
     user_id
   );
   return results;

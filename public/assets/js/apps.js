@@ -18,6 +18,11 @@ function archiveApp(event) {
       console.log(err);
     });
 }
-
 $('.btn-archive').on('click', clickArchive);
 $('#archive').on('click', archiveApp);
+$(document).ready(function () {
+  $('.nav-sidebar a').removeClass('active');
+  $('#sending-li').addClass('menu-open');
+  $('#sending-nav').addClass('active');
+  $('#app-nav').addClass('active');
+});

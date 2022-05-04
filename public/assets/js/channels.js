@@ -1,6 +1,13 @@
 let searchParams = new URLSearchParams(window.location.search);
 const app_id = searchParams.get('app_id');
 
+$(document).ready(function () {
+  $('.nav-sidebar a').removeClass('active');
+  $('#sending-li').addClass('menu-open');
+  $('#sending-nav').addClass('active');
+  $('#app-nav').addClass('active');
+});
+
 function copyToClipboard(element) {
   var $temp = $('<input>');
   $('body').append($temp);
