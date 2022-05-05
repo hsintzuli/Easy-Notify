@@ -11,6 +11,7 @@ const UPDATE_LIMITE_INTERVAL = 60 * 3; // only notification that is scheduled ex
 const pushNotification = async (req, res) => {
   const { channel } = req.locals;
   const { scheduledType } = req.params;
+  console.log(req.body);
   const { name, title, body, sendType, icon, config, sendTime } = req.body;
   console.log('Receive push notification:', name);
   console.log(channel);

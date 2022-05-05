@@ -45,7 +45,7 @@ $(document).ready(function () {
       },
       error: function (error) {
         console.log(error);
-        alert(error);
+        alert(JSON.stringify(error));
       },
     },
     columns: [

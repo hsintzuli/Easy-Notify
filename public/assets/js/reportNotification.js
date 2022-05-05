@@ -103,13 +103,13 @@ const statusMap = {
     update_disabled: false,
   },
 };
-
+let notification;
 function loadPage() {
   console.log('Get API: ', `/api/1.0/notifications?id=${notification_id}`);
   axios
     .get(`/api/1.0/notifications?id=${notification_id}`)
     .then((res) => {
-      let notification = res.data.data;
+      notification = res.data.data;
       updateForm(notification);
       updateStatus(notification.status);
       updateChart(notification);
@@ -128,6 +128,7 @@ function updateForm(notification) {
   $('#input-title').val(notification.content.title);
   $('#input-body').val(notification.content.body);
   $('#input-icon').val(notification.content.icon);
+  $('#input-config').val(notification.content.config);
   $('#' + notification.type).prop('selected', true);
   // $('#icon').attr('src', notification.content.config.icon);
   if (notification.scheduled_dt) {
@@ -143,7 +144,7 @@ function onUpdate() {
   axios
     .get(`/api/1.0/notifications?id=${notification_id}`)
     .then((res) => {
-      let notification = res.data.data;
+      notification = res.data.data;
       updateChart(notification);
     })
     .catch((err) => {
@@ -156,7 +157,7 @@ function updateStatus(status) {
   $('#status-badge').addClass(statusObj.bg);
   $('#status-badge h6').text(statusObj.bgString);
   $('#edit-btn').prop('disabled', statusObj.edit_disabled);
-  $('.form-unput').prop('disabled', statusObj.edit_disabled);
+  $('.form-input').prop('disabled', statusObj.edit_disabled);
   $('#update-btn').prop('disabled', statusObj.update_disabled);
 }
 
@@ -189,5 +190,90 @@ $(document).ready(function () {
   $('#reporting-nav').addClass('active');
 });
 
+$('#json-btn').click((event) => {
+  event.preventDefault();
+  let text = $('#input-config').val();
+  let textedJson;
+  try {
+    text = JSON.parse($('#input-config').val());
+    console.log(text);
+    textedJson = JSON.stringify(text, undefined, 2);
+    $('#input-config').val(textedJson);
+  } catch (error) {
+    alert('Invalid JSON Format');
+  }
+});
+
+function onPut(event) {
+  event.preventDefault();
+
+  let data = new FormData(event.target);
+  console.log('sendTime', data.get('sendTime'));
+  const time = new Date(data.get('sendTime'));
+  const sendTimeOpt = data.get('sendTimeOpt');
+  axios
+    .put(`/api/1.0/notifications?id=${notification_id}`, {
+      channel_id: notification.channel_id,
+      name: $('#notification-name').text(),
+      title: data.get('title'),
+      body: data.get('body'),
+      sendType: data.get('sendType'),
+      sendTime: time,
+      icon: data.get('icon'),
+      config: data.get('config'),
+    })
+    .then((res) => {
+      console.log(res.data);
+      pushSuccess(res.data.data.id);
+    })
+    .catch((err) => {
+      console.log(err);
+      pushFail();
+    });
+}
+
+function pushSuccess(notification_id) {
+  Swal.fire({
+    icon: 'success',
+    title: 'Update successfully',
+    text: 'Check the new notification.',
+    showCancelButton: true,
+  }).then(function () {
+    window.location = `/management/reports/notifications?id=${notification_id}`;
+  });
+}
+function pushFail() {
+  Swal.fire({
+    icon: 'error',
+    title: 'Update failed',
+  });
+}
+
+function onDelete(event) {
+  event.preventDefault();
+  Swal.fire({
+    title: 'Are you sure?',
+    text: "You won't be able to revert this!",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Yes, delete it!',
+  }).then((result) => {
+    if (result.isConfirmed) {
+      axios
+        .delete(`/api/1.0/notifications?id=${notification_id}`)
+        .then((res) => {
+          window.location = '/management/reports';
+        })
+        .catch((error) => {
+          Swal.fire('Delete fail', error.error, 'error');
+        });
+    }
+  });
+}
+
 // document.querySelector('#notification-form').addEventListener('submit', onSubmmit);
 $('#update-btn').on('click', onUpdate);
+$('#myform').on('submit', onPut);
+$('#delete-btn').on('click', onDelete);

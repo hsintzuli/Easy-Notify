@@ -3,8 +3,13 @@ extends layout.pug
 block variables
     - var userName = user.name
 block content
+  // SweetAlert2
+  link(rel='stylesheet' href='/vendor/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css')
   link(rel='stylesheet' href='/vendor/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css')
-  
+  style.
+      .btn-sm {
+        background-color: #E8E8E7;
+      }  
   // Content Wrapper. Contains page content
   .content-wrapper
     // Content Header (Page header)
@@ -19,18 +24,19 @@ block content
                 .card-header.container-fluid
                   .row.justify-content-center.align-items-center
                     .col-11.row.justify-content-center.align-items-center
-                      .col-10.d-flex.align-items-center
+                      .col-8.d-flex.align-items-center
                         h3.m-0#notification-name.float-left.font-weightbold
                         span.ml-2.badge.badge-success.h-50#status-badge
                           h6.m-0
-                      .card-tools.col-2
-                        button#edit-btn.float-right.btn.btn-outline-secondary(type='button') Edit
+                      .card-tools.col-4
+                        button#edit-btn.float-right.btn.btn-outline-secondary(type="submit" form="myform") Edit
+                        button#delete-btn.float-right.btn.btn-outline-danger.mx-2 Delete
                 // /.card-header
                 .card-body
                   .container-fluid
                     .row.justify-content-center.align-items-center
                       .col-11.border.rounded
-                        form.p-2(readonly='')
+                        form#myform.p-2(readonly='')
                           .row
                             .col-md-6
                               .form-group
@@ -45,8 +51,8 @@ block content
                               .form-group
                                 label.col-form-label.col-form-label-lg(for='send-type') Send-Type
                                 select#send-type.custom-select.form-control.form-input(name='sendType' value='websocket' disabled='')
-                                  option#websocket Websocket
-                                  option#webpush Web-Push
+                                  option#websocket websocket
+                                  option#webpush webpush
                             .col-sm-6
                               .form-group.row
                                 label.col-form-label.float-left.col-form-label-lg(for='input-body') Icon
@@ -64,10 +70,16 @@ block content
                               .form-group
                                 label.col-form-label.col-form-label-lg Date and time:
                                 #datetimepicker1.input-group.date(data-target-input='nearest')
-                                  input.form-control.datetimepicker-input.form-input(type='text' data-target='#datetimepicker1' disabled='')
+                                  input.form-control.datetimepicker-input.form-input(type='text' name='sendTime' data-target='#datetimepicker1' disabled='')
                                   .input-group-append(data-target='#datetimepicker1' data-toggle='datetimepicker')
                                     .input-group-text
                                       i.fa.fa-calendar
+                          .row 
+                            .col-sm-12
+                              .form-group
+                                label(for='input-config') Config
+                                  button.btn.btn-sm.shadow-sm.py-0.ml-2#json-btn View in JSON
+                                textarea#input-config.form-control(type='text' name='config' placeholder='Customized Configuration Section')
                           // /.card-body
                       #result.col-11.mt-1(style='display: none;')
                         .p-3
@@ -84,7 +96,8 @@ block content
                             .col-6
                               .container
                                 canvas#receivedRate.chart.donutchart
+  script(src='/vendor/plugins/sweetalert2/sweetalert2.min.js') 
   script(src='/vendor/plugins/moment/moment.min.js') 
   script(src='/vendor/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js')
-  script(src='/vendor/plugins/chart.js/Chart.min.js')                   
+  script(src='/vendor/plugins/chart.js/Chart.min.js')                  
   script(src='/assets/js/reportNotification.js')
