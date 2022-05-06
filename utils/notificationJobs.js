@@ -8,6 +8,7 @@ const Notification = require('../server/models/notifications');
 const { diffFromNow } = require('./util');
 const Content = require('../server/models/content');
 const moment = require('moment');
+const SQS = require('./sqs');
 
 rabbitmq.initConnection(() => {
   console.log('Connect rabbitmq');
@@ -82,6 +83,7 @@ const genWebpushJob = async (notificationId, channelId) => {
     console.log(job.clients);
     await Cache.hincrby('pushJobs', notificationId, 1);
     await rabbitmq.publishMessage(REALTIME_EXCHANGE, 'webpush', JSON.stringify(job), jobOptions);
+    await SQS.sendMessage('Consume job on rabbitmq');
   }
   return;
 };
