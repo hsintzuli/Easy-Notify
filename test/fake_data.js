@@ -1,5 +1,5 @@
-const SUBSCRIPTION_QUANTITY = 3000;
-const START_DATE = new Date(2021, 5, 1);
+const SUBSCRIPTION_QUANTITY = 20;
+const START_DATE = new Date(2021, 5, 6);
 const END_DATE = new Date(2022, 4, 15);
 const { nanoid } = require('nanoid');
 
@@ -32,8 +32,9 @@ const getTotalSubscriptions = () => {
     let date = randomDate(START_DATE, END_DATE);
     let rand_int = getRandomInt(5);
     let id = nanoid();
-    let channel_id = '4Nrcgx-Bu1MgI8RKjnsJB';
-    let endpoint = fake_endpoints[rand_int] + i.toString();
+    let channel_id = 'QKCzVKW68QJ5wKJySIw26';
+    // let endpoint = fake_endpoints[rand_int] + i.toString();
+    let endpoint = `fake-user-${i}`;
     let keys = JSON.stringify(fake_keys[rand_int]);
     let client_tag = `user${i}`;
     let status = 1;

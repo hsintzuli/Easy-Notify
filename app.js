@@ -27,10 +27,10 @@ app.set('views', './server/views');
 // Routes for server side render
 app.use([require('./server/routes/pages/home'), require('./server/routes/pages/management')]);
 
+app.use(cors());
 // API routes for user operation on webpage
 app.use('/api/' + API_VERSION, [require('./server/routes/api/subscription'), require('./server/routes/api/user'), require('./server/routes/api/apps')]);
 
-app.use(cors());
 // API route for client side library
 app.use('/api/' + API_VERSION, require('./server/routes/api/notification'));
 

@@ -1,7 +1,7 @@
 const Subscription = require('../server/models/subscriptions');
 const Cache = require('./cache');
 const rabbitmq = require('./rabbit');
-const { REALTIME_EXCHANGE, DELAY_EXCHANGE, SCHEDULED_INTERVAL_HOUR } = process.env;
+const { REALTIME_EXCHANGE, DELAY_EXCHANGE, SCHEDULED_INTERVAL_HOUR, SEND_TO_SQS } = process.env;
 const MAX_PUSH_CLIENT = parseInt(process.env.MAX_PUSH_CLIENT);
 // const socket = require('./mysocket');
 const Notification = require('../server/models/notifications');
@@ -76,14 +76,17 @@ const genWebpushJob = async (notificationId, channelId) => {
   const subscriptions = await Subscription.getClientIds(channelId);
   console.log(`Update notfication ${notificationId} with targets_num: `, subscriptions.length);
   await Notification.updateNotificationStatus(notificationId, { targets_num: subscriptions.length });
-
-  for (let i = 0; i < subscriptions.length; i += MAX_PUSH_CLIENT) {
+  let i = 0;
+  while (i < subscriptions.length) {
     let last = Math.min(subscriptions.length, i + MAX_PUSH_CLIENT);
     job.clients = subscriptions.slice(i, last).map((element) => element.id);
     console.log(job.clients);
     await Cache.hincrby('pushJobs', notificationId, 1);
     await rabbitmq.publishMessage(REALTIME_EXCHANGE, 'webpush', JSON.stringify(job), jobOptions);
-    await SQS.sendMessage('Consume job on rabbitmq');
+    if (SEND_TO_SQS) {
+      await SQS.sendMessage('Consume job on rabbitmq');
+    }
+    i = last;
   }
   return;
 };

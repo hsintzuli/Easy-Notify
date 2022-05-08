@@ -38,7 +38,7 @@ const getNotificationById = async (notification_id) => {
 };
 
 const deleteNotification = async (notification_id) => {
-  const [results] = await pool.query('DELETE FROM notifications WHERE id = ? AND status < ?', [notification_id, NOTIFICATION_STATUS.DELEVERED]);
+  const [results] = await pool.query('DELETE FROM notifications WHERE id = ?', [notification_id]);
   const deleted = results.affectedRows > 0;
   return deleted;
 };
