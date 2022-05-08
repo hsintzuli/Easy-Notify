@@ -70,13 +70,18 @@ io.on('connection', async (socket) => {
     });
 
     socket.on('disconnecting', async (reason) => {
-      const rooms = socket.rooms.slice();
+      const rooms = socket.rooms;
       for (let room of rooms) {
         if (Cache.hget(`clientNums{${room}}`, serverId)) {
           socket.leave(room);
-          await Cache.hset(`clientNums{${channel_id}}`, serverId, getRoomByChannel(room).size);
+          await Cache.hset(`clientNums{${room}}`, serverId, getRoomByChannel(room).size);
         }
       }
+    });
+
+    socket.on('disconnect', async (reason) => {
+      let total = io.engine.clientsCount;
+      console.log('Socket disconnect! 現在連線人數:', total);
     });
   }
 });
