@@ -55,7 +55,7 @@ async function fnConsumer(msg, ack) {
     const leavingJobs = await Cache.hincrby('pushJobs', notificationId, -1);
     if (leavingJobs === 0) {
       await Notification.updateNotificationStatus(notificationId, { status: NOTIFICATION_STATUS.COMPLETE });
-      await Cache.hdel('pushJobs', notificationId);
+      await Cache.del('pushJobs', notificationId);
       console.log(`Finish ${notificationId}, successfully update mysql & delete redis`);
     }
     ack(true);
