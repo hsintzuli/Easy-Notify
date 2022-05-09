@@ -1,6 +1,10 @@
 extends home-layout.pug
 
 block content
+      style.
+        .feature {
+          background-color: #D99036;
+        }
       // Header
       header#header.py-4
         .container.px-5
@@ -10,7 +14,7 @@ block content
                 h2.display-5.fw-bolder.text-black.mb-2 Push Notification Service for Developers and Business
                 p.lead.fw-normal.text-black-50.mb-4
                   | Bring back lost visitors through webpush notification.   
-                  | Alternative plan - Websocket, for users do not authorize webpush.
+                  | For In-App Message, alternative plan - Websocket is provided.
                 .d-grid.gap-3.d-sm-flex.justify-content-sm-center.justify-content-xl-start
                   a.btn.btn-lg.px-4.me-sm-3.custom-btn(href='/register') Get Started
                   a.btn.btn-lg.px-4.custom-btn.custom-btn-bg(href='https://demo.easynotify.site' target='_blank') Demo
@@ -21,31 +25,31 @@ block content
         .container.px-5.my-5
           .row.gx-5
             .col-lg-4.mb-5.mb-lg-0
-              h2.fw-bolder.mb-0 A better way to start building.
+              h1.fw-bolder.mb-0 It's never been easier to connect customers
             .col-lg-8
               .row.gx-5.row-cols-1.row-cols-md-2
                 .col.mb-5.h-100
-                  .feature.bg-primary.bg-gradient.text-white.rounded-3.mb-3
-                    i.bi.bi-collection
-                  h2.h5 Featured title
+                  .feature.bg-gradient.text-white.rounded-2.mb-3.shadow
+                    i.fas.fa-bell
+                  h2.h4 Better In-APP Messages
                   p.mb-0
-                    | Paragraph of text beneath the heading to explain the heading. Here is just a bit more text.
+                    | No need to worry about clients unauthorize web-push notification. Easily notify clients in your website through Websocket.
                 .col.mb-5.h-100
-                  .feature.bg-primary.bg-gradient.text-white.rounded-3.mb-3
-                    i.bi.bi-building
-                  h2.h5 Featured title
+                  .feature.bg-gradient.text-white.rounded-2.mb-3.shadow
+                    i.fa.fa-tools
+                  h2.h4 Friendly API & Library
                   p.mb-0
-                    | Paragraph of text beneath the heading to explain the heading. Here is just a bit more text.
+                    | Fully documented RESTful API and NPM library. Quick start the travel in easynotify by following the tutorial in demo page.
                 .col.mb-5.mb-md-0.h-100
-                  .feature.bg-primary.bg-gradient.text-white.rounded-3.mb-3
+                  .feature.bg-gradient.text-white.rounded-2.mb-3.shadow
                     i.bi.bi-toggles2
-                  h2.h5 Featured title
+                  h2.h4 High Scalability
                   p.mb-0
-                    | Paragraph of text beneath the heading to explain the heading. Here is just a bit more text.
+                    | Thousands of user? No problem. We sent ten thousands of notifications in 15 minutes.
                 .col.h-100
-                  .feature.bg-primary.bg-gradient.text-white.rounded-3.mb-3
-                    i.bi.bi-toggles2
-                  h2.h5 Featured title
+                  .feature.bg-gradient.text-white.rounded-2.mb-3.shadow
+                    i.fas.fa-chart-pie
+                  h2.h4 Real-Time Reporting
                   p.mb-0
-                    | Paragraph of text beneath the heading to explain the heading. Here is just a bit more text.
+                    | View delivery and conversion performance for every message.
 
