@@ -83,7 +83,8 @@ const genWebpushJob = async (notificationId, channelId) => {
     console.log(job.clients);
     await Cache.hincrby('pushJobs', notificationId, 1);
     await rabbitmq.publishMessage(REALTIME_EXCHANGE, 'webpush', JSON.stringify(job), jobOptions);
-    if (SEND_TO_SQS) {
+
+    if (SEND_TO_SQS === 'true') {
       await SQS.sendMessage('Consume job on rabbitmq');
     }
     i = last;
