@@ -4,6 +4,7 @@ html(lang='en')
     meta(charset='utf-8')
     meta(name='viewport' content='width=device-width, initial-scale=1')
     title Easy Notify | Register
+    link(rel='icon' type='image/x-icon' href='/assets/img/favicon.ico')
     // Google Font: Source Sans Pro
     link(rel='stylesheet' href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback')
     // Font Awesome
@@ -95,22 +96,22 @@ html(lang='en')
           p.login-box-msg Create a new account
           form#signup-form(action='' method='post')
             .input-group.mb-3
-              input.form-control(type='text' name='name' placeholder='Full name')
+              input.form-control(type='text' name='name' placeholder='Name' required)
               .input-group-append
                 .input-group-text
                   span.fas.fa-user
             .input-group.mb-3
-              input.form-control(type='email' name='email' placeholder='Email')
+              input.form-control(type='email' name='email' placeholder='Email' required)
               .input-group-append
                 .input-group-text
                   span.fas.fa-envelope
             .input-group.mb-3
-              input.form-control(type='password' name='password' placeholder='Password')
+              input.form-control(type='password' name='password' placeholder='Password' required)
               .input-group-append
                 .input-group-text
                   span.fas.fa-lock
             .input-group.mb-1
-              input.form-control(type='password' name='checkPassword' placeholder='Retype password')
+              input.form-control(type='password' name='checkPassword' placeholder='Retype password' required)
               .input-group-append
                 .input-group-text
                   span.fas.fa-lock
@@ -121,14 +122,14 @@ html(lang='en')
         #errorModal.modal.fade.bd-example-modal-sm(role='dialog')
           .modal-dialog.modal-dialog-centered.modal-sm
             .modal-content
-              .modal-header
+              .modal-header.py-2
                 h4.modal-title(style='color: #BA3240; font-weight:800;') Error
                 button.close(type='button' data-dismiss='modal') ×
               .modal-body.justify-content-center.align-items-center
-                p#errorMessage.login-box.py-0
+                p#errorMessage.login-box.w-100.py-0
               // Footer
               .modal-footerd.row.justify-content-center
-                button.btn.custom-btn(type='button' data-dismiss='modal') Close
+                button.btn.custom-btn.mb-1(type='button' data-dismiss='modal') Close
         // jQuery
         script(src='/vendor/plugins/jquery/jquery.min.js')
         // Bootstrap 4
@@ -141,7 +142,7 @@ html(lang='en')
             event.preventDefault();
             let data = new FormData(event.target);
             if( data.get('password') != data.get('checkPassword')) {
-                $('.modal-body p').text('Confirm Password is Not Correct');
+                $('.modal-body p').text('Confirm password is not correct');
                 $('#errorModal').modal('show');   
                 return      
             }

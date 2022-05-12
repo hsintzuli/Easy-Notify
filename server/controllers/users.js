@@ -3,19 +3,24 @@ const User = require('../models/users');
 const moment = require('moment');
 const Order = require('../models/orders');
 const Subscription = require('../models/subscriptions');
+const { UserSchema } = require('../../utils/validators');
 const { TAPPAY_PARTNER_KEY, TAPPAY_MERCHANT_ID } = process.env;
+
+const validateUser = async (req, res, next) => {
+  try {
+    const validated = await UserSchema.validateAsync(req.body);
+    req.body = validated;
+    return next();
+  } catch (error) {
+    return res.status(400).json({ error: error.message });
+  }
+};
 
 const signUp = async (req, res) => {
   const { name, email, password } = req.body;
-
-  if (!name || !email || !password) {
-    res.status(400).send({ error: 'name, email and password are required.' });
-    return;
-  }
-
   const result = await User.signUp(name, email, password);
   if (result.error) {
-    res.status(403).send({ error: 'Incorrect input.' });
+    res.status(403).send({ error: 'The email is already in use' });
     return;
   }
 
@@ -140,6 +145,7 @@ const getNewSubscribers = async (req, res) => {
 };
 
 module.exports = {
+  validateUser,
   signUp,
   signIn,
   createOrder,

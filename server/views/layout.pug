@@ -73,10 +73,13 @@ body.sidebar-mini(style='height: auto')
       li.nav-item
         a.nav-link(data-widget='pushmenu' href='#' role='button')
           i.fas.fa-bars
-      li.nav-item.d-none.d-sm-inline-block
-        a.nav-link(href='#') Home
     // Right navbar links
     ul.navbar-nav.ml-auto
+      li.nav-item
+        a.nav-link(href='/management/signout')
+          | Sign Out
+          i.fas.fa-sign-out-alt.ml-1
+          
       li.nav-item
         a.nav-link(data-widget='fullscreen' href='#' role='button')
           i.fas.fa-expand-arrows-alt
@@ -133,4 +136,5 @@ body.sidebar-mini(style='height: auto')
   footer.main-footer
     // To the right
     .float-right.d-none.d-sm-inline An easy way to notify
+
   

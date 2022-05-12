@@ -4,6 +4,7 @@ html(lang='en')
     meta(charset='utf-8')
     meta(name='viewport' content='width=device-width, initial-scale=1')
     title Easy Notify | Sign in
+    link(rel='icon' type='image/x-icon' href='/assets/img/favicon.ico')
     // Google Font: Source Sans Pro
     link(rel='stylesheet' href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback')
     // Font Awesome
@@ -88,20 +89,15 @@ html(lang='en')
           p.login-box-msg Sign in to start
           form#signin-form(action='' method='post')
             .input-group.mb-3
-              input.form-control(type='email' name='email' placeholder='Email')
+              input.form-control(type='email' name='email' placeholder='Email' required)
               .input-group-append
                 .input-group-text
                   span.fas.fa-envelope
             .input-group.mb-3
-              input.form-control(type='password' name='password' placeholder='Password')
+              input.form-control(type='password' name='password' placeholder='Password' required)
               .input-group-append
                 .input-group-text
                   span.fas.fa-lock
-            .row.mb-3
-              .col-8
-                .icheck-primary
-                  input#remember(type='checkbox')
-                  label(for='remember')  Remember Me 
             // /.col
             .row.justify-content-center.mb-3
               .col-4
@@ -115,14 +111,14 @@ html(lang='en')
         #errorModal.modal.fade.bd-example-modal-sm(role='dialog')
           .modal-dialog.modal-dialog-centered.modal-sm
             .modal-content
-              .modal-header
+              .modal-header.py-2
                 h4.modal-title(style='color: #BA3240; font-weight:800;') Error
                 button.close(type='button' data-dismiss='modal') ×
               .modal-body.justify-content-center.align-items-center
-                p#errorMessage.login-box.py-0
+                p#errorMessage.login-box.w-100.py-0
               // Footer
               .modal-footerd.row.justify-content-center
-                button.btn.custom-btn(type='button' data-dismiss='modal') Close
+                button.btn.custom-btn.mb-1(type='button' data-dismiss='modal') Close
         // jQuery
         script(src='/vendor/plugins/jquery/jquery.min.js')
         // Bootstrap 4

@@ -6,10 +6,16 @@ const homePage = async (req, res) => {
 };
 
 const register = async (req, res) => {
+  if (req.session.user) {
+    return res.redirect('/management');
+  }
   res.render('register');
 };
 
 const signIn = async (req, res) => {
+  if (req.session.user) {
+    return res.redirect('/management');
+  }
   res.render('signIn');
 };
 

@@ -26,6 +26,7 @@
     "express": "^4.17.3",
     "express-session": "^1.17.2",
     "ioredis": "^5.0.4",
+    "joi": "^17.6.0",
     "lodash": "^4.17.21",
     "moment": "^2.29.2",
     "mongoose": "^6.2.10",

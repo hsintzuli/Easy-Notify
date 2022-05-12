@@ -4,6 +4,11 @@ const Channel = require('../../models/channels');
 const Notification = require('../../models/notifications');
 const Subscription = require('../../models/subscriptions');
 
+const signOut = async (req, res) => {
+  req.session.destroy();
+  return res.redirect('/');
+};
+
 const apps = async (req, res) => {
   const { user } = req.session;
   console.log(user);
@@ -100,6 +105,7 @@ const reportNotification = async (req, res) => {
 };
 
 module.exports = {
+  signOut,
   apps,
   channels,
   sendNotificaton,
