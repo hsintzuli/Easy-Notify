@@ -17,10 +17,9 @@ const getRoomByChannel = (channelId) => {
   const room = io.sockets.adapter.rooms.get(channelId) || new Set();
   return room;
 };
-
-io.adapter(redis({ host: CACHE_HOST, port: CACHE_PORT, user: CACHE_USER, password: CACHE_PASSWORD }));
 serverId = io.engine.generateId();
 console.log('Socket Server Initialize!, ID:', serverId);
+io.adapter(redis({ host: CACHE_HOST, port: CACHE_PORT, user: CACHE_USER, password: CACHE_PASSWORD }));
 
 // Authentication middleware for admin client - express server
 io.use((socket, next) => {
@@ -39,6 +38,12 @@ io.on('connection', async (socket) => {
   if (socket.role === 1) {
     console.log('Connect with websocket worker!!!!! \n');
     socket.emit('connection', 'Hello worker, ' + socket.id);
+    socket.on('checkRoom', (data) => {
+      let { roomId, notificationId } = data;
+      const room = getRoomByChannel(roomId);
+      socket.emit('roomNums', { roomId, notificationId, clientsNum: room.size });
+    });
+
     socket.on('push', (data) => {
       console.log('Receive push event from websocket worker', data);
       let { roomId, payload } = data;
@@ -66,17 +71,7 @@ io.on('connection', async (socket) => {
       const { channel_id } = data;
       console.log('Socket client unsubscribe room', channel_id);
       socket.leave(channel_id);
-      await Cache.hset(`clientNums{${channel_id}}`, serverId, getRoomByChannel(room).size);
-    });
-
-    socket.on('disconnecting', async (reason) => {
-      const rooms = socket.rooms;
-      for (let room of rooms) {
-        if (Cache.hget(`clientNums{${room}}`, serverId)) {
-          socket.leave(room);
-          await Cache.hset(`clientNums{${room}}`, serverId, getRoomByChannel(room).size);
-        }
-      }
+      await Cache.hset(`clientNums{${channel_id}}`, serverId, getRoomByChannel(channel_id).size);
     });
 
     socket.on('disconnect', async (reason) => {

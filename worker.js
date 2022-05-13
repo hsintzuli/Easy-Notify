@@ -15,7 +15,6 @@ async function fnConsumer(msg, ack) {
   const { notificationId, channelId, clients } = JSON.parse(msg.content);
   console.log('Webpush worker receive job', notificationId);
 
-  // TODO: if this worker is the first one to process the notification, update status
   try {
     const updated = await Notification.updateNotificationStatus(notificationId, { status: NOTIFICATION_STATUS.DELEVERED });
     if (!updated) {

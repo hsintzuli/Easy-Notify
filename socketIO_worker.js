@@ -32,17 +32,32 @@ socket.on('connect', async () => {
     console.log(data);
   });
 
+  socket.on('roomNums', async (data) => {
+    const { roomId, notificationId, clientsNum } = data;
+    console.log(`Receive the numbers of clients in channel ${roomId} from socket server`);
+    try {
+      await Notification.updateNotificationTargetsNum(notificationId, clientsNum);
+    } catch (error) {
+      console.error('Update target clients error', error);
+    }
+  });
+
   socket.on('ack', async (data) => {
     let { notificationId, clientsNum } = data;
     let hourToCheck = getCheckHour(false);
-    await Cache.hset(`sentNum:${hourToCheck}`, notificationId, clientsNum);
-    await Notification.updateNotificationStatus(notificationId, { status: NOTIFICATION_STATUS.COMPLETE });
+    try {
+      await Cache.hincrby(`sentNum:${hourToCheck}`, notificationId, clientsNum);
+      await Notification.updateNotificationStatus(notificationId, { status: NOTIFICATION_STATUS.COMPLETE });
+    } catch (error) {
+      console.error('Update sent clients error', error);
+    }
   });
 });
 
 async function fnConsumer(msg, ack) {
   const { notificationId, channelId } = JSON.parse(msg.content);
   console.log('Websocket worker receive job', notificationId);
+  socket.emit('checkRoom', { roomId: channelId, notificationId });
 
   try {
     // Update notification status in mysql
@@ -60,7 +75,7 @@ async function fnConsumer(msg, ack) {
       config: msgContent.config,
     };
     socket.emit('push', { roomId: channelId, payload });
-    console.log('send msg to', channelId);
+    console.log('Successfully send push requirment to socket server about room:', channelId);
     ack(true);
   } catch (error) {
     console.error(error);

@@ -100,11 +100,11 @@ const genWebsocketJob = async (notificationId, channelId) => {
     contentType: 'application/json',
   };
 
-  const clients = await Cache.hgetall(`clientNums{${channelId}}`);
-  const targets = Object.values(clients);
-  const targets_num = targets.reduce((prev, curr) => prev + parseInt(curr), 0);
-  console.log(`Update notfication ${notificationId} from websocket with targets_num: `, targets_num);
-  await Notification.updateNotificationStatus(notificationId, { targets_num });
+  // const clients = await Cache.hgetall(`clientNums{${channelId}}`);
+  // const targets = Object.values(clients);
+  // const targets_num = targets.reduce((prev, curr) => prev + parseInt(curr), 0);
+  // console.log(`Update notfication ${notificationId} from websocket with targets_num: `, targets_num);
+  // await Notification.updateNotificationStatus(notificationId, { targets_num });
 
   console.log(REALTIME_EXCHANGE, job);
   await rabbitmq.publishMessage(REALTIME_EXCHANGE, 'websocket', JSON.stringify(job), jobOptions);

@@ -60,6 +60,12 @@ const updateNotificationNum = async (notification_id, sent_num, receive_num) => 
   return updated;
 };
 
+const updateNotificationTargetsNum = async (notification_id, targets_num) => {
+  const [results] = await pool.query('UPDATE notifications SET targets_num = targets_num + ? WHERE id = ?', [notification_id, targets_num]);
+  const updated = results.affectedRows > 0;
+  return updated;
+};
+
 const getMaxOnlineClient = async (user_id) => {
   const [results] = await pool.query(
     `SELECT MAX(n.targets_num) AS max_online_clients FROM users AS u INNER Join apps AS a ON  a.user_id = u.id  
@@ -97,6 +103,7 @@ module.exports = {
   getNotificationById,
   deleteNotification,
   updateNotificationStatus,
+  updateNotificationTargetsNum,
   updateNotificationNum,
   getMaxOnlineClient,
   getNotificationSent,
