@@ -29,7 +29,6 @@ async function fnConsumer(msg, ack) {
       icon: msgContent.icon,
       config: msgContent.config,
     };
-    console.log('MongoContent', msgContent);
     const pushOption = {
       vapidDetails: msgContent.vapid_detail,
       TTL: DEFAULT_TTL,
