@@ -69,7 +69,7 @@ const updateNotificationTargetsNum = async (notification_id, targets_num) => {
 const getMaxOnlineClient = async (user_id) => {
   const [results] = await pool.query(
     `SELECT MAX(n.targets_num) AS max_online_clients FROM users AS u INNER Join apps AS a ON  a.user_id = u.id  
-    INNER Join channels AS c ON a.id=c.app_id = c.id INNER Join notifications AS n ON n.channel_id = c.id  AND n.type = 'websocket'
+    INNER Join channels AS c ON a.id = c.app_id INNER Join notifications AS n ON n.channel_id = c.id  AND n.type = 'websocket'
   WHERE u.id = ?;`,
     user_id
   );
