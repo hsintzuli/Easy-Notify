@@ -9,8 +9,6 @@ block content
   link(rel='stylesheet' href='/vendor/plugins/icheck-bootstrap/icheck-bootstrap.min.css')
   // Tempusdominus Bootstrap 4
   link(rel='stylesheet' href='/vendor/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css')
-  // Select2
-  link(rel='stylesheet' href='/vendor/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css')
   link(rel='stylesheet' href='https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css')
   style.
       .btn-sm {
@@ -34,30 +32,30 @@ block content
                     .col-sm-6
                       .form-group
                         label APP
-                        select.form-control.selectpicker#app-select(name='app' onchange='changeApp()')
+                        select.form-control.selectpicker#app-select(name='app' onchange='changeApp()' required)
                           each app in apps
                             option=app
                     .col-sm-6
                       .form-group
                         label Channel
-                        select.form-control.selectpicker#channel-select(name='channel')
+                        select.form-control.selectpicker#channel-select(name='channel' required)
                           //- each channel in channels
                           //-   option=channel.name
                   .row
                     .col-sm-6                  
                       .form-group
                         label(for='input-name') Name
-                        input#input-title.form-control(type='text' name='name' placeholder='Name For Notification')
+                        input#input-title.form-control(type='text' name='name' placeholder='Name For Notification' required)
                     .col-sm-6                  
                       .form-group
                         label(for='input-title') Title
-                        input#input-title.form-control(type='text' name='title' placeholder='Enter Notification Title')
+                        input#input-title.form-control(type='text' name='title' placeholder='Enter Notification Title' required)
                   .form-group
                     label(for='input-body') Body
-                    input#input-body.form-control(type='text' name='body' placeholder='Enter Notification Body')
+                    input#input-body.form-control(type='text' name='body' placeholder='Enter Notification Body' required)
                   .form-group
                     label(for='send-type') Send-Type
-                    select.selectpicker#send-type.form-control(name='sendType')
+                    select.selectpicker#send-type.form-control(name='sendType' required)
                       option websocket
                       option webpush
                   .form-group
@@ -72,7 +70,7 @@ block content
                   .form-group
                     label Date and time:
                     #reservationdatetime.input-group.date(data-target-input='nearest')
-                      input.form-control.datetimepicker-input(type='text' name='sendTime' data-target='#reservationdatetime')
+                      input.form-control.datetimepicker-input(type='text' name='sendTime' data-target='#reservationdatetime' required)
                       .input-group-append(data-target='#reservationdatetime' data-toggle='datetimepicker')
                         .input-group-text
                           i.fa.fa-calendar
@@ -93,13 +91,25 @@ block content
   script(src='/vendor/plugins/inputmask/jquery.inputmask.min.js')
   // date-range-picker
   script(src='/vendor/plugins/daterangepicker/daterangepicker.js')
+  script(src='https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js')
   // Tempusdominus Bootstrap 4
   script(src='/vendor/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js')
-  // SweetAlert2
-  script(src='/vendor/plugins/sweetalert2/sweetalert2.min.js')
   script(src='https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js')
+  script. 
+    var channelGroupByApp = JSON.parse('!{JSON.stringify(channelGroupByApp)}');
   script.
     $(function () {
+      console.log(channelGroupByApp)
+        if (!channelGroupByApp || !Object.keys(channelGroupByApp) ||　!Object.keys(channelGroupByApp).length) {
+            return Swal.fire({
+                      icon: 'info',
+                      title: 'Not yet have a channel',
+                      text: 'Create a channel now',
+                      width: '450px',
+                    }).then(function() {
+                      window.location = `/management/apps`;
+                    });
+        }
         $('.nav-sidebar a').removeClass('active')
         $('#sending-li').addClass('menu-open')
         $('#sending-nav').addClass('active')
@@ -111,21 +121,22 @@ block content
     });
 
     function pushSuccess(notification_id) {
-            Swal.fire({
+            return Swal.fire({
               icon: 'success',
               title: 'Create Notification successfully',
               text: 'Click to view notification report.',
               showCancelButton: true
-            }).then(function() {
-              window.location = `/management/reports/notifications?id=${notification_id}`;
+            }).then(function(result) {
+              if (result.isConfirmed) {
+                window.location = `/management/reports/notifications?id=${notification_id}`;
+              }
             });
-        }
-    function pushFail() {
+    }
+    function pushFail(error) {
             Swal.fire({
               icon: 'error',
               title: 'Create Notification failed',
+              text: error
             })
-    }
-  script. 
-    var channelGroupByApp = JSON.parse('!{JSON.stringify(channelGroupByApp)}');
+      }
   script(src='/assets/js/notification.js')

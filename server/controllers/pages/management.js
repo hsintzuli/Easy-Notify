@@ -97,11 +97,12 @@ const reports = async (req, res) => {
 
 const reportNotification = async (req, res) => {
   const { user } = req.session;
+  const { id } = req.query;
   if (!user) {
     return res.redirect('/signin');
   }
 
-  res.render('notification-reports', { user });
+  res.render('notification-reports', { user, id });
 };
 
 module.exports = {

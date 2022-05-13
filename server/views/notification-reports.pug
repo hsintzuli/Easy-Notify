@@ -15,87 +15,88 @@ block content
     // Content Header (Page header)
     .content-header
       .container-fluid
-        .row.mb-2
-          .col-sm-6
-            h1.m-0 Notification Report
-          .row.col-12.justify-content-center.align-items-center
-            .col-10
-              .card#report-card(style='display:none')
-                .card-header.container-fluid
+          .col-sm-10
+            h1.m-0=`Notification Report / ID - ${id}`
+    section.content
+      .container-fluid
+        .row.col-12.justify-content-center.align-items-center
+          .col-10
+            .card#report-card(style='display:none')
+              .card-header.container-fluid
+                .row.justify-content-center.align-items-center
+                  .col-11.row.justify-content-center.align-items-center
+                    .col-8.d-flex.align-items-center
+                      h3.m-0#notification-name.float-left.font-weightbold
+                      span.ml-2.badge.badge-success.h-50#status-badge
+                        h6.m-0
+                    .card-tools.col-4
+                      button#edit-btn.float-right.btn.btn-outline-secondary(type="submit" form="myform") Edit
+                      button#delete-btn.float-right.btn.btn-outline-danger.mx-2 Delete
+              // /.card-header
+              .card-body
+                .container-fluid
                   .row.justify-content-center.align-items-center
-                    .col-11.row.justify-content-center.align-items-center
-                      .col-8.d-flex.align-items-center
-                        h3.m-0#notification-name.float-left.font-weightbold
-                        span.ml-2.badge.badge-success.h-50#status-badge
-                          h6.m-0
-                      .card-tools.col-4
-                        button#edit-btn.float-right.btn.btn-outline-secondary(type="submit" form="myform") Edit
-                        button#delete-btn.float-right.btn.btn-outline-danger.mx-2 Delete
-                // /.card-header
-                .card-body
-                  .container-fluid
-                    .row.justify-content-center.align-items-center
-                      .col-11.border.rounded
-                        form#myform.p-2(readonly='')
-                          .row
-                            .col-md-6
-                              .form-group
-                                label.col-form-label.col-form-label-lg(for='input-title') Title
-                                input#input-title.form-control.form-input(type='text' name='title' value='' disabled='')
-                            .col-md-6
-                              .form-group
-                                label.col-form-label.col-form-label-lg(for='input-body') Body
-                                input#input-body.form-control.form-input(type='text' name='body' value='' disabled='')
-                          .row
-                            .col-sm-6
-                              .form-group
-                                label.col-form-label.col-form-label-lg(for='send-type') Send-Type
-                                select#send-type.custom-select.form-control.form-input(name='sendType' value='websocket' disabled='')
-                                  option#websocket websocket
-                                  option#webpush webpush
-                            .col-sm-6
-                              .form-group.row
-                                label.col-form-label.float-left.col-form-label-lg(for='input-body') Icon
-                                textarea#input-icon.form-control.form-input(name='icon' disabled='')
-                          .row
-                            .col-sm-6
-                              label.form-inline.col-form-label.col-form-label-lg(for='time-type') Send-Time
-                              .form-check.form-check-inline
-                                input#send-realtime.form-check-input.form-input(type='radio' name='sendTimeOpt' value='realtime' checked='' disabled='')
-                                label.form-check-label(for='send-realtime') Realtime
-                              .form-check.form-check-inline
-                                input#send-scheduled.form-check-input.form-input(type='radio' name='sendTimeOpt' value='scheduled' disabled='')
-                                label.form-check-label(for='send-scheduled') Scheduled
-                            .col-sm-6
-                              .form-group
-                                label.col-form-label.col-form-label-lg Date and time:
-                                #datetimepicker1.input-group.date(data-target-input='nearest')
-                                  input.form-control.datetimepicker-input.form-input(type='text' name='sendTime' data-target='#datetimepicker1' disabled='')
-                                  .input-group-append(data-target='#datetimepicker1' data-toggle='datetimepicker')
-                                    .input-group-text
-                                      i.fa.fa-calendar
-                          .row 
-                            .col-sm-12
-                              .form-group
-                                label(for='input-config') Config
-                                  button.btn.btn-sm.shadow-sm.py-0.ml-2#json-btn View in JSON
-                                textarea#input-config.form-control(type='text' name='config' placeholder='Customized Configuration Section')
-                          // /.card-body
-                      #result.col-11.mt-1(style='display: none;')
-                        .p-3
-                          h4
-                            | Results 
-                            a.btn.ml-1.btn-sm.btn-outline-secondary#update-btn
-                              i.fas.fa-sync
-                            small.float-right#updateTime Update Time: 2/10/2014
-                        .container-fluid.mt-2
-                          .row
-                            .col-6
-                              .container
-                                canvas#deliveryRate.chart.donutchart
-                            .col-6
-                              .container
-                                canvas#receivedRate.chart.donutchart
+                    .col-11.border.rounded
+                      form#myform.p-2(readonly='')
+                        .row
+                          .col-md-6
+                            .form-group
+                              label.col-form-label.col-form-label-lg(for='input-title') Title
+                              input#input-title.form-control.form-input(type='text' name='title' value='' disabled='')
+                          .col-md-6
+                            .form-group
+                              label.col-form-label.col-form-label-lg(for='input-body') Body
+                              input#input-body.form-control.form-input(type='text' name='body' value='' disabled='')
+                        .row
+                          .col-sm-6
+                            .form-group
+                              label.col-form-label.col-form-label-lg(for='send-type') Send-Type
+                              select#send-type.custom-select.form-control.form-input(name='sendType' value='websocket' disabled='')
+                                option#websocket websocket
+                                option#webpush webpush
+                          .col-sm-6
+                            .form-group.row
+                              label.col-form-label.float-left.col-form-label-lg(for='input-body') Icon
+                              textarea#input-icon.form-control.form-input(name='icon' disabled='')
+                        .row
+                          .col-sm-6
+                            label.form-inline.col-form-label.col-form-label-lg(for='time-type') Send-Time
+                            .form-check.form-check-inline
+                              input#send-realtime.form-check-input.form-input(type='radio' name='sendTimeOpt' value='realtime' checked='' disabled='')
+                              label.form-check-label(for='send-realtime') Realtime
+                            .form-check.form-check-inline
+                              input#send-scheduled.form-check-input.form-input(type='radio' name='sendTimeOpt' value='scheduled' disabled='')
+                              label.form-check-label(for='send-scheduled') Scheduled
+                          .col-sm-6
+                            .form-group
+                              label.col-form-label.col-form-label-lg Date and time:
+                              #datetimepicker1.input-group.date(data-target-input='nearest')
+                                input.form-control.datetimepicker-input.form-input(type='text' name='sendTime' data-target='#datetimepicker1' disabled='')
+                                .input-group-append(data-target='#datetimepicker1' data-toggle='datetimepicker')
+                                  .input-group-text
+                                    i.fa.fa-calendar
+                        .row 
+                          .col-sm-12
+                            .form-group
+                              label(for='input-config') Config
+                                button.btn.btn-sm.shadow-sm.py-0.ml-2#json-btn View in JSON
+                              textarea#input-config.form-control.form-input(type='text' name='config' placeholder='Customized Configuration Section')
+                    // /.card-body
+                    #result.col-11.mt-1(style='display: none;')
+                      .p-3
+                        h4
+                          | Results 
+                          a.btn.ml-1.btn-sm.btn-outline-secondary#update-btn
+                            i.fas.fa-sync
+                          small.float-right#updateTime Update Time: 2/10/2014
+                      .container-fluid.mt-2
+                        .row
+                          .col-6
+                            .container
+                              canvas#deliveryRate.chart.donutchart
+                          .col-6
+                            .container
+                              canvas#receivedRate.chart.donutchart
   script(src='/vendor/plugins/sweetalert2/sweetalert2.min.js') 
   script(src='/vendor/plugins/moment/moment.min.js') 
   script(src='/vendor/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js')

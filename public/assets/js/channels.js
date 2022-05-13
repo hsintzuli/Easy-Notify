@@ -1,5 +1,15 @@
 let searchParams = new URLSearchParams(window.location.search);
 const app_id = searchParams.get('app_id');
+const Toast = Swal.mixin({
+  toast: true,
+  position: 'center-end',
+  showConfirmButton: false,
+  timer: 1500,
+  didOpen: (toast) => {
+    toast.addEventListener('mouseenter', Swal.stopTimer);
+    toast.addEventListener('mouseleave', Swal.resumeTimer);
+  },
+});
 
 $(document).ready(function () {
   $('.nav-sidebar a').removeClass('active');
@@ -14,6 +24,10 @@ function copyToClipboard(element) {
   $temp.val($(element).text()).select();
   document.execCommand('copy');
   $temp.remove();
+  Toast.fire({
+    icon: 'success',
+    title: 'Copy successfully',
+  });
 }
 
 function channelUpdate(event) {
@@ -28,6 +42,11 @@ function channelUpdate(event) {
     })
     .catch((err) => {
       console.log(err);
+      Toast.fire({
+        icon: 'fail',
+        title: 'Rotate channel fail',
+        text: err.response.data.error,
+      });
     });
 }
 
@@ -50,6 +69,11 @@ function deleteChannel(event) {
     })
     .catch((err) => {
       console.log(err);
+      Toast.fire({
+        icon: 'fail',
+        title: 'Delete channel fail',
+        text: err.response.data.error,
+      });
     });
 }
 
@@ -67,6 +91,12 @@ function channelCreate(event) {
     })
     .catch((err) => {
       console.log(err);
+      Swal.fire({
+        icon: 'error',
+        title: 'Create Channel fail',
+        text: err.response.data.error,
+        width: '450px',
+      });
     });
 }
 

@@ -6,26 +6,37 @@ const App = require('../models/apps');
 const Cache = require('../../utils/cache');
 const NotificationJobs = require('../../utils/notificationJobs');
 const { generateValidDatetimeRange, diffFromNow } = require('../../utils/util');
+const { NotificationSchema } = require('../../utils/validators');
 const UPDATE_LIMITE_INTERVAL = 60 * 3; // only notification that is scheduled exceed 3 minutes from now can be update
+
+const validateNotification = async (req, res, next) => {
+  console.log(req.body);
+  try {
+    const validated = await NotificationSchema.validateAsync(req.body, {
+      allowUnknown: true,
+    });
+    req.body = validated;
+    return next();
+  } catch (error) {
+    return res.status(400).json({ error: error.message });
+  }
+};
 
 const pushNotification = async (req, res) => {
   const { channel } = req.locals;
   const { scheduledType } = req.params;
-  console.log(req.body);
-  const { name, title, body, sendType, icon, config, sendTime } = req.body;
-  console.log('Receive push notification:', name);
-  console.log(channel);
+  let { name, title, body, sendType, icon, config, sendTime } = req.body;
+  console.log('Receive push notification:', req.body);
 
   // Check scheduledType & sendType are valid types
-  if (!scheduledType || !sendType || !SCHEDULED_TYPE.has(scheduledType) || !SEND_TYPE.has(sendType)) {
-    res.status(400).send({ error: 'Wrong ScheduledType or SendType' });
+  if (!scheduledType || !SCHEDULED_TYPE.has(scheduledType)) {
+    res.status(400).json({ error: 'Wrong ScheduledType' });
     return;
   }
 
-  // Check inputs
-  if (!name || !title || !body) {
-    res.status(400).send({ error: 'Wrong input' });
-    return;
+  // Convert config to string type
+  if (config && typeof config === 'object') {
+    config = JSON.stringify(config);
   }
 
   // Save notification content to Mongo DB and use _id of Mongo as notification id
@@ -183,6 +194,7 @@ const getNotificationsByApp = async (req, res, next) => {
 };
 
 module.exports = {
+  validateNotification,
   pushNotification,
   getNotifications,
   checkUpdateAndDelete,

@@ -9,11 +9,25 @@ function onSubmmit(event) {
       default_icon: data.get('icon'),
     })
     .then((res) => {
-      console.log(res.data);
-      // window.location.href = '/management/apps';
+      return Swal.fire({
+        icon: 'success',
+        title: 'Create App successfully',
+        text: 'Click to view all apps.',
+        confirmButtonText: 'OK',
+        width: '450px',
+      });
+    })
+    .then(function () {
+      window.location.href = '/management/apps';
     })
     .catch((err) => {
       console.log(err);
+      Swal.fire({
+        icon: 'error',
+        title: 'Create App fail',
+        text: err.response.data.error,
+        width: '450px',
+      });
     });
 }
 

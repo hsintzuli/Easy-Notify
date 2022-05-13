@@ -1,4 +1,14 @@
 let selectedApp;
+const Toast = Swal.mixin({
+  toast: true,
+  position: 'top-end',
+  showConfirmButton: false,
+  timer: 1500,
+  didOpen: (toast) => {
+    toast.addEventListener('mouseenter', Swal.stopTimer);
+    toast.addEventListener('mouseleave', Swal.resumeTimer);
+  },
+});
 
 function changeApp() {
   const app = $('#app-select').val();
@@ -44,7 +54,7 @@ function onSubmmit(event) {
     })
     .catch((err) => {
       console.log(err);
-      pushFail();
+      pushFail(err.response.data.error);
     });
 }
 
@@ -61,7 +71,10 @@ $('#json-btn').click((event) => {
     textedJson = JSON.stringify(text, undefined, 2);
     $('#input-config').val(textedJson);
   } catch (error) {
-    alert('Invalid JSON Format');
+    Toast.fire({
+      icon: 'fail',
+      title: 'Invalid JSON Format',
+    });
   }
 });
 

@@ -35,7 +35,7 @@ let sentChart = new Chart(document.getElementById('deliveryRate'), {
         text: '75%', //set as you wish
       },
     },
-    cutoutPercentage: 70,
+    cutoutPercentage: 75,
     legend: {
       display: true,
       labels: {
@@ -64,7 +64,7 @@ let deliveredChart = new Chart(document.getElementById('receivedRate'), {
         text: '75%',
       },
     },
-    cutoutPercentage: 70,
+    cutoutPercentage: 75,
     legend: {
       display: true,
       labels: {
@@ -248,6 +248,20 @@ function pushFail() {
     title: 'Update failed',
   });
 }
+
+$('#json-btn').click((event) => {
+  event.preventDefault();
+  let text = $('#input-config').val();
+  let textedJson;
+  try {
+    text = JSON.parse($('#input-config').val());
+    console.log(text);
+    textedJson = JSON.stringify(text, undefined, 2);
+    $('#input-config').val(textedJson);
+  } catch (error) {
+    console.log(error);
+  }
+});
 
 function onDelete(event) {
   event.preventDefault();

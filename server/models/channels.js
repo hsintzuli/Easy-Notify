@@ -93,7 +93,7 @@ const getChannels = async (app_id) => {
 
 const getChannelsByUser = async (user_id) => {
   const [results] = await pool.query(
-    `SELECT c.id, c.name, a.id AS app_id, a.name AS app_name, a.default_icon AS icon FROM notify.channels AS c INNER JOIN notify.apps AS a on c.app_id = a.id  WHERE a.user_id = ? AND c.deleted_dt iS NULL `,
+    `SELECT c.id, c.name, a.id AS app_id, a.name AS app_name, a.default_icon AS icon FROM notify.channels AS c INNER JOIN notify.apps AS a on c.app_id = a.id  AND a.archived_dt is NULL WHERE a.user_id = ? AND c.deleted_dt iS NULL `,
     user_id
   );
   return results;

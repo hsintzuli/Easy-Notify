@@ -1,9 +1,23 @@
 require('dotenv').config();
 const App = require('../models/apps');
 const Channel = require('../models/channels');
+const { AppSchema, ChannelSchema } = require('../../utils/validators');
 const KET_EXPIRE_S = 60 * 60 * 24 * 7;
 
+const validateApp = async (req, res, next) => {
+  try {
+    const validated = await AppSchema.validateAsync(req.body, {
+      allowUnknown: true,
+    });
+    req.body = validated;
+    return next();
+  } catch (error) {
+    return res.status(400).json({ error: error.message });
+  }
+};
+
 const createApp = async (req, res) => {
+  console.log('Post App:', req.body);
   const { user } = req.session;
   const { name, description, contact_email, default_icon } = req.body;
   console.log(`${user.id} create app: ${name}`);
@@ -17,7 +31,7 @@ const archiveApp = async (req, res) => {
   console.log(`${user.id} archive app: ${app_id}`);
   const verified = await App.verifyAppWithUser(user.id, app_id);
   if (!verified) {
-    return res.status(400).json({ error: 'Incorrect user or channel id' });
+    return res.status(400).json({ error: 'Incorrect user or app id' });
   }
 
   const result = await App.archiveApp(app_id);
@@ -40,7 +54,20 @@ const getApps = async (req, res) => {
   return res.status(200).json({ data: app });
 };
 
+const validateChannel = async (req, res, next) => {
+  try {
+    const validated = await ChannelSchema.validateAsync(req.body, {
+      allowUnknown: true,
+    });
+    req.body = validated;
+    return next();
+  } catch (error) {
+    return res.status(400).json({ error: error.message });
+  }
+};
+
 const createChannel = async (req, res) => {
+  console.log('Post Channel:', req.body);
   const { user } = req.session;
   const { app_id, name } = req.body;
   const verified = await App.verifyAppWithUser(user.id, app_id);
@@ -81,9 +108,11 @@ const rotateChannelKey = async (req, res) => {
 };
 
 module.exports = {
+  validateApp,
   createApp,
   getApps,
   archiveApp,
+  validateChannel,
   createChannel,
   deleteChannel,
   rotateChannelKey,

@@ -4,7 +4,17 @@ $(document).ready(function () {
   let start = moment().subtract(1, 'months');
   let end = moment();
   let app_id = $('#app-select').children(':selected').attr('data-id');
-  console.log(app_id);
+  if (!app_id) {
+    return Swal.fire({
+      title: 'Not yet have an App',
+      text: 'Create an App now',
+      icon: 'info',
+      confirmButtonText: 'OK',
+      width: '450px',
+    }).then(function () {
+      window.location = `/management/create/app`;
+    });
+  }
 
   $('#reportrange').daterangepicker(
     {
@@ -103,7 +113,7 @@ $(document).ready(function () {
     table.ajax.url(`/api/1.0/notifications?app_id=${app_id}&start_date=${start}&end_date=${end}`).load();
   });
 
-  $('#report-table').on('click', 'tr', function () {
+  $('#report-table').on('click', 'tbody td', function () {
     if (table.rows().count() === 0) {
       return;
     }
