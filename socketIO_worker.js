@@ -34,7 +34,7 @@ socket.on('connect', async () => {
 
   socket.on('roomNums', async (data) => {
     const { roomId, notificationId, clientsNum } = data;
-    console.log(`Receive the numbers of clients in channel ${roomId} from socket server`);
+    console.log(`Receive the numbers of clients in channel ${roomId} from socket server`, clientsNum);
     try {
       await Notification.updateNotificationTargetsNum(notificationId, clientsNum);
     } catch (error) {

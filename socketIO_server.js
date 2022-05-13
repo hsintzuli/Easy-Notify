@@ -71,7 +71,6 @@ io.on('connection', async (socket) => {
       const { channel_id } = data;
       console.log('Socket client unsubscribe room', channel_id);
       socket.leave(channel_id);
-      await Cache.hset(`clientNums{${channel_id}}`, serverId, getRoomByChannel(channel_id).size);
     });
 
     socket.on('disconnect', async (reason) => {
