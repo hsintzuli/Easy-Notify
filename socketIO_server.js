@@ -59,8 +59,6 @@ io.on('connection', async (socket) => {
         const { channel_id } = data;
         console.log('Socket client subscribe room:', channel_id);
         socket.join(channel_id);
-        const room = getRoomByChannel(channel_id);
-        await Cache.hset(`clientNums{${channel_id}}`, serverId, room.size);
       } catch (error) {
         console.log('[error]', 'join room :', error);
         socket.emit('error', 'couldnt perform requested action');
