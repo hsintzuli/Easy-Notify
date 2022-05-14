@@ -80,7 +80,6 @@ const dashboard = async (req, res) => {
     apps: notificationSent && notificationSent.apps ? notificationSent.apps : 0,
   };
   console.log('user:', user);
-  console.log(dashboardData);
   res.render('dashboard', { user, dashboardData });
 };
 

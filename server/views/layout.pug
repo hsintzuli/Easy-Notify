@@ -59,6 +59,9 @@ head
     background-color: #a29291;
     color: #fff;
     }
+    .info a {
+      color: #fff !important;
+    }
   // jQuery
   script(src='/vendor/plugins/jquery/jquery.min.js')
   // Bootstrap 4
@@ -99,7 +102,7 @@ body.sidebar-mini(style='height: auto')
         .image
           img.img-circle.elevation-2(src='/assets/img/user.png' alt='User Image')
         .info
-          a.d-block(href='#')=(userName||" Visitor ")
+          a.d-block=(userName||" Visitor ")
       // Sidebar Menu
       nav.mt-2
         ul.nav.nav-pills.nav-sidebar.flex-column(data-widget='treeview' role='menu' data-accordion='false')

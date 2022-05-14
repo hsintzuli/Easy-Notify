@@ -24,7 +24,7 @@ const NotificationSchema = Joi.object({
   body: Joi.string().required().error(new Error('Notification body is required')),
   icon: Joi.string().max(256).allow(null, '').error(new Error('Invalid Notification Icon [Must be less less than 256 characters]')),
   sendType: Joi.string().valid('websocket', 'webpush').required().error(new Error('Invalid Send Type [Must be "webpush" or "websocket"]')),
-  sendTime: Joi.date().greater('now').error(new Error('Invalid Send Time')),
+  sendTime: Joi.date().greater('now').allow(null, '').error(new Error('Invalid Send Time')),
   config: Joi.alternatives(Joi.string(), Joi.object()).allow(null, '').error(new Error('Invalid Config Format [Must be string or JSON object]')),
 });
 

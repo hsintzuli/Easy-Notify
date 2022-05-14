@@ -71,6 +71,9 @@ html(lang='en')
     .navbar-expand .navbar-nav .nav-link {
     font-size: 1.1rem;
     }
+    .nav-logo {
+      width: 25px;
+    }
   script(src='/vendor/plugins/jquery/jquery.min.js')
   script(src='/vendor/plugins/bootstrap/js/bootstrap.bundle.min.js')
   body.d-flex.flex-column.h-100
@@ -93,11 +96,15 @@ html(lang='en')
                 a#dropdownMenuLinkropdownBlog.nav-link.dropdown-toggle(href='#' role='button' data-toggle="dropdown" aria-expanded='false') Document
                 ul.dropdown-menu.dropdown-menu-end(aria-labelledby='dropdownMenuLink')
                   li
-                    a.dropdown-item(href='https://github.com/hsintzuli/EasyNotify-Client') Client Library
+                    a.dropdown-item(href='https://github.com/hsintzuli/EasyNotify-Client')
+                      img.nav-logo.mr-2(src='assets/img/file-type-swagger.256x256.png' alt='logo')
+                      | Client Library
                   li
-                    a.dropdown-item(href='https://app.swaggerhub.com/apis-docs/nnjkm076017/EasyNotify/1.0') Server REST API
+                    a.dropdown-item(href='https://app.swaggerhub.com/apis-docs/nnjkm076017/EasyNotify/1.0') 
+                      img.nav-logo.mr-2(src='assets/img/npm-icon.png' alt='logo')
+                      | Server REST API
               li.nav-item.login
-                a.nav-link(href='/signin') Sign In
+                a.nav-link(href='/signin')=btnString
     block content 
     // Footer
     footer.bg-dark.py-4.mt-auto

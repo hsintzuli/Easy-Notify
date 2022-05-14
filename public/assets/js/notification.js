@@ -31,9 +31,7 @@ function onSubmmit(event) {
 
   let data = new FormData(event.target);
   const channel_id = data.get('channel').split(']-').pop();
-  console.log('channel_id', channel_id);
-  console.log('sendTime', data.get('sendTime'));
-  const time = new Date(data.get('sendTime'));
+  const time = data.get('sendTime') ? new Date(data.get('sendTime')) : '';
   console.log('sendTime', time);
 
   const sendTimeOpt = data.get('sendTimeOpt');
