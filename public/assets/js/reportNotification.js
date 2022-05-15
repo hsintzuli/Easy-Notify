@@ -132,10 +132,12 @@ function updateForm(notification) {
   $('#' + notification.type).prop('selected', true);
   // $('#icon').attr('src', notification.content.config.icon);
   if (notification.scheduled_dt) {
-    $('#send-scheduled').prop('selected', true);
+    $('#send-scheduled').prop('checked', true);
+    SENDTIME = new Date(notification.scheduled_dt);
     $('#datetimepicker1').data('datetimepicker').date(new Date(notification.scheduled_dt));
   } else {
-    $('#send-realtime').prop('selected', true);
+    $('#send-realtime').prop('checked', true);
+    SENDTIME = new Date(notification.scheduled_dt);
     $('#datetimepicker1').data('datetimepicker').date(new Date(notification.created_dt));
   }
 }

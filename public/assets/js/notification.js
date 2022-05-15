@@ -18,12 +18,16 @@ function changeApp() {
   console.log(channels);
   channels.forEach((element) => {
     $('#channel-select').append(
-      $('<option/>') //add option tag in select
+      $('<option>') //add option tag in select
         .val(element) //set value for option to post it
         .text(element)
     );
   });
+  if (channels && channels.length > 0) {
+    $('#channel-select').val(channels[0]);
+  }
   $('.selectpicker').selectpicker('refresh');
+  $('.selectpicker').selectpicker('render');
 }
 changeApp();
 function onSubmmit(event) {
