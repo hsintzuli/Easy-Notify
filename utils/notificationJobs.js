@@ -79,7 +79,7 @@ const genWebpushJob = async (notificationId, channelId) => {
 
   if (subscriptions.length === 0) {
     console.log('No subscriber to this channel');
-    await Notification.updateNotificationStatus(notificationId, { status: NOTIFICATION_STATUS.COMPLETE });
+    await Notification.updateNotificationStatus(notificationId, { status: Notification.NOTIFICATION_STATUS.COMPLETE });
   }
 
   let i = 0;
