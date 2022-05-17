@@ -30,7 +30,8 @@ block content
                       span.ml-2.badge.badge-success.h-50#status-badge
                         h6.m-0
                     .card-tools.col-4
-                      button#edit-btn.float-right.btn.btn-outline-secondary(type="submit" form="myform") Edit
+                      span.float-right.d-inline-block(tabindex='0' data-toggle='tooltip' title='Notification can only be updated 3 minutes before it was sent')
+                        button#edit-btn.btn.btn-outline-secondary(type="submit" form="myform") Edit
                       button#delete-btn.float-right.btn.btn-outline-danger.mx-2 Delete
               // /.card-header
               .card-body

@@ -74,7 +74,7 @@ $('#json-btn').click((event) => {
     $('#input-config').val(textedJson);
   } catch (error) {
     Toast.fire({
-      icon: 'fail',
+      icon: 'error',
       title: 'Invalid JSON Format',
     });
   }
