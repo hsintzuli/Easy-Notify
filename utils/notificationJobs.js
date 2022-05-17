@@ -76,6 +76,12 @@ const genWebpushJob = async (notificationId, channelId) => {
   const subscriptions = await Subscription.getClientIds(channelId);
   console.log(`Update notfication ${notificationId} with targets_num: `, subscriptions.length);
   await Notification.updateNotificationStatus(notificationId, { targets_num: subscriptions.length });
+
+  if (subscriptions.length === 0) {
+    console.log('No subscriber to this channel');
+    await Notification.updateNotificationStatus(notificationId, { status: NOTIFICATION_STATUS.COMPLETE });
+  }
+
   let i = 0;
   while (i < subscriptions.length) {
     let last = Math.min(subscriptions.length, i + MAX_PUSH_CLIENT);
