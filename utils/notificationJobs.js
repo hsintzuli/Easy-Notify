@@ -1,6 +1,6 @@
 const Subscription = require('../server/models/subscriptions');
 const Cache = require('./cache');
-const rabbitmq = require('./rabbit');
+// const rabbitmq = require('./rabbit');
 const { REALTIME_EXCHANGE, DELAY_EXCHANGE, SCHEDULED_INTERVAL_HOUR, SEND_TO_SQS } = process.env;
 const MAX_PUSH_CLIENT = parseInt(process.env.MAX_PUSH_CLIENT);
 // const socket = require('./mysocket');
@@ -9,10 +9,12 @@ const { diffFromNow } = require('./util');
 const Content = require('../server/models/content');
 const moment = require('moment');
 const SQS = require('./sqs');
+const RabbitMQ = require('./newRabbit');
+// RabbitMQ.startPublish();
 
-rabbitmq.initConnection(() => {
-  console.log('Connect rabbitmq');
-});
+// rabbitmq.initConnection(() => {
+//   console.log('Connect rabbitmq');
+// });
 
 const handleRealtimeRequest = async (notification, channel) => {
   await Notification.createNotification(notification.id, channel.id, notification.name, notification.sendType);
@@ -62,7 +64,7 @@ const handleScheduledRequest = async (notification, channel) => {
     headers: { 'x-delay': delay * 1000 },
     contentType: 'application/json',
   };
-  await rabbitmq.publishMessage(DELAY_EXCHANGE, '', JSON.stringify(job), jobOptions);
+  await RabbitMQ.publishMessage(DELAY_EXCHANGE, '', JSON.stringify(job), jobOptions);
 };
 
 const genWebpushJob = async (notificationId, channelId) => {
@@ -88,7 +90,7 @@ const genWebpushJob = async (notificationId, channelId) => {
     job.clients = subscriptions.slice(i, last).map((element) => element.id);
     console.log(job.clients);
     await Cache.hincrby('pushJobs', notificationId, 1);
-    await rabbitmq.publishMessage(REALTIME_EXCHANGE, 'webpush', JSON.stringify(job), jobOptions);
+    await RabbitMQ.publishMessage(REALTIME_EXCHANGE, 'webpush', JSON.stringify(job), jobOptions);
 
     if (SEND_TO_SQS === 'true') {
       await SQS.sendMessage('Consume job on rabbitmq');
@@ -106,14 +108,8 @@ const genWebsocketJob = async (notificationId, channelId) => {
     contentType: 'application/json',
   };
 
-  // const clients = await Cache.hgetall(`clientNums{${channelId}}`);
-  // const targets = Object.values(clients);
-  // const targets_num = targets.reduce((prev, curr) => prev + parseInt(curr), 0);
-  // console.log(`Update notfication ${notificationId} from websocket with targets_num: `, targets_num);
-  // await Notification.updateNotificationStatus(notificationId, { targets_num });
-
   console.log(REALTIME_EXCHANGE, job);
-  await rabbitmq.publishMessage(REALTIME_EXCHANGE, 'websocket', JSON.stringify(job), jobOptions);
+  await RabbitMQ.publishMessage(REALTIME_EXCHANGE, 'websocket', JSON.stringify(job), jobOptions);
   return true;
 };
 

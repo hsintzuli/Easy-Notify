@@ -38,15 +38,7 @@ const apiAuthentication = async (req, res, next) => {
   // check Authorization header
   const channelId = req.get('X-CHANNEL-ID');
   const channelKey = req.get('X-API-KEY');
-  // const accessToken = req.get('Authorization');
-  // console.log(accessToken);
-  // if (!channelId || !channelKey) {
-  //   res.status(401).json({ error: 'No channel key' });
-  //   return;
-  // }
 
-  // check authorization header is correct format
-  // const [channelId, channelKey] = accessToken.split(':');
   console.log(channelId, channelKey);
   if (!channelId || !channelKey) {
     res.status(401).send({ error: 'Unauthorized' });
@@ -64,44 +56,9 @@ const apiAuthentication = async (req, res, next) => {
   next();
 };
 
-const diffFromNow = (time) => {
-  const targetTime = new Date(time);
-  const now = new Date();
-  console.log(targetTime.getTime());
-  console.log(new Date(targetTime).toString());
-  console.log(now.getTime());
-  console.log(new Date(now).toString());
-  return (targetTime.getTime() - now.getTime()) / 1000;
-};
-
-const generateValidDatetimeRange = (startDate, endDate) => {
-  const now = new Date();
-  startDate = new Date(startDate);
-  endDate = new Date(endDate);
-  startDate = startDate < endDate ? startDate : endDate;
-  endDate = startDate < endDate ? endDate : startDate;
-  if (moment(endDate).format('YYYY-MM-DD') >= moment(now).format('YYYY-MM-DD')) {
-    endDate = now;
-  } else {
-    endDate = new Date(endDate.getTime() + (23 * 3600 + 59 * 60) * 1000);
-  }
-
-  return [startDate, endDate];
-};
-
-const getCheckHour = (delay) => {
-  const now = new Date();
-  console.log('delay', +delay);
-  const hourToCheck = now.getHours() % 2 === +delay ? 'even' : 'odd';
-  return hourToCheck;
-};
-
 module.exports = {
   wrapAsync,
   userAuthentication,
   apiAuthentication,
   setChannelDataToReq,
-  diffFromNow,
-  generateValidDatetimeRange,
-  getCheckHour,
 };

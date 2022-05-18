@@ -30,5 +30,6 @@ async function fnConsumer(msg, ack) {
 
 (async function () {
   await RabbitMQ.connect();
+  await RabbitMQ.startPublish();
   await RabbitMQ.consumeQueue(DELAY_QUEUE, fnConsumer);
 })();
