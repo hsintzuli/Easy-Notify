@@ -1,5 +1,4 @@
-const path = require('path');
-require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
+require('dotenv').config({ path: __dirname + '/../.env' });
 const Cache = require('../utils/cache');
 const { pool } = require('../server/models/mysqlcon');
 const Notification = require('../server/models/notifications');

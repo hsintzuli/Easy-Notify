@@ -5,7 +5,7 @@ const SEND_TYPE = new Set(['webpush', 'websocket']);
 const App = require('../models/apps');
 const Cache = require('../../utils/cache');
 const NotificationJobs = require('../../utils/notificationJobs');
-const { generateValidDatetimeRange, diffFromNow } = require('../../utils/util');
+const { generateValidDatetimeRange, diffFromNow } = require('../../utils/timeUtils');
 const { NotificationSchema } = require('../../utils/validators');
 const UPDATE_LIMITE_INTERVAL = 60 * 3; // only notification that is scheduled exceed 3 minutes from now can be update
 
