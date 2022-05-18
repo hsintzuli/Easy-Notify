@@ -1,6 +1,7 @@
 require('dotenv').config({ path: __dirname + '/.env' });
 const NotificationJobs = require('./utils/notificationJobs');
-const rabbitmq = require('./utils/rabbit');
+// const rabbitmq = require('./utils/rabbit');
+const RabbitMQ = require('./utils/newRabbit');
 const { DELAY_QUEUE } = process.env;
 
 async function fnConsumer(msg, ack) {
@@ -22,7 +23,12 @@ async function fnConsumer(msg, ack) {
 }
 
 // InitConnection of rabbitmq
-rabbitmq.initConnection(() => {
-  // start consumer worker when the connection to rabbitmq has been made
-  rabbitmq.consumeQueue(DELAY_QUEUE, fnConsumer);
-});
+// rabbitmq.initConnection(() => {
+// start consumer worker when the connection to rabbitmq has been made
+//   rabbitmq.consumeQueue(DELAY_QUEUE, fnConsumer);
+// });
+
+(async function () {
+  await RabbitMQ.connect();
+  await RabbitMQ.consumeQueue(DELAY_QUEUE, fnConsumer);
+})();

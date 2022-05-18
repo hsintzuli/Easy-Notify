@@ -1,5 +1,5 @@
 require('dotenv').config({ path: __dirname + '/.env' });
-const rabbitmqLib = require('./utils/rabbit');
+// const rabbitmqLib = require('./utils/rabbit');
 const Notification = require('./server/models/notifications');
 const { NOTIFICATION_STATUS } = Notification;
 const Content = require('./server/models/content');
@@ -7,8 +7,10 @@ const Cache = require('./utils/cache');
 const { WEBSOCKET_QUEUE, SOCKET_TOKEN } = process.env;
 const { io } = require('socket.io-client');
 const { getCheckHour } = require('./utils/util');
+const RabbitMQ = require('./utils/newRabbit');
 require('./server/models/mongoconn').connect();
-// Initialize socketIO client
+
+// Initialize socketIO client with admin token
 const socket = io('https://notify.easynotify.site', {
   auth: {
     token: SOCKET_TOKEN,
@@ -83,11 +85,16 @@ async function fnConsumer(msg, ack) {
   }
 }
 
-const initializSocketWorker = () => {
-  rabbitmqLib.initConnection(() => {
-    // start socket worker when the connection to rabbitmq has been made
-    console.log('Start Socketworker');
-    rabbitmqLib.consumeQueue(WEBSOCKET_QUEUE, fnConsumer);
-  });
-};
-initializSocketWorker();
+// const initializSocketWorker = () => {
+//   rabbitmqLib.initConnection(() => {
+//     // start socket worker when the connection to rabbitmq has been made
+//     console.log('Start Socketworker');
+//     rabbitmqLib.consumeQueue(WEBSOCKET_QUEUE, fnConsumer);
+//   });
+// };
+// initializSocketWorker();
+
+(async function () {
+  await RabbitMQ.connect();
+  await RabbitMQ.consumeQueue(WEBSOCKET_QUEUE, fnConsumer);
+})();
