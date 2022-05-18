@@ -1,20 +1,13 @@
 const Subscription = require('../server/models/subscriptions');
 const Cache = require('./cache');
-// const rabbitmq = require('./rabbit');
 const { REALTIME_EXCHANGE, DELAY_EXCHANGE, SCHEDULED_INTERVAL_HOUR, SEND_TO_SQS } = process.env;
 const MAX_PUSH_CLIENT = parseInt(process.env.MAX_PUSH_CLIENT);
-// const socket = require('./mysocket');
 const Notification = require('../server/models/notifications');
 const { diffFromNow } = require('./util');
 const Content = require('../server/models/content');
 const moment = require('moment');
 const SQS = require('./sqs');
-const RabbitMQ = require('./newRabbit');
-// RabbitMQ.startPublish();
-
-// rabbitmq.initConnection(() => {
-//   console.log('Connect rabbitmq');
-// });
+const RabbitMQ = require('./rabbit');
 
 const handleRealtimeRequest = async (notification, channel) => {
   await Notification.createNotification(notification.id, channel.id, notification.name, notification.sendType);

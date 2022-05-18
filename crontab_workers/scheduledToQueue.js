@@ -1,6 +1,6 @@
 const path = require('path');
 require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
-const RabbitMQ = require('./../utils/newRabbit');
+const RabbitMQ = require('./../utils/rabbit');
 const { DELAY_EXCHANGE, SCHEDULED_INTERVAL_HOUR } = process.env;
 const { pool } = require('./../server/models/mysqlcon');
 const { NOTIFICATION_STATUS, updateNotificationStatus } = require('./../server/models/notifications');

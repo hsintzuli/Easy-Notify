@@ -1,6 +1,5 @@
 require('dotenv').config({ path: __dirname + '/.env' });
 const webpush = require('web-push');
-// const rabbitmq = require('./utils/rabbit');
 const Cache = require('./utils/cache');
 const Content = require('./server/models/content');
 const Notification = require('./server/models/notifications');
@@ -10,7 +9,7 @@ const { NOTIFICATION_STATUS } = Notification;
 const { getCheckHour } = require('./utils/util');
 const DEFAULT_TTL = 5;
 require('./server/models/mongoconn').connect();
-const RabbitMQ = require('./utils/newRabbit');
+const RabbitMQ = require('./utils/rabbit');
 
 async function fnConsumer(msg, ack) {
   const { notificationId, channelId, clients } = JSON.parse(msg.content);
@@ -63,12 +62,6 @@ async function fnConsumer(msg, ack) {
     ack(false);
   }
 }
-
-// InitConnection of rabbitmq
-// rabbitmq.initConnection(() => {
-// start consumer worker when the connection to rabbitmq has been made
-//   rabbitmq.consumeQueue(WEBPUSH_QUEUE, fnConsumer);
-// });
 
 (async function () {
   await RabbitMQ.connect();

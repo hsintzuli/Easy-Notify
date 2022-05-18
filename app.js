@@ -3,11 +3,9 @@ const { PORT, API_VERSION } = process.env;
 const session = require('express-session');
 const cors = require('cors');
 const Cache = require('./utils/cache');
-const Mongo = require('./server/models/mongoconn');
-Mongo.connect();
-
-require('./utils/newRabbit')
-  .connectToPublish()
+require('./server/models/mongoconn').connect();
+require('./utils/rabbit')
+  .connect()
   .catch((error) => {
     console.log('RabbitMQ create connection error');
   });

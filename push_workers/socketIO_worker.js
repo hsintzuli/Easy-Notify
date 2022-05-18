@@ -1,5 +1,4 @@
 require('dotenv').config({ path: __dirname + '/.env' });
-// const rabbitmqLib = require('./utils/rabbit');
 const Notification = require('./server/models/notifications');
 const { NOTIFICATION_STATUS } = Notification;
 const Content = require('./server/models/content');
@@ -7,7 +6,7 @@ const Cache = require('./utils/cache');
 const { WEBSOCKET_QUEUE, SOCKET_TOKEN } = process.env;
 const { io } = require('socket.io-client');
 const { getCheckHour } = require('./utils/util');
-const RabbitMQ = require('./utils/newRabbit');
+const RabbitMQ = require('./utils/rabbit');
 require('./server/models/mongoconn').connect();
 
 // Initialize socketIO client with admin token
