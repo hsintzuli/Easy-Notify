@@ -1,7 +1,18 @@
 const router = require('express').Router();
-const { signOut, apps, channels, sendNotificaton, createApp, dashboard, reports, reportNotification } = require('../../controllers/pages/management');
+const {
+  signOut,
+  apps,
+  channels,
+  sendNotificaton,
+  createApp,
+  dashboard,
+  reports,
+  reportNotification,
+  checkUserInSession,
+} = require('../../controllers/pages/management');
 const { wrapAsync } = require('../../../utils/util');
 
+router.use('/management', checkUserInSession);
 router.route('/management/signout').get(wrapAsync(signOut));
 router.route('/management/apps').get(wrapAsync(apps));
 router.route('/management/channels').get(wrapAsync(channels));

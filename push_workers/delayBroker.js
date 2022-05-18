@@ -1,6 +1,6 @@
 require('dotenv').config({ path: __dirname + '/.env' });
 const NotificationJobs = require('../utils/notificationJobs');
-const RabbitMQ = require('./utils/newRabbit');
+const RabbitMQ = require('../utils/rabbit');
 const { DELAY_QUEUE } = process.env;
 
 async function fnConsumer(msg, ack) {

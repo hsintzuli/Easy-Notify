@@ -1,9 +1,9 @@
 require('dotenv').config();
 const User = require('../models/users');
-const moment = require('moment');
 const Order = require('../models/orders');
 const Subscription = require('../models/subscriptions');
 const { UserSchema } = require('../../utils/validators');
+const TimeUtils = require('../../utils/timeUtils');
 const { TAPPAY_PARTNER_KEY, TAPPAY_MERCHANT_ID } = process.env;
 
 const validateUser = async (req, res, next) => {
@@ -30,7 +30,6 @@ const signUp = async (req, res) => {
     return;
   }
   req.session.user = { id: user.id, name: user.name };
-
   res.status(200).send({
     data: {
       user: {
@@ -43,6 +42,7 @@ const signUp = async (req, res) => {
 };
 
 const signIn = async (req, res) => {
+  console.log('signin');
   const { email, password } = req.body;
   if (!email || !password) {
     return { error: 'Request Error: email and password are required.', status: 400 };
@@ -54,7 +54,6 @@ const signIn = async (req, res) => {
   }
 
   const user = result.user;
-
   if (!user) {
     res.status(500).json({ error: 'Database Query Error' });
     return;
@@ -69,6 +68,23 @@ const signIn = async (req, res) => {
         email: user.email,
       },
     },
+  });
+};
+
+const getNewSubscribers = async (req, res) => {
+  const { user } = req.session;
+  let { start_date, end_date } = req.body;
+  if (!start_date || !end_date) {
+    res.status(400).send({ error: 'Get New Subscribers Error: Wrong Data Format' });
+    return;
+  }
+
+  [start_date, end_date] = TimeUtils.generateValidDatetimeRange(start_date, end_date);
+  const interval = TimeUtils.calDiffInterval(start_date, end_date);
+  const data = await Subscription.getClientGroupByDate(user.id, start_date, end_date, interval);
+
+  res.status(200).send({
+    data,
   });
 };
 
@@ -102,45 +118,6 @@ const createOrder = async (req, res) => {
     data: {
       order_number: order.id,
     },
-  });
-};
-
-const getNewSubscribers = async (req, res) => {
-  const { user } = req.session;
-  let { start_date, end_date } = req.body;
-  if (!start_date || !end_date) {
-    res.status(400).send({ error: 'Get New Subscribers Error: Wrong Data Format' });
-    return;
-  }
-  start_date = new Date(start_date);
-  end_date = new Date(end_date);
-  let now = new Date();
-  let interval;
-  if (moment(end_date).format('YYYY-MM-DD') === moment(now).format('YYYY-MM-DD')) {
-    end_date = now;
-  } else {
-    end_date = new Date(end_date.getTime() + (23 * 3600 + 59 * 60) * 1000);
-  }
-  console.log(moment(start_date).format('YYYY-MM-DD'));
-  console.log(moment(end_date).format('YYYY-MM-DD'));
-  const diffHour = Math.ceil((end_date.getTime() - start_date.getTime()) / (1000 * 3600));
-  console.log(diffHour);
-  if (diffHour < 72) {
-    interval = '%b-%d %H';
-  } else if (diffHour < 60 * 24) {
-    interval = '%b-%d';
-  } else {
-    interval = '%Y-%b';
-  }
-
-  const data = await Subscription.getClientGroupByDate(user.id, start_date, end_date, interval);
-
-  // if (!order) {
-  //   res.status(500).send({ error: 'Database Query Error' });
-  //   return;
-  // }
-  res.status(200).send({
-    data,
   });
 };
 

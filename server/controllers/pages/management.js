@@ -4,6 +4,14 @@ const Channel = require('../../models/channels');
 const Notification = require('../../models/notifications');
 const Subscription = require('../../models/subscriptions');
 
+const checkUserInSession = async (req, res, next) => {
+  const { user } = req.session;
+  if (!user) {
+    return res.redirect('/signin');
+  }
+  return next();
+};
+
 const signOut = async (req, res) => {
   req.session.destroy();
   return res.redirect('/');
@@ -11,36 +19,25 @@ const signOut = async (req, res) => {
 
 const apps = async (req, res) => {
   const { user } = req.session;
-  console.log(user);
-  if (!user) {
-    return res.redirect('/signin');
-  }
   const apps = await App.getApps(user.id);
-  console.log('select apps', apps);
   return res.render('apps', { user, apps });
 };
 
 const channels = async (req, res) => {
   const { user } = req.session;
   const { app_id } = req.query;
-  if (!user) {
-    return res.redirect('/signin');
-  }
   const verified = await App.verifyAppWithUser(user.id, app_id);
   if (!verified) {
     return res.redirect('/signin');
   }
   const channels = await Channel.getChannels(app_id);
-  console.log(channels);
   return res.render('channels', { user, channels, moment: require('moment') });
 };
 
 const sendNotificaton = async (req, res) => {
   const { user } = req.session;
-  if (!user) {
-    return res.redirect('/signin');
-  }
   const channels = await Channel.getChannelsByUser(user.id);
+
   const channelGroupByApp = channels.reduce((prev, curr) => {
     let app = `[${curr.app_name}]-${curr.app_id}`;
     if (!prev.hasOwnProperty(app)) prev[app] = { icon: curr.icon, channels: [] };
@@ -55,17 +52,12 @@ const sendNotificaton = async (req, res) => {
 
 const createApp = async (req, res) => {
   const { user } = req.session;
-  if (!user) {
-    return res.redirect('/signin');
-  }
   res.render('createApp', { user });
 };
 
 const dashboard = async (req, res) => {
   const { user } = req.session;
-  if (!user) {
-    return res.redirect('/signin');
-  }
+
   const notificationSent = await Notification.getNotificationSent(user.id);
   const clientCount = await Subscription.getClientCountByUser(user.id);
   const onlineClient = await Notification.getMaxOnlineClient(user.id);
@@ -79,17 +71,13 @@ const dashboard = async (req, res) => {
     activatedClients: newClient && newClient.activated_user ? newClient.activated_user : 0,
     apps: notificationSent && notificationSent.apps ? notificationSent.apps : 0,
   };
-  console.log('user:', user);
+
   res.render('dashboard', { user, dashboardData });
 };
 
 const reports = async (req, res) => {
   const { user } = req.session;
-  if (!user) {
-    return res.redirect('/signin');
-  }
   const apps = await App.getApps(user.id);
-  console.log(apps);
 
   res.render('reports', { user, apps });
 };
@@ -97,9 +85,6 @@ const reports = async (req, res) => {
 const reportNotification = async (req, res) => {
   const { user } = req.session;
   const { id } = req.query;
-  if (!user) {
-    return res.redirect('/signin');
-  }
 
   res.render('notification-reports', { user, id });
 };
@@ -113,4 +98,5 @@ module.exports = {
   dashboard,
   reports,
   reportNotification,
+  checkUserInSession,
 };

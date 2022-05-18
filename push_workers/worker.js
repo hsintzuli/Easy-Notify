@@ -1,14 +1,14 @@
 require('dotenv').config({ path: __dirname + '/.env' });
 const webpush = require('web-push');
-const Cache = require('./utils/cache');
-const Content = require('./server/models/content');
-const Notification = require('./server/models/notifications');
-const Subscription = require('./server/models/subscriptions');
+const Cache = require('../utils/cache');
+const Content = require('../server/models/content');
+const Notification = require('../server/models/notifications');
+const Subscription = require('../server/models/subscriptions');
 const { WEBPUSH_QUEUE } = process.env;
 const { NOTIFICATION_STATUS } = Notification;
-const { getCheckHour } = require('./utils/util');
+const { getCheckHour } = require('../utils/timeUtils');
 const DEFAULT_TTL = 5;
-require('./server/models/mongoconn').connect();
+require('../server/models/mongoconn').connect();
 const RabbitMQ = require('./utils/rabbit');
 
 async function fnConsumer(msg, ack) {
