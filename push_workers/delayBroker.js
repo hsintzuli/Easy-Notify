@@ -1,4 +1,4 @@
-require('dotenv').config({ path: __dirname + './../.env' });
+require('dotenv').config({ path: __dirname + '/../.env' });
 const NotificationJobs = require('../utils/notificationJobs');
 const RabbitMQ = require('../utils/rabbit');
 const { DELAY_QUEUE } = process.env;

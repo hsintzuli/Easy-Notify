@@ -1,4 +1,4 @@
-require('dotenv').config({ path: __dirname + './../.env' });
+require('dotenv').config({ path: __dirname + '/../.env' });
 const httpServer = require('http').createServer();
 const { Server } = require('socket.io');
 const redis = require('socket.io-redis');

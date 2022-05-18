@@ -1,4 +1,4 @@
-require('dotenv').config({ path: __dirname + './../.env' });
+require('dotenv').config({ path: __dirname + '/../.env' });
 const webpush = require('web-push');
 const Cache = require('../utils/cache');
 const Content = require('../server/models/content');
