@@ -1,4 +1,4 @@
-require('dotenv').config({ path: __dirname + '/.env' });
+require('dotenv').config({ path: __dirname + './../.env' });
 const Notification = require('../server/models/notifications');
 const { NOTIFICATION_STATUS } = Notification;
 const Content = require('../server/models/content');

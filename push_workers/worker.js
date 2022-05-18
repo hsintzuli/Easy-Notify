@@ -1,4 +1,4 @@
-require('dotenv').config({ path: __dirname + '/.env' });
+require('dotenv').config({ path: __dirname + './../.env' });
 const webpush = require('web-push');
 const Cache = require('../utils/cache');
 const Content = require('../server/models/content');
@@ -9,7 +9,7 @@ const { NOTIFICATION_STATUS } = Notification;
 const { getCheckHour } = require('../utils/timeUtils');
 const DEFAULT_TTL = 5;
 require('../server/models/mongoconn').connect();
-const RabbitMQ = require('./utils/rabbit');
+const RabbitMQ = require('../utils/rabbit');
 
 async function fnConsumer(msg, ack) {
   const { notificationId, channelId, clients } = JSON.parse(msg.content);
