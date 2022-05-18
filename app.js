@@ -6,6 +6,12 @@ const Cache = require('./utils/cache');
 const Mongo = require('./server/models/mongoconn');
 Mongo.connect();
 
+require('./utils/newRabbit')
+  .connectToPublish()
+  .catch((error) => {
+    console.log('RabbitMQ create connection error');
+  });
+
 // Express Initialization
 const express = require('express');
 const app = express();
