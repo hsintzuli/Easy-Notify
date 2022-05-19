@@ -22,7 +22,7 @@ const publishToDelayExchange = async () => {
     }
 
     for (let notification of notifications) {
-      let delay = diffFromNow(notification.sendTime);
+      let delay = diffFromNow(notification.scheduled_dt);
       let job = { notificationId: notification.id, channelId: notification.channel_id, sendType: notification.type };
       let jobOptions = {
         headers: { 'x-delay': delay * 1000 },

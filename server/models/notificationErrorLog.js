@@ -8,7 +8,7 @@ const errorNotificationSchema = new Schema({
   created_dt: { type: Date, default: Date.now },
 });
 
-const ErrorNotification = mongoose.model('Content', errorNotificationSchema);
+const ErrorNotification = mongoose.model('ErrorNotification', errorNotificationSchema);
 
 const createErrorLog = async (log) => {
   if (typeof log === 'Object') {

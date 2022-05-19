@@ -57,7 +57,7 @@ const publishMessage = async (exchange, routingKey, content, options) => {
     await pubChannel.publish(exchange, routingKey, message, options);
     console.log('[AMQP] successfully publish');
   } catch (error) {
-    await pubChannel.connection.close();
+    console.error(error);
     throw new Error('[AMQP] publish error', error);
   }
 };

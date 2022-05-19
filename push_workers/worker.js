@@ -22,7 +22,7 @@ async function fnConsumer(msg, ack) {
       console.log(`Notification ${notificationId} has been deleted before delevered`);
       return ack(true);
     }
-    const msgContent = await Content.findById(notificationId);
+    const msgContent = await Content.getContentById(notificationId);
     const payload = {
       notification_id: notificationId,
       title: msgContent.title,
