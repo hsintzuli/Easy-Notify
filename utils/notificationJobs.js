@@ -12,42 +12,24 @@ const RabbitMQ = require('./rabbit');
 const handleRealtimeRequest = async (notification, channel) => {
   await Notification.createNotification(notification.id, channel.id, notification.name, notification.sendType);
   if (notification.sendType === 'websocket') {
-    // generate websocket notification job
     await genWebsocketJob(notification.id, channel.id);
   } else {
     // Save vapidDetail to mongo
-    const vapidDetail = {
-      subject: `mailto:${channel.email}`,
-      publicKey: channel.public_key,
-      privateKey: channel.private_key,
-    };
-    const result = await Content.findOneAndUpdate({ _id: notification.id }, { vapid_detail: vapidDetail });
-    console.log(result);
-
-    // generate webpush notification job
+    await Content.updateVapidDetail(notification.id, channel.email, channel.public_key, channel.private_key);
     await genWebpushJob(notification.id, channel.id);
   }
 };
 
 const handleScheduledRequest = async (notification, channel) => {
   const delay = diffFromNow(notification.sendTime);
-  console.log(delay);
   console.log('Handling Scheduled Job, Scheduled Time:', moment(notification.sendTime).format('YYYY-MM-DD HH:mm:ss'));
 
   // If delay time exceed SCHEDULED_INTERVAL_HOUR, just stay in db and not publish to delay exchange
   const notPublishToQueue = delay > parseInt(SCHEDULED_INTERVAL_HOUR) * 3600;
-  console.log(parseInt(SCHEDULED_INTERVAL_HOUR) * 3600);
   await Notification.createNotification(notification.id, channel.id, notification.name, notification.sendType, notification.sendTime, notPublishToQueue);
 
-  if (notification.sendType === 'webpush') {
-    const vapidDetail = {
-      subject: `mailto:${channel.email}`,
-      publicKey: channel.public_key,
-      privateKey: channel.private_key,
-    };
-    const result = await Content.findOneAndUpdate({ _id: notification.id }, { vapid_detail: vapidDetail });
-    console.log(result);
-  }
+  // Save vapidDetail to mongo
+  await Content.updateVapidDetail(notification.id, channel.email, channel.public_key, channel.private_key);
   if (notPublishToQueue) {
     return;
   }
@@ -60,8 +42,9 @@ const handleScheduledRequest = async (notification, channel) => {
   await RabbitMQ.publishMessage(DELAY_EXCHANGE, '', JSON.stringify(job), jobOptions);
 };
 
+// Generate job for webpush notifcation
 const genWebpushJob = async (notificationId, channelId) => {
-  console.log('Generate job for websocket', notificationId);
+  console.log('Generate job for webpush', notificationId);
   const job = { notificationId, channelId };
   const jobOptions = {
     contentType: 'application/json',
@@ -101,7 +84,6 @@ const genWebsocketJob = async (notificationId, channelId) => {
     contentType: 'application/json',
   };
 
-  console.log(REALTIME_EXCHANGE, job);
   await RabbitMQ.publishMessage(REALTIME_EXCHANGE, 'websocket', JSON.stringify(job), jobOptions);
   return true;
 };

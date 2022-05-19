@@ -3,9 +3,12 @@ const { pool } = require('./mysqlcon');
 
 const createApp = async (user_id, name, description, contact_email, default_icon) => {
   const app = { user_id, name, description, contact_email, default_icon };
-  const [result] = await pool.query('INSERT INTO apps SET ?', app);
-  console.log(result);
-  return result.insertId;
+  try {
+    const [result] = await pool.query('INSERT INTO apps SET ?', app);
+    return { app_id: result.insertId };
+  } catch (error) {
+    return { error };
+  }
 };
 
 const getApps = async (user_id) => {
@@ -29,7 +32,6 @@ const getAppDetail = async (app_id) => {
 
 const verifyAppWithUser = async (user_id, app_id) => {
   const [results] = await pool.query('SELECT * FROM apps WHERE id = ? and user_id = ?', [app_id, user_id]);
-  console.log('Verify', results);
   const verified = results.length > 0;
   return verified;
 };

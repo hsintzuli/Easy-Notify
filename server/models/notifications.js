@@ -44,7 +44,6 @@ const deleteNotification = async (notification_id) => {
 };
 
 const updateNotificationStatus = async (notification_id, status) => {
-  console.log(status);
   const [results] = await pool.query('UPDATE notifications SET ? WHERE id = ?', [status, notification_id]);
   const updated = results.affectedRows > 0;
   return updated;

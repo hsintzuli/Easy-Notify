@@ -17,12 +17,14 @@ const validateApp = async (req, res, next) => {
 };
 
 const createApp = async (req, res) => {
-  console.log('Post App:', req.body);
   const { user } = req.session;
   const { name, description, contact_email, default_icon } = req.body;
   console.log(`${user.id} create app: ${name}`);
-  const app_id = await App.createApp(user.id, name, description, contact_email, default_icon);
-  return res.status(200).json({ data: { app_id } });
+  const result = await App.createApp(user.id, name, description, contact_email, default_icon);
+  if (result.error) {
+    return res.status(400).json({ error: result.error });
+  }
+  return res.status(200).json({ data: { app_id: result.app_id } });
 };
 
 const archiveApp = async (req, res) => {
@@ -34,8 +36,8 @@ const archiveApp = async (req, res) => {
     return res.status(400).json({ error: 'Incorrect user or app id' });
   }
 
-  const result = await App.archiveApp(app_id);
-  return res.status(200).json({ ok: result });
+  const isArchiveSuccess = await App.archiveApp(app_id);
+  return res.status(200).json({ ok: isArchiveSuccess });
 };
 
 const getApps = async (req, res) => {
@@ -74,8 +76,11 @@ const createChannel = async (req, res) => {
   if (!verified) {
     return res.status(400).json({ error: 'Incorrect user or app id' });
   }
-  const channel = await Channel.createChannel(app_id, name);
-  return res.status(200).json({ data: channel });
+  const result = await Channel.createChannel(app_id, name);
+  if (result.error) {
+    return res.status(500).json({ error: 'Fail to create channel' });
+  }
+  return res.status(200).json({ data: result.channel });
 };
 
 const deleteChannel = async (req, res) => {
@@ -102,7 +107,6 @@ const rotateChannelKey = async (req, res) => {
 
   const now = new Date();
   const key_expire_dt = new Date(now.getTime() + KET_EXPIRE_S * 1000);
-  console.log('now', key_expire_dt);
   const channel = await Channel.updateChannelKey(channel_id, key_expire_dt);
   return res.status(200).json({ data: channel });
 };

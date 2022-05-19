@@ -5,21 +5,26 @@ const { nanoid } = require('nanoid');
 const { pool } = require('./mysqlcon');
 
 const createChannel = async (app_id, name, description) => {
-  const id = nanoid();
-  const pushKey = webpush.generateVAPIDKeys();
-  const channelKey = uuidv4();
+  try {
+    const id = nanoid();
+    const pushKey = webpush.generateVAPIDKeys();
+    const channelKey = uuidv4();
 
-  const channel = {
-    id: id,
-    app_id: app_id,
-    name: name,
-    channel_key: channelKey,
-    public_key: pushKey.publicKey,
-    private_key: pushKey.privateKey,
-  };
+    const channel = {
+      id: id,
+      app_id: app_id,
+      name: name,
+      channel_key: channelKey,
+      public_key: pushKey.publicKey,
+      private_key: pushKey.privateKey,
+    };
 
-  const [result] = await pool.query('INSERT INTO channels SET ?', channel);
-  return channel;
+    const [result] = await pool.query('INSERT INTO channels SET ?', channel);
+    return { channel };
+  } catch (error) {
+    console.error('[createChannel] error', error);
+    return { error };
+  }
 };
 
 const updateChannelKey = async (channel_id, key_expire_dt) => {
