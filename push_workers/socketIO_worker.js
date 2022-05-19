@@ -6,6 +6,7 @@ const Cache = require('../utils/cache');
 const { WEBSOCKET_QUEUE, SOCKET_TOKEN } = process.env;
 const { io } = require('socket.io-client');
 const { getCheckHour } = require('../utils/timeUtils');
+const { createErrorLog } = require('../server/models/notificationErrorLog');
 const RabbitMQ = require('../utils/rabbit');
 require('../server/models/mongoconn').connect();
 
@@ -79,8 +80,9 @@ async function fnConsumer(msg, ack) {
     console.log('Successfully send push requirment to socket server about room:', channelId);
     ack(true);
   } catch (error) {
-    console.error(error);
-    ack(false);
+    await createErrorLog(error);
+    console.error('Record error in MongoDB', error);
+    ack(true);
   }
 }
 

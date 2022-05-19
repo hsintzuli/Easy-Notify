@@ -7,6 +7,7 @@ const Subscription = require('../server/models/subscriptions');
 const { WEBPUSH_QUEUE } = process.env;
 const { NOTIFICATION_STATUS } = Notification;
 const { getCheckHour } = require('../utils/timeUtils');
+const { createErrorLog } = require('../server/models/notificationErrorLog');
 const DEFAULT_TTL = 5;
 require('../server/models/mongoconn').connect();
 const RabbitMQ = require('../utils/rabbit');
@@ -58,8 +59,9 @@ async function fnConsumer(msg, ack) {
     }
     ack(true);
   } catch (error) {
-    console.log(error);
-    ack(false);
+    await createErrorLog(error);
+    console.error('Record error in MongoDB', error);
+    ack(true);
   }
 }
 

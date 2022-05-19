@@ -1,6 +1,7 @@
 require('dotenv').config({ path: __dirname + '/../.env' });
 const NotificationJobs = require('../utils/notificationJobs');
 const RabbitMQ = require('../utils/rabbit');
+const { createErrorLog } = require('../server/models/notificationErrorLog');
 const { DELAY_QUEUE } = process.env;
 
 async function fnConsumer(msg, ack) {
@@ -16,8 +17,9 @@ async function fnConsumer(msg, ack) {
     console.log('Successfully Transfer!');
     return ack(true);
   } catch (error) {
-    console.error(error);
-    ack(false);
+    await createErrorLog(error);
+    console.error('Record error in MongoDB', error);
+    ack(true);
   }
 }
 
