@@ -54,7 +54,7 @@ const updateVapidDetail = async (notificationId, email, publiKey, privateKey) =>
 
 const getContentById = async (notificationId) => {
   notificationId = mongoose.Types.ObjectId(notificationId);
-  const content = await Content.findById(notificationId, '-_id -__v -vapid_detail');
+  const content = await Content.findById(notificationId, '-_id -__v');
   delete content._id;
   return content;
 };
