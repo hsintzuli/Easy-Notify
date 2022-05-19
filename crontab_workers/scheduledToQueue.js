@@ -9,7 +9,7 @@ const mongo = require('./../server/models/mongoconn');
 
 const publishToDelayExchange = async () => {
   try {
-    mongo.connect();
+    await mongo.connect();
     const [notifications] = await pool.query(
       `SELECT id, channel_id, type, scheduled_dt FROM notifications 
         WHERE status = ? AND scheduled_dt < DATE_ADD(NOW(), INTERVAL ? HOUR);`,
@@ -34,7 +34,7 @@ const publishToDelayExchange = async () => {
   } catch (error) {
     console.error(error);
   } finally {
-    mongo.disconnect();
+    await mongo.disconnect();
     await pool.end();
   }
 };

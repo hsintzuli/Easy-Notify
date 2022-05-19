@@ -3,7 +3,11 @@ const { PORT, API_VERSION } = process.env;
 const session = require('express-session');
 const cors = require('cors');
 const Cache = require('./utils/cache');
-require('./server/models/mongoconn').connect();
+require('./server/models/mongoconn')
+  .connect()
+  .catch((error) => {
+    console.log('MongoDB create connection error');
+  });
 require('./utils/rabbit')
   .connect()
   .catch((error) => {
