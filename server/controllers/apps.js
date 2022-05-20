@@ -96,19 +96,23 @@ const deleteChannel = async (req, res) => {
 };
 
 const rotateChannelKey = async (req, res) => {
-  const { user } = req.session;
-  const { channel_id } = req.query;
-  console.log('rotate', user, channel_id);
-  const verified = await Channel.verifyChannelWithUser(user.id, channel_id);
-  if (!verified) {
-    console.log('error');
-    return res.status(400).json({ error: 'Incorrect user or channel id' });
-  }
-
+  const { channel_key } = req.body;
   const now = new Date();
   const key_expire_dt = new Date(now.getTime() + KET_EXPIRE_S * 1000);
-  const channel = await Channel.updateChannelKey(channel_id, key_expire_dt);
-  return res.status(200).json({ data: channel });
+  const result = await Channel.rotateChannelKey(channel_key, key_expire_dt);
+  if (result.error) {
+    return res.status(400).json({ error: result.error });
+  }
+  return res.status(200).json({ data: { new_key: result.newKey } });
+};
+
+const deleteChannelKey = async (req, res) => {
+  const { channel_key } = req.body;
+  const result = await Channel.deleteChannelKey(channel_key);
+  if (result.error) {
+    return res.status(400).json({ error: result.error });
+  }
+  return res.status(200).json({ ok: result.deleted });
 };
 
 module.exports = {
@@ -120,4 +124,5 @@ module.exports = {
   createChannel,
   deleteChannel,
   rotateChannelKey,
+  deleteChannelKey,
 };

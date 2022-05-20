@@ -50,6 +50,48 @@ function channelUpdate(event) {
     });
 }
 
+function keyRotate(event) {
+  event.preventDefault();
+  console.log($(event.target).parents('tr').children('.channel-key').text());
+  const channelKey = $(event.target).parents('tr').children('.channel-key').text();
+  axios
+    .put(`/api/1.0/apps/channels/channelkey`, { channel_key: channelKey })
+    .then((res) => {
+      console.log(res);
+      alert(res);
+      window.location.href = `/management/channels?app_id=${app_id}`;
+    })
+    .catch((err) => {
+      console.log(err);
+      Toast.fire({
+        icon: 'error',
+        title: 'Rotate channel fail',
+        text: err.response.data.error,
+      });
+    });
+}
+
+function deleteKey(event) {
+  event.preventDefault();
+  console.log($(event.target).parents('tr').children('.channel-key').text());
+  const channelKey = $(event.target).parents('tr').children('.channel-key').text();
+  axios
+    .delete(`/api/1.0/apps/channels/channelkey`, { data: { channel_key: channelKey } })
+    .then((res) => {
+      console.log(res);
+      alert(res);
+      window.location.href = `/management/channels?app_id=${app_id}`;
+    })
+    .catch((err) => {
+      console.log(err);
+      Toast.fire({
+        icon: 'error',
+        title: 'Delete key fail',
+        text: err.response.data.error,
+      });
+    });
+}
+
 let focusChannelId = '';
 function clickDelete(event) {
   event.preventDefault();
@@ -70,7 +112,7 @@ function deleteChannel(event) {
     .catch((err) => {
       console.log(err);
       Toast.fire({
-        icon: 'fail',
+        icon: 'error',
         title: 'Delete channel fail',
         text: err.response.data.error,
       });
@@ -100,7 +142,8 @@ function channelCreate(event) {
     });
 }
 
-$('.btn-update').on('click', channelUpdate);
-$('.btn-delete').on('click', clickDelete);
+$('.deleteChannel').on('click', clickDelete);
+$('.deleteKey').on('click', deleteKey);
+$('.rotateKey').on('click', keyRotate);
 $('#delete').on('click', deleteChannel);
 $('#btn-create').on('click', channelCreate);

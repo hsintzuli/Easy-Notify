@@ -45,13 +45,13 @@ const apiAuthentication = async (req, res, next) => {
     return;
   }
 
-  // check whether the key is the correct one
-  const channel = await Channel.getChannelDetail(channelId);
-  console.log(channel);
-  if (!channel || channel.channel_key !== channelKey) {
+  const channelWithKey = await Channel.getChannelKey(channelKey);
+  if (!channelWithKey || channelWithKey.channel_id !== channelId) {
     res.status(403).send({ error: 'Forbidden' });
     return;
   }
+  // check whether the key is the correct one
+  const channel = await Channel.getChannelDetail(channelId);
   req.locals = { channel };
   next();
 };

@@ -30,7 +30,8 @@ const channels = async (req, res) => {
   if (!verified) {
     return res.redirect('/signin');
   }
-  const channels = await Channel.getChannels(app_id);
+  const channels = await Channel.getChannelsWithKeys(app_id);
+  console.log(channels);
   return res.render('channels', { user, channels, moment: require('moment') });
 };
 

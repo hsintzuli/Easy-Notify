@@ -4,55 +4,35 @@ const { v4: uuidv4 } = require('uuid');
 const { nanoid } = require('nanoid');
 const { pool } = require('./mysqlcon');
 
-const createChannel = async (app_id, name, description) => {
-  try {
-    const id = nanoid();
-    const pushKey = webpush.generateVAPIDKeys();
-    const channelKey = uuidv4();
+const createChannel = async (app_id, name) => {
+  const id = nanoid();
+  const pushKey = webpush.generateVAPIDKeys();
+  const apiKey = uuidv4();
 
+  const conn = await pool.getConnection();
+  try {
+    await conn.query('START TRANSACTION');
     const channel = {
       id: id,
       app_id: app_id,
       name: name,
-      channel_key: channelKey,
       public_key: pushKey.publicKey,
       private_key: pushKey.privateKey,
     };
 
-    const [result] = await pool.query('INSERT INTO channels SET ?', channel);
+    await pool.query('INSERT INTO channels SET ?', channel);
+
+    const channelKey = {
+      channel_key: apiKey,
+      channel_id: id,
+    };
+
+    await pool.query('INSERT INTO channel_keys SET ?', channelKey);
+    console.log('COMMIT');
+    await conn.query('COMMIT');
     return { channel };
   } catch (error) {
     console.error('[createChannel] error', error);
-    return { error };
-  }
-};
-
-const updateChannelKey = async (channel_id, key_expire_dt) => {
-  const id = nanoid();
-  const pushKey = webpush.generateVAPIDKeys();
-  const channelKey = uuidv4();
-  const conn = await pool.getConnection();
-  try {
-    await conn.query('START TRANSACTION');
-    const [channels] = await conn.query('SELECT id, app_id, name, public_key, private_key FROM channels WHERE id = ? AND deleted_dt IS NULL', channel_id);
-    const channel = channels[0];
-    if (!channel) {
-      console.log('no channel');
-      await conn.query('ROLLBACK');
-      return { error: 'Incorrect channel id' };
-    }
-
-    await conn.query('UPDATE channels SET key_expire_dt = ? WHERE id = ?', [key_expire_dt, channel.id]);
-    channel.id = id;
-    channel.channel_key = channelKey;
-    channel.public_key = pushKey.publicKey;
-    channel.private_key = pushKey.privateKey;
-    await conn.query('INSERT INTO channels SET ?', channel);
-    console.log('COMMIT');
-    await conn.query('COMMIT');
-    return channel;
-  } catch (error) {
-    console.log(error);
     await conn.query('ROLLBACK');
     return { error };
   } finally {
@@ -78,7 +58,7 @@ const verifyChannelWithUser = async (user_id, channel_id) => {
 
 const getChannelDetail = async (channel_id) => {
   const [results] = await pool.query(
-    `SELECT c.id, c.app_id, c.channel_key, c.public_key, c.private_key, 
+    `SELECT c.id, c.app_id, c.public_key, c.private_key, 
     apps.name AS app_name, apps.default_icon AS icon, apps.contact_email AS email 
     FROM channels AS c INNER JOIN apps ON c.app_id = apps.id WHERE c.id = ? AND c.deleted_dt IS NULL`,
     channel_id
@@ -104,13 +84,91 @@ const getChannelsByUser = async (user_id) => {
   return results;
 };
 
+const getChannelKey = async (channel_key) => {
+  const [results] = await pool.query(`SELECT * FROM channel_keys WHERE channel_key = ?`, [channel_key]);
+  return results[0];
+};
+
+const getChannelsKeys = async (channel_ids) => {
+  const [results] = await pool.query(`SELECT * FROM channel_keys WHERE channel_id in (?) ORDER BY  created_dt DESC`, [channel_ids]);
+  return results;
+};
+
+const getChannelsWithKeys = async (app_id) => {
+  let channels = await getChannels(app_id);
+  channels = channels.reduce((prev, curr) => {
+    prev[curr.id] = curr;
+    return prev;
+  }, {});
+  const keys = await getChannelsKeys(Object.keys(channels));
+  console.log('keys', keys);
+  keys.forEach((key) => {
+    channels[key.channel_id]['keys'] = channels[key.channel_id]['keys'] || [];
+    channels[key.channel_id]['keys'].push(key);
+  });
+  return channels;
+};
+
+const rotateChannelKey = async (channel_key, key_expire_dt) => {
+  const conn = await pool.getConnection();
+  try {
+    await conn.query('START TRANSACTION');
+    const [channelKeys] = await conn.query('SELECT * FROM channel_keys WHERE channel_key = ?  FOR UPDATE', [channel_key]);
+    const channelKey = channelKeys[0];
+
+    if (!channelKey) {
+      console.log('no channel key');
+      await conn.query('ROLLBACK');
+      return { error: 'Incorrect channel key' };
+    }
+
+    if (channelKey.key_expire_dt) {
+      await conn.query('ROLLBACK');
+      return { error: 'The channel key can not be update' };
+    }
+
+    await conn.query('UPDATE channel_keys SET key_expire_dt = ? WHERE channel_key = ?', [key_expire_dt, channel_key]);
+    const newKey = {
+      channel_key: uuidv4(),
+      channel_id: channelKey.channel_id,
+    };
+    await conn.query('INSERT INTO channel_keys SET ?', newKey);
+    console.log('COMMIT');
+    await conn.query('COMMIT');
+    return { newKey };
+  } catch (error) {
+    console.log('[rotateChannelKey] error', error);
+    await conn.query('ROLLBACK');
+    return { error };
+  } finally {
+    conn.release();
+  }
+};
+
+const deleteChannelKey = async (channel_key) => {
+  const [channelKeys] = await pool.query('SELECT * FROM channel_keys WHERE channel_key = ?', [channel_key]);
+  const channelKey = channelKeys[0];
+  if (!channelKey) {
+    return { error: 'Wrong channel key' };
+  }
+  if (!channelKey.key_expire_dt) {
+    return { error: 'The channel key can not be delete' };
+  }
+  const [results] = await pool.query('DELETE FROM channel_keys WHERE channel_key = ?', channel_key);
+  const deleted = results.affectedRows > 0;
+  return { deleted };
+};
+
 module.exports = {
   createChannel,
   deleteChannel,
-  updateChannelKey,
   getChannelDetail,
   verifyChannelWithUser,
   getChannelById,
   getChannels,
   getChannelsByUser,
+  getChannelKey,
+  getChannelsWithKeys,
+  rotateChannelKey,
+  deleteChannelKey,
 };
