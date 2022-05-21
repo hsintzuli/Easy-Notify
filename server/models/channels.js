@@ -42,8 +42,7 @@ const createChannel = async (app_id, name) => {
 
 const deleteChannel = async (channel_id) => {
   const [results] = await pool.query('UPDATE channels SET deleted_dt = NOW() WHERE id = ?', channel_id);
-  const deleted = results.affectedRows > 0;
-  return deleted;
+  return results.affectedRows > 0;
 };
 
 const verifyChannelWithUser = async (user_id, channel_id) => {
@@ -52,8 +51,7 @@ const verifyChannelWithUser = async (user_id, channel_id) => {
     'SELECT apps.user_id AS user_id FROM channels INNER JOIN apps ON channels.app_id = apps.id AND apps.user_id = ? WHERE channels.id = ? and channels.deleted_dt IS NULL',
     [user_id, channel_id]
   );
-  const verified = results.length > 0;
-  return verified;
+  return results.length > 0;
 };
 
 const getChannelDetail = async (channel_id) => {
@@ -155,8 +153,7 @@ const deleteChannelKey = async (channel_key) => {
     return { error: 'The channel key can not be delete' };
   }
   const [results] = await pool.query('DELETE FROM channel_keys WHERE channel_key = ?', channel_key);
-  const deleted = results.affectedRows > 0;
-  return { deleted };
+  return results.affectedRows > 0;
 };
 
 module.exports = {

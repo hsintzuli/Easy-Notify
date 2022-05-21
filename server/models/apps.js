@@ -32,14 +32,12 @@ const getAppDetail = async (app_id) => {
 
 const verifyAppWithUser = async (user_id, app_id) => {
   const [results] = await pool.query('SELECT * FROM apps WHERE id = ? and user_id = ?', [app_id, user_id]);
-  const verified = results.length > 0;
-  return verified;
+  return results.length > 0;
 };
 
 const archiveApp = async (app_id) => {
   const [results] = await pool.query('UPDATE apps SET archived_dt = NOW() WHERE id = ?', app_id);
-  const archived = results.affectedRows > 0;
-  return archived;
+  return results.affectedRows > 0;
 };
 
 module.exports = {

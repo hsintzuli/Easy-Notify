@@ -39,14 +39,12 @@ const getNotificationById = async (notification_id) => {
 
 const deleteNotification = async (notification_id) => {
   const [results] = await pool.query('DELETE FROM notifications WHERE id = ?', [notification_id]);
-  const deleted = results.affectedRows > 0;
-  return deleted;
+  return results.affectedRows > 0;
 };
 
 const updateNotificationStatus = async (notification_id, status) => {
   const [results] = await pool.query('UPDATE notifications SET ? WHERE id = ?', [status, notification_id]);
-  const updated = results.affectedRows > 0;
-  return updated;
+  return results.affectedRows > 0;
 };
 
 const updateNotificationNum = async (notification_id, sent_num, receive_num) => {
@@ -55,14 +53,12 @@ const updateNotificationNum = async (notification_id, sent_num, receive_num) => 
     receive_num,
     notification_id,
   ]);
-  const updated = results.affectedRows > 0;
-  return updated;
+  return results.affectedRows > 0;
 };
 
 const updateNotificationTargetsNum = async (notification_id, targets_num) => {
   const [results] = await pool.query('UPDATE notifications SET targets_num = targets_num + ? WHERE id = ?', [targets_num, notification_id]);
-  const updated = results.affectedRows > 0;
-  return updated;
+  return results.affectedRows > 0;
 };
 
 const getMaxOnlineClient = async (user_id) => {
