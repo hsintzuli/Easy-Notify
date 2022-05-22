@@ -99,7 +99,8 @@ const deleteChannel = async (req, res) => {
 const rotateChannelKey = async (req, res) => {
   const { channel_key } = req.body;
   const now = new Date();
-  const key_expire_dt = new Date(now.getTime() + KET_EXPIRE_S * 1000);
+  let key_expire_dt = new Date(now.getTime() + KET_EXPIRE_S * 1000);
+  key_expire_dt.setHours(24, 0, 0, 0);
   console.debug(`[rotateChannelKey] rotate channel key`);
   const result = await Channel.rotateChannelKey(channel_key, key_expire_dt);
   if (result.error) {
