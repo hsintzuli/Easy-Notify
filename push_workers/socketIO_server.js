@@ -1,6 +1,6 @@
 require('dotenv').config({ path: __dirname + '/../.env' });
 const { SOCKET_TOKEN, SOCKETIO_PORT, CACHE_HOST, CACHE_PORT, CACHE_USER, CACHE_PASSWORD, WORKERS_ERROR_FILE_PATH } = process.env;
-const logger = require('../logger/index').setLogger(WORKERS_ERROR_FILE_PATH);
+require('../logger/index').setLogger(WORKERS_ERROR_FILE_PATH);
 const httpServer = require('http').createServer();
 const { Server } = require('socket.io');
 const redis = require('socket.io-redis');
@@ -84,7 +84,7 @@ const clientSocketOperation = (socket) => {
     socket.leave(channel_id);
   });
 
-  socket.on('disconnect', async (reason) => {
+  socket.on('disconnect', async () => {
     let total = io.engine.clientsCount;
     console.debug('[OnDisconnect] Socket disconnect! 現在連線人數: %s', total);
   });

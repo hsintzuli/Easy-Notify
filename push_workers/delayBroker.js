@@ -1,6 +1,6 @@
 require('dotenv').config({ path: __dirname + '/../.env' });
 const { DELAY_QUEUE, WORKERS_ERROR_FILE_PATH } = process.env;
-const logger = require('../logger/index').setLogger(WORKERS_ERROR_FILE_PATH);
+require('../logger/index').setLogger(WORKERS_ERROR_FILE_PATH);
 const NotificationJobs = require('../utils/notificationJobs');
 const RabbitMQ = require('../utils/rabbit');
 const { createErrorLog } = require('../server/models/notificationErrorLog');

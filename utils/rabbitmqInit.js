@@ -1,7 +1,7 @@
 require('dotenv').config({ path: __dirname + '/.env' });
-const logger = require('../logger/index');
+const { DELAY_EXCHANGE, REALTIME_EXCHANGE, WEBSOCKET_QUEUE, WEBPUSH_QUEUE, DELAY_QUEUE, WORKERS_ERROR_FILE_PATH } = process.env;
+require('../logger/index').setLogger(WORKERS_ERROR_FILE_PATH);
 const RabbitMQ = require('./rabbit');
-const { DELAY_EXCHANGE, REALTIME_EXCHANGE, WEBSOCKET_QUEUE, WEBPUSH_QUEUE, DELAY_QUEUE } = process.env;
 const setExchangeAndQueue = async (amqpConn) => {
   try {
     const ch = await amqpConn.createChannel();

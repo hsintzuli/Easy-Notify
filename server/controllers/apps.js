@@ -111,7 +111,7 @@ const rotateChannelKey = async (req, res) => {
 const deleteChannelKey = async (req, res) => {
   const { channel_key } = req.body;
   const result = await Channel.deleteChannelKey(channel_key);
-  console.debug(`[deleteChannelKey] ${user.id} delete channel key`);
+  console.debug(`[deleteChannelKey] delete channel key`);
   if (result.error) {
     return res.status(400).json({ error: result.error });
   }

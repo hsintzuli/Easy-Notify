@@ -77,9 +77,8 @@ const consumeQueue = async (queue, fnConsumer) => {
 
     // Connect to queue
     await consumerChannel.assertQueue(queue, { durable: true });
-    await consumerChannel.consume(queue, processMsg, { noAck: false });
 
-    function processMsg(msg) {
+    const processMsg = (msg) => {
       // Process incoming messages and send them to fnConsumer
       // Send a callback(true) for acknowledge the message or callback(false) for reject them
       fnConsumer(msg, (ok) => {
@@ -89,7 +88,9 @@ const consumeQueue = async (queue, fnConsumer) => {
           closeOnChannelError(error);
         }
       });
-    }
+    };
+
+    await consumerChannel.consume(queue, processMsg, { noAck: false });
   } catch (error) {
     return closeOnChannelError(error);
   }

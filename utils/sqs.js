@@ -1,5 +1,4 @@
 const { AWS_REGION, ACCESS_ID, ACCESS_KEY, SQS_URL } = process.env;
-const moment = require('moment');
 
 // Load the AWS SDK for Node.js
 const AWS = require('aws-sdk');

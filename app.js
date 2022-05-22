@@ -2,8 +2,8 @@ require('dotenv').config();
 const { PORT, API_VERSION } = process.env;
 const session = require('express-session');
 const cors = require('cors');
-const logger = require('./logger/index').setLogger('app_error.log');
-const Cache = require('./utils/cache');
+require('./logger/index').setLogger('app_error.log');
+require('./utils/cache');
 require('./server/models/mongoconn')
   .connect()
   .catch((error) => {
@@ -47,7 +47,7 @@ app.use('/api/' + API_VERSION, require('./server/routes/api/notification'));
 app.use('/notifier/api/' + API_VERSION, [require('./server/routes/notifier')]);
 
 // Page not found
-app.use((req, res, next) => {
+app.use((req, res) => {
   res.sendStatus(404);
 });
 

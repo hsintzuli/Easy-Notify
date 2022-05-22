@@ -1,6 +1,6 @@
 require('dotenv').config({ path: __dirname + '/../.env' });
 const { WEBPUSH_QUEUE, WORKERS_ERROR_FILE_PATH } = process.env;
-const logger = require('../logger/index').setLogger(WORKERS_ERROR_FILE_PATH);
+require('../logger/index').setLogger(WORKERS_ERROR_FILE_PATH);
 const webpush = require('web-push');
 const Cache = require('../utils/cache');
 const Content = require('../server/models/content');
@@ -14,7 +14,7 @@ require('../server/models/mongoconn').connect();
 const RabbitMQ = require('../utils/rabbit');
 
 async function fnConsumer(msg, ack) {
-  const { notificationId, channelId, clients } = JSON.parse(msg.content);
+  const { notificationId, clients } = JSON.parse(msg.content);
   console.info('[fnConsumer] Webpush worker receive job with id: %s', notificationId);
 
   try {

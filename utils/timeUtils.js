@@ -33,6 +33,7 @@ const getCheckHour = (delay) => {
 
 const calDiffInterval = (startDate, endDate) => {
   const diffHour = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 3600));
+  let interval;
   if (diffHour < 72) {
     interval = '%b-%d %H';
   } else if (diffHour < 60 * 24) {

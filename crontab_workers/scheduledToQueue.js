@@ -1,11 +1,10 @@
 require('dotenv').config({ path: __dirname + '/../.env' });
 const { DELAY_EXCHANGE, SCHEDULED_INTERVAL_HOUR, WORKERS_ERROR_FILE_PATH } = process.env;
-const logger = require('../logger/index').setLogger(WORKERS_ERROR_FILE_PATH);
+require('../logger/index').setLogger(WORKERS_ERROR_FILE_PATH);
 const RabbitMQ = require('./../utils/rabbit');
 
 const { pool } = require('./../server/models/mysqlcon');
 const { NOTIFICATION_STATUS, updateNotificationStatus } = require('./../server/models/notifications');
-const _ = require('lodash');
 const { diffFromNow } = require('./../utils/timeUtils');
 const mongo = require('./../server/models/mongoconn');
 

@@ -1,6 +1,6 @@
 require('dotenv').config({ path: __dirname + '/../.env' });
 const { WEBSOCKET_QUEUE, SOCKET_TOKEN, WORKERS_ERROR_FILE_PATH } = process.env;
-const logger = require('../logger/index').setLogger(WORKERS_ERROR_FILE_PATH);
+require('../logger/index').setLogger(WORKERS_ERROR_FILE_PATH);
 const Notification = require('../server/models/notifications');
 const { NOTIFICATION_STATUS } = Notification;
 const Content = require('../server/models/content');

@@ -37,7 +37,7 @@ const subscribe = async (req, res) => {
 const verifySubscription = async (req, res) => {
   const { code } = req.query;
   const condition = { status: 1 };
-  const id = await Subscription.updateClient(code, condition);
+  await Subscription.updateClient(code, condition);
   return res.status(200).json({ status: 'success' });
 };
 

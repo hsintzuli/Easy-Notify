@@ -1,13 +1,12 @@
 require('dotenv').config({ path: __dirname + '/../.env' });
 const { WORKERS_ERROR_FILE_PATH } = process.env;
-const logger = require('../logger/index').setLogger(WORKERS_ERROR_FILE_PATH);
+require('../logger/index').setLogger(WORKERS_ERROR_FILE_PATH);
 const Cache = require('../utils/cache');
 const { pool } = require('../server/models/mysqlcon');
 const Notification = require('../server/models/notifications');
 const { getCheckHour } = require('../utils/timeUtils');
 
 const updateNotificationReceived = async () => {
-  const now = new Date();
   const hourToCheck = getCheckHour(false);
   console.info('[updateNotificationReceived] Start check receivedNumber & sentNumber in %s', hourToCheck);
   try {
@@ -34,7 +33,7 @@ const updateNotificationReceived = async () => {
     await pool.end();
     await Cache.disconnect();
     console.info('[updateNotificationReceived] End check');
-    return process.exit(0);
+    process.exit(0);
   }
 };
 
