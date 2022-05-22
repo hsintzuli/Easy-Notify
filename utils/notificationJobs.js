@@ -23,7 +23,7 @@ const handleRealtimeRequest = async (notification, channel) => {
 
 const handleScheduledRequest = async (notification, channel) => {
   const delay = diffFromNow(notification.sendTime);
-  console.info('[handleScheduledRequest] Handling Scheduled Job, Scheduled Time:', moment(notification.sendTime).format('YYYY-MM-DD HH:mm:ss'));
+  console.info('[handleScheduledRequest] Handling Scheduled Job, Scheduled Time: %s', moment(notification.sendTime).format('YYYY-MM-DD HH:mm:ss'));
 
   // If delay time exceed SCHEDULED_INTERVAL_HOUR, just stay in db and not publish to delay exchange
   const notPublishToQueue = delay > parseInt(SCHEDULED_INTERVAL_HOUR) * 3600;
@@ -45,7 +45,7 @@ const handleScheduledRequest = async (notification, channel) => {
 
 // Generate job for webpush notifcation
 const genWebpushJob = async (notificationId, channelId) => {
-  console.info('[genWebpushJob] Generate job for webpush with notification ID:', notificationId);
+  console.info('[genWebpushJob] Generate job for webpush with notification id: %s', notificationId);
   const job = { notificationId, channelId };
   const jobOptions = {
     contentType: 'application/json',
@@ -53,11 +53,11 @@ const genWebpushJob = async (notificationId, channelId) => {
 
   // Get subscribers form mysql and split to small job according to the numbers of subscribers
   const subscriptions = await Subscription.getClientIds(channelId);
-  console.debug(`[genWebpushJob] Update notfication ${notificationId} with targets_num: `, subscriptions.length);
+  console.debug(`[genWebpushJob] Update notfication ${notificationId} with targets_num: %s`, subscriptions.length);
   await Notification.updateNotificationStatus(notificationId, { targets_num: subscriptions.length });
 
   if (subscriptions.length === 0) {
-    console.debug('[genWebpushJob] No subscriber to the channel with ID:', channelId);
+    console.debug('[genWebpushJob] No subscriber to the channel with id: %s', channelId);
     await Notification.updateNotificationStatus(notificationId, { status: Notification.NOTIFICATION_STATUS.COMPLETE });
   }
 
@@ -78,7 +78,7 @@ const genWebpushJob = async (notificationId, channelId) => {
 
 // Generate job for websocket notifcation
 const genWebsocketJob = async (notificationId, channelId) => {
-  console.info('[genWebsocketJob] Generate job for websocket with notification ID:', notificationId);
+  console.info('[genWebsocketJob] Generate job for websocket with notification id: %s', notificationId);
   const job = { notificationId, channelId };
   const jobOptions = {
     contentType: 'application/json',

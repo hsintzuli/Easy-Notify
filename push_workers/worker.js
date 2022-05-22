@@ -15,7 +15,7 @@ const RabbitMQ = require('../utils/rabbit');
 
 async function fnConsumer(msg, ack) {
   const { notificationId, channelId, clients } = JSON.parse(msg.content);
-  console.info('[fnConsumer] Webpush worker receive job', notificationId);
+  console.info('[fnConsumer] Webpush worker receive job with id: %s', notificationId);
 
   try {
     const updated = await Notification.updateNotificationStatus(notificationId, { status: NOTIFICATION_STATUS.DELEVERED });

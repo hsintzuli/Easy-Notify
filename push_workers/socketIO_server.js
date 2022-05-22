@@ -20,13 +20,13 @@ const getRoomByChannel = (channelId) => {
 };
 
 serverId = io.engine.generateId();
-console.info('Socket Server Initialize!, ID:', serverId);
+console.info('Socket Server Initialize!, id: %s', serverId);
 io.adapter(redis({ host: CACHE_HOST, port: CACHE_PORT, user: CACHE_USER, password: CACHE_PASSWORD }));
 
 // Authentication middleware for admin client (socketIO worker)
 io.use((socket, next) => {
   let total = io.engine.clientsCount;
-  console.debug('New connect! 現在連線人數:', total);
+  console.debug('New connect! 現在連線人數: %s', total);
   if (socket.handshake.auth && socket.handshake.auth.token && socket.handshake.auth.token === SOCKET_TOKEN) {
     socket.role = 1;
     return next();
@@ -70,23 +70,23 @@ const clientSocketOperation = (socket) => {
   socket.on('subscribe', async (data) => {
     try {
       const { channel_id } = data;
-      console.debug('[OnConnection] Socket client subscribe room:', channel_id);
+      console.debug('[OnConnection] Socket client subscribe room: %s', channel_id);
       socket.join(channel_id);
     } catch (error) {
-      console.debug('[error] join room :', error);
+      console.debug('[error] join room : %o', error);
       socket.emit('error', 'couldnt perform requested action');
     }
   });
 
   socket.on('unsubscribe', (data) => {
     const { channel_id } = data;
-    console.debug('[OnSnsubscribe] Socket client unsubscribe room', channel_id);
+    console.debug('[OnSnsubscribe] Socket client unsubscribe room: %s', channel_id);
     socket.leave(channel_id);
   });
 
   socket.on('disconnect', async (reason) => {
     let total = io.engine.clientsCount;
-    console.debug('[OnDisconnect] Socket disconnect! 現在連線人數:', total);
+    console.debug('[OnDisconnect] Socket disconnect! 現在連線人數: %s', total);
   });
 };
 

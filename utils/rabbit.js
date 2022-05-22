@@ -28,7 +28,7 @@ const startPublish = async () => {
     pubChannel = await amqpConn.createConfirmChannel();
     console.info('[Rabbit] Publisher started');
     pubChannel.on('error', async function (err) {
-      console.error('[Rabbit] publish channel error', err.message);
+      console.error('[Rabbit] publish channel error: %o', err.message);
       await pubChannel.connection.close();
     });
     pubChannel.on('close', function () {
@@ -57,7 +57,7 @@ const publishMessage = async (exchange, routingKey, content, options) => {
     console.info('[Rabbit] successfully publish message: %o', message);
   } catch (error) {
     console.error('[Rabbit] publish message error: %o', error);
-    throw new Error('[Rabbit] publish error', error);
+    throw new Error('[Rabbit] publish error');
   }
 };
 
@@ -68,7 +68,7 @@ const consumeQueue = async (queue, fnConsumer) => {
     console.info('[Rabbit] Consumer is started');
 
     consumerChannel.on('error', function (error) {
-      console.error('[Rabbit] consumer channel error', error.message);
+      console.error('[Rabbit] consumer channel error: %o', error);
     });
 
     consumerChannel.on('close', function () {
@@ -121,7 +121,7 @@ const onClose = () => {
 
 const onError = (error) => {
   amqpConn = null;
-  console.error('[Rabbit] connect error', error.message);
+  console.error('[Rabbit] connect error: %o', error);
   if (error.message !== 'Connection closing') {
     reconnect();
   }
@@ -129,7 +129,7 @@ const onError = (error) => {
 
 const closeOnChannelError = async (error) => {
   if (!error) return false;
-  console.error('[Rabbit] Close connection because', error);
+  console.error('[Rabbit] Close connection because: %o', error);
 
   try {
     await amqpConn.close();

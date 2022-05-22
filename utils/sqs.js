@@ -17,7 +17,7 @@ const sendMessage = async (messageBody) => {
     if (err) {
       console.error('[SQS] Send message error: %o', err);
     } else {
-      console.info('[SQS] Send message success with id:', data.MessageId);
+      console.info('[SQS] Send message success with id: %s', data.MessageId);
     }
   });
 };

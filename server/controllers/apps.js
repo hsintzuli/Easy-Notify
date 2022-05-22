@@ -45,7 +45,7 @@ const getApps = async (req, res) => {
   const { app_id } = req.query;
   if (!app_id) {
     const apps = await App.getApps(user.id);
-    console.debug('[getApps] get all apps of user', apps);
+    console.debug('[getApps] get all apps of user: %o', apps);
     return res.status(200).json({ data: apps });
   }
   const verified = await App.verifyAppWithUser(user.id, app_id);

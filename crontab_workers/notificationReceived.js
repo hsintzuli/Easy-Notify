@@ -9,7 +9,7 @@ const { getCheckHour } = require('../utils/timeUtils');
 const updateNotificationReceived = async () => {
   const now = new Date();
   const hourToCheck = getCheckHour(false);
-  console.info('[updateNotificationReceived] Start check receivedNumber & sentNumber in', hourToCheck);
+  console.info('[updateNotificationReceived] Start check receivedNumber & sentNumber in %s', hourToCheck);
   try {
     const receivedNum = await Cache.hgetall(`receivedNum:${hourToCheck}`);
     const sentNum = await Cache.hgetall(`sentNum:${hourToCheck}`);

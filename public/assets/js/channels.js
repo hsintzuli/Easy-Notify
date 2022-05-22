@@ -37,7 +37,6 @@ function channelUpdate(event) {
   axios
     .put(`/api/1.0/apps/channels?channel_id=${channelID}`)
     .then((res) => {
-      console.log(res);
       window.location.href = `/management/channels?app_id=${app_id}`;
     })
     .catch((err) => {
@@ -57,8 +56,6 @@ function keyRotate(event) {
   axios
     .put(`/api/1.0/apps/channels/channelkey`, { channel_key: channelKey })
     .then((res) => {
-      console.log(res);
-      alert(res);
       window.location.href = `/management/channels?app_id=${app_id}`;
     })
     .catch((err) => {
@@ -78,8 +75,6 @@ function deleteKey(event) {
   axios
     .delete(`/api/1.0/apps/channels/channelkey`, { data: { channel_key: channelKey } })
     .then((res) => {
-      console.log(res);
-      alert(res);
       window.location.href = `/management/channels?app_id=${app_id}`;
     })
     .catch((err) => {
@@ -106,7 +101,6 @@ function deleteChannel(event) {
   axios
     .delete(`/api/1.0/apps/channels?channel_id=${focusChannelId}`)
     .then((res) => {
-      console.log(res);
       window.location.href = `/management/channels?app_id=${app_id}`;
     })
     .catch((err) => {
@@ -128,7 +122,6 @@ function channelCreate(event) {
       name: name,
     })
     .then((res) => {
-      console.log(res);
       window.location.href = `/management/channels?app_id=${app_id}`;
     })
     .catch((err) => {

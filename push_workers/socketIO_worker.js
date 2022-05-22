@@ -20,15 +20,15 @@ const socket = io('https://notify.easynotify.site', {
 
 socket.on('connect', async () => {
   const engine = socket.io.engine;
-  console.info('[SocketIO] Connect to socket server, connect in', engine.transport.name);
+  console.info('[SocketIO] Connect to socket server, connect in %s', engine.transport.name);
 
   engine.once('upgrade', () => {
-    console.info('[SocketIO] Connection upgrade, connect in', engine.transport.name);
+    console.info('[SocketIO] Connection upgrade, connect in %s', engine.transport.name);
   });
 
   engine.on('close', (reason) => {
     // called when the underlying connection is closed
-    console.warn('[SocketIO] Connection closed', reason);
+    console.warn('[SocketIO] Connection closed %o', reason);
   });
 
   socket.on('connection', async (data) => {
@@ -37,11 +37,11 @@ socket.on('connect', async () => {
 
   socket.on('roomNums', async (data) => {
     const { roomId, notificationId, clientsNum } = data;
-    console.debug(`[SocketIO] Receive the numbers of clients in channel ${roomId} from socket server`, clientsNum);
+    console.debug(`[SocketIO] Receive the numbers of clients in channel ${roomId} from socket server: ${clientsNum}`);
     try {
       await Notification.updateNotificationTargetsNum(notificationId, clientsNum);
     } catch (error) {
-      console.error('[SocketIO] Update target clients error', error);
+      console.error('[SocketIO] Update target clients error: %o', error);
     }
   });
 
@@ -52,14 +52,14 @@ socket.on('connect', async () => {
       await Cache.hincrby(`sentNum:${hourToCheck}`, notificationId, clientsNum);
       await Notification.updateNotificationStatus(notificationId, { status: NOTIFICATION_STATUS.COMPLETE });
     } catch (error) {
-      console.error('[SocketIO] Update sent clients error', error);
+      console.error('[SocketIO] Update sent clients error: %o', error);
     }
   });
 });
 
 async function fnConsumer(msg, ack) {
   const { notificationId, channelId } = JSON.parse(msg.content);
-  console.info('[SocketIO] Websocket worker receive job with ID:', notificationId);
+  console.info('[SocketIO] Websocket worker receive job with id: %s', notificationId);
   socket.emit('checkRoom', { roomId: channelId, notificationId });
 
   try {
@@ -78,7 +78,7 @@ async function fnConsumer(msg, ack) {
       config: msgContent.config,
     };
     socket.emit('push', { roomId: channelId, payload });
-    console.info('[SocketIO] Successfully send push requirment to socket server about room:', channelId);
+    console.info('[SocketIO] Successfully send push requirment to socket server about room: %s', channelId);
     ack(true);
   } catch (error) {
     await createErrorLog(error);
