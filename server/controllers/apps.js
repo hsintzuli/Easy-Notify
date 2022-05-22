@@ -19,7 +19,7 @@ const validateApp = async (req, res, next) => {
 const createApp = async (req, res) => {
   const { user } = req.session;
   const { name, description, contact_email, default_icon } = req.body;
-  console.log(`${user.id} create app: ${name}`);
+  console.debug(`[createApp] ${user.id} create app: ${name}`);
   const result = await App.createApp(user.id, name, description, contact_email, default_icon);
   if (result.error) {
     return res.status(400).json({ error: result.error });
@@ -30,7 +30,7 @@ const createApp = async (req, res) => {
 const archiveApp = async (req, res) => {
   const { user } = req.session;
   const { app_id } = req.query;
-  console.log(`${user.id} archive app: ${app_id}`);
+  console.debug(`[createApp] ${user.id} archive app: ${app_id}`);
   const verified = await App.verifyAppWithUser(user.id, app_id);
   if (!verified) {
     return res.status(400).json({ error: 'Incorrect user or app id' });
@@ -45,7 +45,7 @@ const getApps = async (req, res) => {
   const { app_id } = req.query;
   if (!app_id) {
     const apps = await App.getApps(user.id);
-    console.log(apps);
+    console.debug('[getApps] get all apps of user', apps);
     return res.status(200).json({ data: apps });
   }
   const verified = await App.verifyAppWithUser(user.id, app_id);
@@ -69,9 +69,9 @@ const validateChannel = async (req, res, next) => {
 };
 
 const createChannel = async (req, res) => {
-  console.log('Post Channel:', req.body);
   const { user } = req.session;
   const { app_id, name } = req.body;
+  console.debug(`[createChannel] ${user.id} create channel: ${name}`);
   const verified = await App.verifyAppWithUser(user.id, app_id);
   if (!verified) {
     return res.status(400).json({ error: 'Incorrect user or app id' });
@@ -86,6 +86,7 @@ const createChannel = async (req, res) => {
 const deleteChannel = async (req, res) => {
   const { user } = req.session;
   const { channel_id } = req.query;
+  console.debug(`[deleteChannel] ${user.id} delete channel: ${channel_id}`);
   const verified = await Channel.verifyChannelWithUser(user.id, channel_id);
   if (!verified) {
     return res.status(400).json({ error: 'Incorrect user or channel id' });
@@ -99,6 +100,7 @@ const rotateChannelKey = async (req, res) => {
   const { channel_key } = req.body;
   const now = new Date();
   const key_expire_dt = new Date(now.getTime() + KET_EXPIRE_S * 1000);
+  console.debug(`[rotateChannelKey] rotate channel key`);
   const result = await Channel.rotateChannelKey(channel_key, key_expire_dt);
   if (result.error) {
     return res.status(400).json({ error: result.error });
@@ -109,6 +111,7 @@ const rotateChannelKey = async (req, res) => {
 const deleteChannelKey = async (req, res) => {
   const { channel_key } = req.body;
   const result = await Channel.deleteChannelKey(channel_key);
+  console.debug(`[deleteChannelKey] ${user.id} delete channel key`);
   if (result.error) {
     return res.status(400).json({ error: result.error });
   }

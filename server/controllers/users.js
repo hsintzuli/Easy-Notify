@@ -29,6 +29,7 @@ const signUp = async (req, res) => {
     res.status(500).send({ error: 'Database Query Error' });
     return;
   }
+  console.debug('[SignUp] user sign up : %o', user);
   req.session.user = { id: user.id, name: user.name };
   res.status(200).send({
     data: {
@@ -42,18 +43,17 @@ const signUp = async (req, res) => {
 };
 
 const signIn = async (req, res) => {
-  console.log('signin');
   const { email, password } = req.body;
   if (!email || !password) {
-    return { error: 'Request Error: email and password are required.', status: 400 };
+    return res.status(400).json({ error: 'Request Error: email and password are required.' });
   }
   const result = await User.signIn(email, password);
   if (result.error) {
     res.status(403).send({ error: 'Incorrect email or password.' });
     return;
   }
-
   const user = result.user;
+  console.debug('[SignIn] user sign in : %o', user);
   if (!user) {
     res.status(500).json({ error: 'Database Query Error' });
     return;
@@ -82,7 +82,7 @@ const getNewSubscribers = async (req, res) => {
   [start_date, end_date] = TimeUtils.generateValidDatetimeRange(start_date, end_date);
   const interval = TimeUtils.calDiffInterval(start_date, end_date);
   const data = await Subscription.getClientGroupByDate(user.id, start_date, end_date, interval);
-
+  console.debug('[getNewSubscribers] Get clients group by date : %o', data);
   res.status(200).send({
     data,
   });

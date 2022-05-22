@@ -1,8 +1,10 @@
 require('dotenv').config({ path: __dirname + '/../.env' });
+const { SOCKET_TOKEN, SOCKETIO_PORT, CACHE_HOST, CACHE_PORT, CACHE_USER, CACHE_PASSWORD, WORKERS_ERROR_FILE_PATH } = process.env;
+const logger = require('../logger/index').setLogger(WORKERS_ERROR_FILE_PATH);
 const httpServer = require('http').createServer();
 const { Server } = require('socket.io');
 const redis = require('socket.io-redis');
-const { SOCKET_TOKEN, SOCKETIO_PORT, CACHE_HOST, CACHE_PORT, CACHE_USER, CACHE_PASSWORD } = process.env;
+
 let serverId;
 
 const io = new Server(httpServer, {
@@ -18,13 +20,13 @@ const getRoomByChannel = (channelId) => {
 };
 
 serverId = io.engine.generateId();
-console.log('Socket Server Initialize!, ID:', serverId);
+console.info('Socket Server Initialize!, ID:', serverId);
 io.adapter(redis({ host: CACHE_HOST, port: CACHE_PORT, user: CACHE_USER, password: CACHE_PASSWORD }));
 
 // Authentication middleware for admin client (socketIO worker)
 io.use((socket, next) => {
   let total = io.engine.clientsCount;
-  console.log('New connect! 現在連線人數:', total);
+  console.debug('New connect! 現在連線人數:', total);
   if (socket.handshake.auth && socket.handshake.auth.token && socket.handshake.auth.token === SOCKET_TOKEN) {
     socket.role = 1;
     return next();
@@ -44,7 +46,7 @@ io.on('connection', async (socket) => {
 
 // Communication with socketIO worker. Handle checkRoom clients & push notification request.
 const adminSocketOperation = (socket) => {
-  console.log('Connect with websocket worker!!!!! \n');
+  console.info('[OnConnection] Connect with websocket worker!!!!!');
   socket.emit('connection', 'Hello worker, ' + socket.id);
   socket.on('checkRoom', (data) => {
     let { roomId, notificationId } = data;
@@ -53,7 +55,7 @@ const adminSocketOperation = (socket) => {
   });
 
   socket.on('push', (data) => {
-    console.log('Receive push event from websocket worker', data);
+    console.info('[OnPush] Receive push event from websocket worker: %o', data);
     let { roomId, payload } = data;
     io.in(roomId).emit('push', payload);
 
@@ -68,23 +70,23 @@ const clientSocketOperation = (socket) => {
   socket.on('subscribe', async (data) => {
     try {
       const { channel_id } = data;
-      console.log('Socket client subscribe room:', channel_id);
+      console.debug('[OnConnection] Socket client subscribe room:', channel_id);
       socket.join(channel_id);
     } catch (error) {
-      console.log('[error]', 'join room :', error);
+      console.debug('[error] join room :', error);
       socket.emit('error', 'couldnt perform requested action');
     }
   });
 
   socket.on('unsubscribe', (data) => {
     const { channel_id } = data;
-    console.log('Socket client unsubscribe room', channel_id);
+    console.debug('[OnSnsubscribe] Socket client unsubscribe room', channel_id);
     socket.leave(channel_id);
   });
 
   socket.on('disconnect', async (reason) => {
     let total = io.engine.clientsCount;
-    console.log('Socket disconnect! 現在連線人數:', total);
+    console.debug('[OnDisconnect] Socket disconnect! 現在連線人數:', total);
   });
 };
 

@@ -27,11 +27,11 @@ const signUp = async (name, email, password) => {
     await conn.query('COMMIT');
     return { user };
   } catch (error) {
-    console.log(error);
+    console.error('[signUp] User signUp error: %o', error);
     await conn.query('ROLLBACK');
     return { error };
   } finally {
-    await conn.release();
+    conn.release();
   }
 };
 
@@ -49,11 +49,11 @@ const signIn = async (email, password) => {
     await conn.query('COMMIT');
     return { user };
   } catch (error) {
-    console.log('catch error', error);
+    console.error('[signIn] User signIn error: %o', error);
     await conn.query('ROLLBACK');
     return { error };
   } finally {
-    await conn.release();
+    conn.release();
   }
 };
 

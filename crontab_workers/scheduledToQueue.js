@@ -1,6 +1,8 @@
 require('dotenv').config({ path: __dirname + '/../.env' });
+const { DELAY_EXCHANGE, SCHEDULED_INTERVAL_HOUR, WORKERS_ERROR_FILE_PATH } = process.env;
+const logger = require('../logger/index').setLogger(WORKERS_ERROR_FILE_PATH);
 const RabbitMQ = require('./../utils/rabbit');
-const { DELAY_EXCHANGE, SCHEDULED_INTERVAL_HOUR } = process.env;
+
 const { pool } = require('./../server/models/mysqlcon');
 const { NOTIFICATION_STATUS, updateNotificationStatus } = require('./../server/models/notifications');
 const _ = require('lodash');
@@ -17,7 +19,7 @@ const publishToDelayExchange = async () => {
     );
 
     if (notifications.length === 0) {
-      console.log('No scheduled notification moved to queue');
+      console.info('[publishToDelayExchange] No scheduled notification moved to queue');
       return;
     }
 
@@ -30,9 +32,10 @@ const publishToDelayExchange = async () => {
       };
       await RabbitMQ.publishMessage(DELAY_EXCHANGE, '', JSON.stringify(job), jobOptions);
       await updateNotificationStatus(notification.id, { status: NOTIFICATION_STATUS.ONQUEUE });
+      console.debug('[publishToDelayExchange] Successfully publish to delay exchange: %o', job);
     }
   } catch (error) {
-    console.error(error);
+    console.error('[publishToDelayExchange] Publish Error: %o', error);
   } finally {
     await mongo.disconnect();
     await pool.end();

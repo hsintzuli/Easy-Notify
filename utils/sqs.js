@@ -12,12 +12,12 @@ const sendMessage = async (messageBody) => {
     MessageBody: messageBody,
     QueueUrl: SQS_URL,
   };
-  console.log('Send message to SQS at:', moment());
+  console.info('[SQS] Send message to SQS');
   sqs.sendMessage(params, function (err, data) {
     if (err) {
-      console.log('Error', err);
+      console.error('[SQS] Send message error: %o', err);
     } else {
-      console.log('SQS Success', data.MessageId);
+      console.info('[SQS] Send message success with id:', data.MessageId);
     }
   });
 };

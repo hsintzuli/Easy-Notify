@@ -8,19 +8,17 @@ redisClient.ready = false;
 
 redisClient.on('ready', () => {
   redisClient.ready = true;
-  console.log('Redis is ready');
+  console.info('[Cache] Redis is ready');
 });
 
 redisClient.on('error', () => {
   redisClient.ready = false;
-  if (process.env.NODE_ENV == 'production') {
-    console.log('Error in Redis');
-  }
+  console.error('[Cache] Error in Redis');
 });
 
 redisClient.on('end', () => {
   redisClient.ready = false;
-  console.log('Redis is disconnected');
+  console.warn('[Cache] Redis is disconnected');
 });
 
 module.exports = redisClient;

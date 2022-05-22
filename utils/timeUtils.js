@@ -27,7 +27,6 @@ const generateValidDatetimeRange = (startDate, endDate) => {
 
 const getCheckHour = (delay) => {
   const now = new Date();
-  console.log('delay', +delay);
   const hourToCheck = now.getHours() % 2 === +delay ? 'even' : 'odd';
   return hourToCheck;
 };

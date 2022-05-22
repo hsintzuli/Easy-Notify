@@ -2,16 +2,17 @@ require('dotenv').config();
 const { PORT, API_VERSION } = process.env;
 const session = require('express-session');
 const cors = require('cors');
+const logger = require('./logger/index').setLogger('app_error.log');
 const Cache = require('./utils/cache');
 require('./server/models/mongoconn')
   .connect()
   .catch((error) => {
-    console.log('MongoDB create connection error');
+    console.error('MongoDB create connection error:', error);
   });
 require('./utils/rabbit')
   .connect()
   .catch((error) => {
-    console.log('RabbitMQ create connection error');
+    console.error('RabbitMQ create connection error:', error);
   });
 
 // Express Initialization
@@ -54,14 +55,13 @@ app.use((req, res, next) => {
 app.use((err, req, res, next) => {
   err.status = err.status || 500;
   res.status(err.status);
-  console.log(err);
-  res.json({
+  console.error('[Uncaught error] %o:', err);
+  res.statys(err.status).json({
     status: err.status,
-    error: err.message,
+    error: 'Please contact the server administrator',
   });
 });
 
 app.listen(PORT, async () => {
-  // require('./utils/websocketWorker').initializSocketWorker();
-  console.log(`Listening on port: ${PORT}`);
+  console.info(`Listening on port: ${PORT}`);
 });

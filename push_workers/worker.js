@@ -1,10 +1,11 @@
 require('dotenv').config({ path: __dirname + '/../.env' });
+const { WEBPUSH_QUEUE, WORKERS_ERROR_FILE_PATH } = process.env;
+const logger = require('../logger/index').setLogger(WORKERS_ERROR_FILE_PATH);
 const webpush = require('web-push');
 const Cache = require('../utils/cache');
 const Content = require('../server/models/content');
 const Notification = require('../server/models/notifications');
 const Subscription = require('../server/models/subscriptions');
-const { WEBPUSH_QUEUE } = process.env;
 const { NOTIFICATION_STATUS } = Notification;
 const { getCheckHour } = require('../utils/timeUtils');
 const { createErrorLog } = require('../server/models/notificationErrorLog');
@@ -14,12 +15,12 @@ const RabbitMQ = require('../utils/rabbit');
 
 async function fnConsumer(msg, ack) {
   const { notificationId, channelId, clients } = JSON.parse(msg.content);
-  console.log('Webpush worker receive job', notificationId);
+  console.info('[fnConsumer] Webpush worker receive job', notificationId);
 
   try {
     const updated = await Notification.updateNotificationStatus(notificationId, { status: NOTIFICATION_STATUS.DELEVERED });
     if (!updated) {
-      console.log(`Notification ${notificationId} has been deleted before delevered`);
+      console.info(`[fnConsumer] sNotification ${notificationId} has been deleted before delevered`);
       return ack(true);
     }
     const msgContent = await Content.getContentById(notificationId);
@@ -34,9 +35,9 @@ async function fnConsumer(msg, ack) {
       vapidDetails: msgContent.vapid_detail,
       TTL: DEFAULT_TTL,
     };
-    console.log('Start to push notification through webpush:', payload);
+    console.debug('[Start Push] Start to push notification through webpush: %o', payload);
     const subscriptions = await Subscription.getClientDetailByIds(clients);
-    console.log('Target clients', subscriptions);
+    console.debug('[Start Push] Target clients: %o', subscriptions);
     for (let subscription of subscriptions) {
       const client = {
         endpoint: subscription.endpoint,
@@ -55,12 +56,12 @@ async function fnConsumer(msg, ack) {
     if (leavingJobs === 0) {
       await Notification.updateNotificationStatus(notificationId, { status: NOTIFICATION_STATUS.COMPLETE });
       await Cache.del('pushJobs', notificationId);
-      console.log(`Finish ${notificationId}, successfully update mysql & delete redis`);
+      console.info(`[fnConsumer] Finish ${notificationId}, successfully update mysql & delete redis`);
     }
     ack(true);
   } catch (error) {
     await createErrorLog(error);
-    console.error('Record error in MongoDB', error);
+    console.error('[Consume error] Consume error \nRecord error in MongoDB: %o', error);
     ack(true);
   }
 }

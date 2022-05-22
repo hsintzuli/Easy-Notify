@@ -11,30 +11,29 @@ const connect = async () => {
     amqpConn = await amqp.connect(AMQP_URL);
     amqpConn.on('error', onError);
     amqpConn.on('close', onClose);
-    console.log('[AMQP] successfully connected');
+    console.info('[Rabbit] successfully connected');
     return amqpConn;
   } catch (error) {
-    console.error('[AMQP] error on rabbitmq first connection', error);
-    reconnect();
+    onError(error);
   }
 };
 
 // Create channel for publishing
 const startPublish = async () => {
   if (!amqpConn) {
-    throw new Error('[AMQP] Publish Error');
+    throw new Error('[Rabbit] Publish error because no existing connection');
   }
 
   try {
     pubChannel = await amqpConn.createConfirmChannel();
-    console.log('[AMQP] Publisher started');
+    console.info('[Rabbit] Publisher started');
     pubChannel.on('error', async function (err) {
-      console.error('[AMQP] publish channel error', err.message);
+      console.error('[Rabbit] publish channel error', err.message);
       await pubChannel.connection.close();
     });
     pubChannel.on('close', function () {
       pubChannel = null;
-      console.log('[AMQP] publish channel closed');
+      console.warn('[Rabbit] publish channel closed');
     });
 
     return true;
@@ -55,10 +54,10 @@ const publishMessage = async (exchange, routingKey, content, options) => {
 
     // Publish message to exchange
     await pubChannel.publish(exchange, routingKey, message, options);
-    console.log('[AMQP] successfully publish');
+    console.info('[Rabbit] successfully publish message: %o', message);
   } catch (error) {
-    console.error(error);
-    throw new Error('[AMQP] publish error', error);
+    console.error('[Rabbit] publish message error: %o', error);
+    throw new Error('[Rabbit] publish error', error);
   }
 };
 
@@ -66,14 +65,14 @@ const consumeQueue = async (queue, fnConsumer) => {
   // Create a channel for queue
   try {
     const consumerChannel = await amqpConn.createChannel();
-    console.log('[AMQP] Consumer is started');
+    console.info('[Rabbit] Consumer is started');
 
     consumerChannel.on('error', function (error) {
-      console.error('[AMQP] consumer channel error', error.message);
+      console.error('[Rabbit] consumer channel error', error.message);
     });
 
     consumerChannel.on('close', function () {
-      console.log('[AMQP] consumer channel closed');
+      console.warn('[Rabbit] consumer channel closed');
     });
 
     // Connect to queue
@@ -104,16 +103,16 @@ const closeConnection = async () => {
   tryReconnect = false;
   await amqpConn.close();
   amqpConn = null;
-  console.log('[AMQP] connection closed');
+  console.info('[Rabbit] Manually close connection');
 };
 
 const reconnect = () => {
-  console.log('[AMQP] reconnectting');
+  console.warn('[Rabbit] reconnectting');
   setTimeout(() => connect(), 10000);
 };
 
 const onClose = () => {
-  console.log('[AMQP] connection closing');
+  console.warn('[Rabbit] connection closing');
   amqpConn = null;
   if (tryReconnect) {
     reconnect();
@@ -122,7 +121,7 @@ const onClose = () => {
 
 const onError = (error) => {
   amqpConn = null;
-  console.error('[AMQP] connect error', error.message);
+  console.error('[Rabbit] connect error', error.message);
   if (error.message !== 'Connection closing') {
     reconnect();
   }
@@ -130,13 +129,13 @@ const onError = (error) => {
 
 const closeOnChannelError = async (error) => {
   if (!error) return false;
-  console.error('[AMQP] Close connection because', error);
+  console.error('[Rabbit] Close connection because', error);
 
   try {
     await amqpConn.close();
     return true;
   } catch (error) {
-    console.error(error);
+    console.error('[Rabbit] close connection error: %o', error);
     return false;
   } finally {
     amqpConn = null;

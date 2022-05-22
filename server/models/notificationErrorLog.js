@@ -22,7 +22,7 @@ const createErrorLog = async (log) => {
     const result = await errorNotification.save();
     return { data: result._id.toString() };
   } catch (error) {
-    console.error('[createErrorNotification] error', error);
+    console.error('[createErrorNotification] error: %o', error);
     return { error };
   }
 };

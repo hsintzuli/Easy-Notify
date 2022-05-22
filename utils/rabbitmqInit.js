@@ -1,4 +1,5 @@
 require('dotenv').config({ path: __dirname + '/.env' });
+const logger = require('../logger/index');
 const RabbitMQ = require('./rabbit');
 const { DELAY_EXCHANGE, REALTIME_EXCHANGE, WEBSOCKET_QUEUE, WEBPUSH_QUEUE, DELAY_QUEUE } = process.env;
 const setExchangeAndQueue = async (amqpConn) => {
@@ -13,9 +14,9 @@ const setExchangeAndQueue = async (amqpConn) => {
     await ch.bindQueue(WEBSOCKET_QUEUE, REALTIME_EXCHANGE, 'websocket');
     await ch.assertQueue(WEBPUSH_QUEUE, { durable: true });
     await ch.bindQueue(WEBPUSH_QUEUE, REALTIME_EXCHANGE, 'webpush');
-    console.log('[AMQP] Assert Queue and complete bind!');
+    console.info('[Rabbit] Assert Queue and complete bind!');
   } catch (err) {
-    console.error('[AMQP]', err.message);
+    console.error('[Rabbit] Initialize error: %o', err.message);
   }
 };
 

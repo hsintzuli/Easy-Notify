@@ -7,13 +7,15 @@ const Channel = require('../models/channels');
 const subscribe = async (req, res) => {
   const { channel_id, subscription } = req.body;
   const channel = await Channel.getChannelById(channel_id);
-  console.log('receive subscription', channel);
+  console.debug('[subscribe] receive subscription to channel:', channel);
   if (!channel || !subscription || !subscription.endpoint || !subscription.keys) {
     return res.status(400).json({ error: 'Wrong Request' });
   }
   const id = await Subscription.createClient(channel_id, subscription.endpoint, subscription.expirationTime, JSON.stringify(subscription.keys));
+  console.debug('[subscribe] Create subscription successfully with id:', id);
   res.status(200).json({ status: 'success' });
-  console.log('Create subscribe, id:', id);
+
+  // Auth for subcription
   const vapidDetails = {
     subject: `mailto:${channel.email}`,
     publicKey: channel.public_key,
@@ -28,7 +30,7 @@ const subscribe = async (req, res) => {
     TTL: 0,
   };
 
-  await webpush.sendNotification(subscription, JSON.stringify(payload), option).catch((err) => console.error(err));
+  await webpush.sendNotification(subscription, JSON.stringify(payload), option);
   return;
 };
 
@@ -41,10 +43,11 @@ const verifySubscription = async (req, res) => {
 
 const cancelSubscription = async (req, res) => {
   const { endpoint } = req.body;
-  console.log('receive cancellation', endpoint);
   if (!endpoint) {
     return res.status(400).json({ error: 'Wrong Request' });
   }
+
+  console.debug('[cancelSubscription] receive cancellation of subscription:', endpoint);
   const removeSuccess = await Subscription.removeClient(endpoint);
   if (removeSuccess) {
     res.status(200).json({ status: 'success' });
@@ -60,9 +63,9 @@ const trackNotification = async (req, res) => {
     res.status(400).json({ error: 'Wrong Request' });
     return;
   }
+  console.debug('[trackNotification] track subscription to notification with ID:', id);
   const now = new Date();
   const hourToCheck = now.getHours() % 2 === 0 ? 'even' : 'odd';
-  console.log('in');
   await Cache.hincrby(`receivedNum:${hourToCheck}`, id, 1);
   res.status(200).json({ status: 'success' });
   return;

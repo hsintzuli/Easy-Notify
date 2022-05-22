@@ -12,7 +12,6 @@ const wrapAsync = (fn) => {
 
 // Authentication fo User Session
 const userAuthentication = function (req, res, next) {
-  console.log('session', req.session);
   if (!req.session.user) {
     res.status(401).send({ error: 'Unauthorized' });
     return;
@@ -28,7 +27,7 @@ const setChannelDataToReq = async (req, res, next) => {
     return res.status(403).send({ error: 'Forbidden' });
   }
   const channel = await Channel.getChannelDetail(channel_id);
-  console.log('setChannelDataToReq', channel);
+  console.debug('[setChannelDataToReq] set data of channel to req.local %o', channel);
   req.locals = { channel };
   return next();
 };
@@ -39,7 +38,7 @@ const apiAuthentication = async (req, res, next) => {
   const channelId = req.get('X-CHANNEL-ID');
   const channelKey = req.get('X-API-KEY');
 
-  console.log(channelId, channelKey);
+  console.debug(`[apiAuthentication] channelId: ${channelId}; channelKey: ${channelKey}`);
   if (!channelId || !channelKey) {
     res.status(401).send({ error: 'Unauthorized' });
     return;
@@ -52,6 +51,7 @@ const apiAuthentication = async (req, res, next) => {
   }
   // check whether the key is the correct one
   const channel = await Channel.getChannelDetail(channelId);
+  console.debug(`[apiAuthentication] channelId: ${channelId} pass authentication`);
   req.locals = { channel };
   next();
 };

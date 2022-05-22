@@ -37,7 +37,6 @@ const createOrder = async (order, plan_id, tappayKey, tappayId, prime) => {
     return { order };
   } catch (error) {
     await conn.query('ROLLBACK');
-    console.log(error);
     return { error };
   } finally {
     conn.release();

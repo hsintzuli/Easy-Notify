@@ -14,6 +14,7 @@ const checkUserInSession = async (req, res, next) => {
 
 const signOut = async (req, res) => {
   req.session.destroy();
+  console.debug('[signOut] User sign out');
   return res.redirect('/');
 };
 
@@ -31,7 +32,6 @@ const channels = async (req, res) => {
     return res.redirect('/signin');
   }
   const channels = await Channel.getChannelsWithKeys(app_id);
-  console.log(channels);
   return res.render('channels', { user, channels, moment: require('moment') });
 };
 
@@ -42,11 +42,10 @@ const sendNotificaton = async (req, res) => {
   const channelGroupByApp = channels.reduce((prev, curr) => {
     let app = `[${curr.app_name}]-${curr.app_id}`;
     if (!prev.hasOwnProperty(app)) prev[app] = { icon: curr.icon, channels: [] };
-    console.log(prev);
     prev[app]['channels'].push(`[${curr.name}]-${curr.id}`);
     return prev;
   }, {});
-  console.log(channelGroupByApp);
+  console.debug('[sendNotificaton] Channel Group By App: %o', channelGroupByApp);
 
   res.render('sendnotification', { user, apps: Object.keys(channelGroupByApp), channelGroupByApp });
 };
@@ -72,7 +71,7 @@ const dashboard = async (req, res) => {
     activatedClients: newClient && newClient.activated_user ? newClient.activated_user : 0,
     apps: notificationSent && notificationSent.apps ? notificationSent.apps : 0,
   };
-
+  console.debug('Get Dashboard Data: %o', dashboardData);
   res.render('dashboard', { user, dashboardData });
 };
 

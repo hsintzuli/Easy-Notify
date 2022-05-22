@@ -1,9 +1,10 @@
 require('dotenv').config({ path: __dirname + '/../.env' });
+const { WEBSOCKET_QUEUE, SOCKET_TOKEN, WORKERS_ERROR_FILE_PATH } = process.env;
+const logger = require('../logger/index').setLogger(WORKERS_ERROR_FILE_PATH);
 const Notification = require('../server/models/notifications');
 const { NOTIFICATION_STATUS } = Notification;
 const Content = require('../server/models/content');
 const Cache = require('../utils/cache');
-const { WEBSOCKET_QUEUE, SOCKET_TOKEN } = process.env;
 const { io } = require('socket.io-client');
 const { getCheckHour } = require('../utils/timeUtils');
 const { createErrorLog } = require('../server/models/notificationErrorLog');
@@ -19,28 +20,28 @@ const socket = io('https://notify.easynotify.site', {
 
 socket.on('connect', async () => {
   const engine = socket.io.engine;
-  console.log('[SocketIO] Connect to socket server, connect in', engine.transport.name);
+  console.info('[SocketIO] Connect to socket server, connect in', engine.transport.name);
 
   engine.once('upgrade', () => {
-    console.log('[SocketIO] Connection upgrade, connect in', engine.transport.name);
+    console.info('[SocketIO] Connection upgrade, connect in', engine.transport.name);
   });
 
   engine.on('close', (reason) => {
     // called when the underlying connection is closed
-    console.log('[SocketIO] Connection closed', reason);
+    console.warn('[SocketIO] Connection closed', reason);
   });
 
   socket.on('connection', async (data) => {
-    console.log(data);
+    console.debug('[SocketIO] on connection: %o', data);
   });
 
   socket.on('roomNums', async (data) => {
     const { roomId, notificationId, clientsNum } = data;
-    console.log(`Receive the numbers of clients in channel ${roomId} from socket server`, clientsNum);
+    console.debug(`[SocketIO] Receive the numbers of clients in channel ${roomId} from socket server`, clientsNum);
     try {
       await Notification.updateNotificationTargetsNum(notificationId, clientsNum);
     } catch (error) {
-      console.error('Update target clients error', error);
+      console.error('[SocketIO] Update target clients error', error);
     }
   });
 
@@ -51,21 +52,21 @@ socket.on('connect', async () => {
       await Cache.hincrby(`sentNum:${hourToCheck}`, notificationId, clientsNum);
       await Notification.updateNotificationStatus(notificationId, { status: NOTIFICATION_STATUS.COMPLETE });
     } catch (error) {
-      console.error('Update sent clients error', error);
+      console.error('[SocketIO] Update sent clients error', error);
     }
   });
 });
 
 async function fnConsumer(msg, ack) {
   const { notificationId, channelId } = JSON.parse(msg.content);
-  console.log('Websocket worker receive job', notificationId);
+  console.info('[SocketIO] Websocket worker receive job with ID:', notificationId);
   socket.emit('checkRoom', { roomId: channelId, notificationId });
 
   try {
     // Update notification status in mysql
     const updated = await Notification.updateNotificationStatus(notificationId, { status: NOTIFICATION_STATUS.DELEVERED });
     if (!updated) {
-      console.log(`Notification ${notificationId} has been deleted before delevered`);
+      console.info(`[SocketIO] Notification ${notificationId} has been deleted before delevered`);
       return ack(true);
     }
     const msgContent = await Content.getContentById(notificationId);
@@ -77,11 +78,11 @@ async function fnConsumer(msg, ack) {
       config: msgContent.config,
     };
     socket.emit('push', { roomId: channelId, payload });
-    console.log('Successfully send push requirment to socket server about room:', channelId);
+    console.info('[SocketIO] Successfully send push requirment to socket server about room:', channelId);
     ack(true);
   } catch (error) {
     await createErrorLog(error);
-    console.error('Record error in MongoDB', error);
+    console.error('[SocketIO] Consume error \nRecord error in MongoDB: %o', error);
     ack(true);
   }
 }

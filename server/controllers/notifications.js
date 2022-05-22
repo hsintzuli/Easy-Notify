@@ -26,7 +26,7 @@ const pushNotification = async (req, res) => {
   const { channel } = req.locals;
   const { scheduledType } = req.params;
   let { name, title, body, sendType, icon, config, sendTime } = req.body;
-  console.log('Receive push notification:', req.body);
+  console.info('[pushNotification] Receive push notification request: %o', req.body);
 
   // Check sendType is 'realtime' or 'scheduled'
   if (!scheduledType || !SCHEDULED_TYPE.has(scheduledType)) {
@@ -62,7 +62,7 @@ const pushNotification = async (req, res) => {
   return res.status(200).json({ data: { id, status: 'success' } });
 };
 
-// Get all notifications
+// Get all notifications of one specific channel
 const getNotifications = async (req, res, next) => {
   const { id } = req.query;
   if (id) {
@@ -75,7 +75,7 @@ const getNotifications = async (req, res, next) => {
     res.status(200).json({ data: [] });
     return;
   }
-
+  console.debug(`[getNotifications] get all notifications of channel ${channel.id}`);
   const notificationIds = notifications.map((element) => element.id);
   const contents = Content.getContents(notificationIds);
   notifications.forEach((element) => {
@@ -85,14 +85,14 @@ const getNotifications = async (req, res, next) => {
   return;
 };
 
-// Get notification by specific ID
+// Get notification detail by notification ID
 const getNotificationById = async (req, res) => {
   const { id } = req.query;
   const notification = await Notification.getNotificationById(id);
   if (!notification) {
     return res.status(404).json({ error: 'Notification not found' });
   }
-
+  console.debug(`[getNotifications] get notification by id: ${id}`);
   const content = await Content.getContentById(id);
   notification.content = content;
   let sentTime = notification.scheduled_dt || notification.created_dt;
@@ -107,6 +107,7 @@ const getNotificationById = async (req, res) => {
     notification.sent_num += parseInt(sent_odd || 0) + parseInt(sent_even || 0);
     notification.received_num += parseInt(received_odd || 0) + parseInt(received_even || 0);
     notification.updated_dt = now;
+    console.debug(`[getNotifications] get notification detail from redis: %o`, notification);
   }
 
   res.status(200).json({ data: notification });
@@ -174,8 +175,9 @@ const getNotificationsByApp = async (req, res, next) => {
   if (!verified) {
     return res.status(400).json({ error: 'Wrong app_id' });
   }
+  console.debug(`[generateValidDatetimeRange] before: ${start_date}-${end_date}`);
   [start_date, end_date] = generateValidDatetimeRange(start_date, end_date);
-  console.log('date:', start_date, end_date);
+  console.debug(`[generateValidDatetimeRange] after: ${start_date}-${end_date}`);
   const data = await Notification.getNotificationByApp(app_id, start_date, end_date);
   res.status(200).json({
     data,

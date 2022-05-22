@@ -10,6 +10,7 @@ const mysqlConfig = {
 };
 
 const pool = mysql.createPool(mysqlConfig);
+console.info('[Mysql] successfully connected');
 
 module.exports = {
   mysql,

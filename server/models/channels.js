@@ -28,7 +28,6 @@ const createChannel = async (app_id, name) => {
     };
 
     await pool.query('INSERT INTO channel_keys SET ?', channelKey);
-    console.log('COMMIT');
     await conn.query('COMMIT');
     return { channel };
   } catch (error) {
@@ -94,12 +93,14 @@ const getChannelsKeys = async (channel_ids) => {
 
 const getChannelsWithKeys = async (app_id) => {
   let channels = await getChannels(app_id);
+  if (channels.length === 0) {
+    return [];
+  }
   channels = channels.reduce((prev, curr) => {
     prev[curr.id] = curr;
     return prev;
   }, {});
   const keys = await getChannelsKeys(Object.keys(channels));
-  console.log('keys', keys);
   keys.forEach((key) => {
     channels[key.channel_id]['keys'] = channels[key.channel_id]['keys'] || [];
     channels[key.channel_id]['keys'].push(key);
@@ -115,7 +116,6 @@ const rotateChannelKey = async (channel_key, key_expire_dt) => {
     const channelKey = channelKeys[0];
 
     if (!channelKey) {
-      console.log('no channel key');
       await conn.query('ROLLBACK');
       return { error: 'Incorrect channel key' };
     }
@@ -131,11 +131,10 @@ const rotateChannelKey = async (channel_key, key_expire_dt) => {
       channel_id: channelKey.channel_id,
     };
     await conn.query('INSERT INTO channel_keys SET ?', newKey);
-    console.log('COMMIT');
     await conn.query('COMMIT');
     return { newKey };
   } catch (error) {
-    console.log('[rotateChannelKey] error', error);
+    console.error('[rotateChannelKey] error: %o', error);
     await conn.query('ROLLBACK');
     return { error };
   } finally {
