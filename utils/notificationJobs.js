@@ -59,8 +59,25 @@ const genWebpushJob = async (notificationId, channelId) => {
   if (subscriptions.length === 0) {
     console.debug('[genWebpushJob] No subscriber to the channel with id: %s', channelId);
     await Notification.updateNotificationStatus(notificationId, { status: Notification.NOTIFICATION_STATUS.COMPLETE });
+    return;
   }
 
+  await splitJobToPublish(notificationId, job, jobOptions, subscriptions);
+};
+
+// Generate job for websocket notifcation
+const genWebsocketJob = async (notificationId, channelId) => {
+  console.info('[genWebsocketJob] Generate job for websocket with notification id: %s', notificationId);
+  const job = { notificationId, channelId };
+  const jobOptions = {
+    contentType: 'application/json',
+  };
+
+  await RabbitMQ.publishMessage(REALTIME_EXCHANGE, 'websocket', JSON.stringify(job), jobOptions);
+  return true;
+};
+
+const splitJobToPublish = async (notificationId, job, jobOptions, subscriptions) => {
   let i = 0;
   while (i < subscriptions.length) {
     let last = Math.min(subscriptions.length, i + MAX_PUSH_CLIENT);
@@ -74,18 +91,6 @@ const genWebpushJob = async (notificationId, channelId) => {
     i = last;
   }
   return;
-};
-
-// Generate job for websocket notifcation
-const genWebsocketJob = async (notificationId, channelId) => {
-  console.info('[genWebsocketJob] Generate job for websocket with notification id: %s', notificationId);
-  const job = { notificationId, channelId };
-  const jobOptions = {
-    contentType: 'application/json',
-  };
-
-  await RabbitMQ.publishMessage(REALTIME_EXCHANGE, 'websocket', JSON.stringify(job), jobOptions);
-  return true;
 };
 
 module.exports = {
