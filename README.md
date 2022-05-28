@@ -1,5 +1,5 @@
 <a href="https://easynotify.site/">
-    <img src="./docs/imgs/easy-notify.png" alt="Easy-Notify logo" align="right" height="40" style="background:white"/>
+    <img src="./docs/imgs/easy-notify.png" alt="Easy-Notify logo" align="right" height="40" style="background-color:white"/>
 </a>
 
 # Easy-Notify
@@ -14,11 +14,11 @@ Easy-Notify is a handy push notification service that enables developer to easil
 3. [Techniques](#techniques)
    - [Brief Architecture](#brief-architecture)
    - [Architecture of Web-Push Notification and WebSocket Notification](#architecture-of-web-push-notification-and-websocket-notification)
-     - [Scale out Web-Push worker with AWS Lambda](#)
-     - [Auto Scaling of Socket.IO Server](#)
-   - [Mechanism of Sending and Tracking Notification](#)
-     - [Schedule Notification with Crontab and RabbitMQ](#)
-     - [Record ACK response on Redis without Race Condition](#)  
+     - <a href="./docs/webpush-lambda.md/#scale-out-web-push-worker-by-using-aws-lambda" target="_blank">Scale Out Web-Push Worker by Using AWS Lambda</a>
+     - Auto Scaling of Socket.IO Server
+   - <a href="./docs/notification-related_mechanism.md/" target="_blank">Mechanism of Sending and Tracking Notification</a>
+     - <a href="./docs/notification-related_mechanism.md/#three-cases-of-notifications" target="_blank">Schedule Notification with Crontab and RabbitMQ</a>
+     - <a href="./docs/notification-related_mechanism.md/#record-ack-response-on-redis-without-race-condition" target="_blank">Record the ACK Response on Redis Without Race Condition</a>  
 4. [Demo](#demo)
    - [Home Page](#home-page)
    - [Subscribe to Your Channel on the Demo Website](#subscribe-to-your-channel-on-the-demo-website)
@@ -74,12 +74,13 @@ The architecture to scale out the handlers of Web-Push Notification and WebSocke
 <br />
 
 #### **Documents about how this project implemented the two mechanisms**
-- Scale out Web-Push worker with AWS Lambda
+- <a href="./docs/webpush-lambda.md/#scale-out-web-push-worker-by-using-aws-lambda" target="_blank">Scale Out Web-Push Worker by Using AWS Lambda</a>
 - Auto Scaling of Socket.IO Server
-
+<br/>
 
 ### **Mechanism of scheduled notification**
-
+- <a href="./docs/notification-related_mechanism.md/#three-cases-of-notifications" target="_blank">Schedule Notification with Crontab and RabbitMQ</a>
+- <a href="./docs/notification-related_mechanism.md/#record-ack-response-on-redis-without-race-condition" target="_blank">Record the ACK Response on Redis Without Race Condition</a>  
 --------------
 ## Demo
 <br/>
@@ -104,7 +105,7 @@ Send a Web-Push notification to the channel you subscribed in console and checko
 
 ### **Key-Rotate**
 In addition to create Apps and Channels, you can also rotate the Channel Key to enhance the security of your account
-![Key Rotate](./docs/imgs/Keyrotate.gif)
+![Key Rotate](./docs/imgs/keyrotate.gif)
 <br/>
 <br/>
 
