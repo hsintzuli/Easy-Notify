@@ -1,6 +1,4 @@
-## Mechanism of scheduled notification
-<br/>
-
+## Mechanism of scheduled notification  
 ### **Three cases of notifications:**
 <p align="center">
   <img src="./imgs/notification-flow.png" alt="Notification Flow Chart" width="700" />
@@ -16,9 +14,7 @@ Let a crontab worker examine whether there are notifications in the database tha
 --------
 <br/>
 
-## Record ACK response on Redis without race condition
-<br/>
-
+## Record ACK response on Redis without race condition  
 ### **Rotate two HashMaps on Redis to record the ack responses from subscribers:**
 <p align="center">
   <img src="./imgs/ack-response.png" alt="./imgs/ack-response.png" width="700" />

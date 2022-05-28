@@ -6,7 +6,6 @@
 Easy-Notify is a handy push notification service that enables developer to easily send and manage notifications via RESTful API and a management console. A Front-End NPM library, <a href="https://github.com/hsintzuli/EasyNotify-Client" target="_blank">EasyNotify-Client</a>, is provided for receiving the push notifications.
 
 --------------  
-<br/>
 
 ## Table of contents
 1. [Links and Test Account](#links-and-test-account)
@@ -27,7 +26,6 @@ Easy-Notify is a handy push notification service that enables developer to easil
 5. [Contact](#contact)
 
 --------------  
-<br/>
 
 ## Links and Test Account
 - <a href="https://easynotify.site/" target="_blank">Easy-Notify Website</a> : Main website to sign up, manage Apps, and send notifications
@@ -36,7 +34,6 @@ Easy-Notify is a handy push notification service that enables developer to easil
 - <a href="https://www.npmjs.com/package/easy-notify-client" target="_blank">EasyNotify-Client NPM</a> : Link to the Front-End library in NPM
 - <a href="https://app.swaggerhub.com/apis-docs/nnjkm076017/EasyNotify/1.0" target="_blank">Swagger API document</a> : API document about sending notification  
 
-</br>
 
 ### Test Account
 
@@ -46,8 +43,9 @@ visitor1    | visitor1@easynotify.com | visitor1 |
 visitor2    | visitor2@easynotify.com | visitor2 |
 
 _Note: After experiencing the service of Easy-Notify on Demo website with the test account, remember to click the unsubscribe button or you may keep receiving the test notifications from others._  
-</br>
+</br>  
 
+--------------  
 ## Features
 - Send real-time/scheduled notifications by Web-Push or WebSocket
    - Web-Push : Need the authorization of your clients and let them receive messages even though your web app is not in the foreground. **Re-engage your clients with Web-Push notifications!**
@@ -60,9 +58,7 @@ _Note: After experiencing the service of Easy-Notify on Demo website with the te
 - Scalable architecture for users with thousands of subscribers 
 
 --------------
-## Techniques
-<br />
-
+## Techniques  
 ### **Brief Architecture**  
 The system architecture of Easy-Notify  
 ![Brief Architecture](./docs/imgs/architecture.png)  
@@ -71,20 +67,17 @@ The system architecture of Easy-Notify
 ### **Architecture of Web-Push Notification and WebSocket Notification**
 The architecture to scale out the handlers of Web-Push Notification and WebSocket Notification
 ![Architecture of Notification Handler](./docs/imgs/scaleout-architecture.png)  
-<br />
 
 #### **Documents about how this project implemented the two mechanisms**
 - <a href="./docs/webpush-lambda.md/#scale-out-web-push-worker-by-using-aws-lambda" target="_blank">Scale Out Web-Push Worker by Using AWS Lambda</a>
-- Auto Scaling of Socket.IO Server
+- Auto Scaling of Socket.IO Server  
 <br/>
 
 ### **Mechanism of scheduled notification**
 - <a href="./docs/notification-related_mechanism.md/#three-cases-of-notifications" target="_blank">Schedule Notification with Crontab and RabbitMQ</a>
 - <a href="./docs/notification-related_mechanism.md/#record-ack-response-on-redis-without-race-condition" target="_blank">Record the ACK Response on Redis Without Race Condition</a>  
 --------------
-## Demo
-<br/>
-
+## Demo  
 ### **Home Page**
 Click Get Started to sign up a new account and follow the instruction in Demo page to quickly experience Easy-Notify
 ![Home Page](./docs/imgs/homepage.gif)
@@ -110,6 +103,5 @@ In addition to create Apps and Channels, you can also rotate the Channel Key to 
 <br/>
 
 ---------------
-
 ## Contact
 Email: hsintzuli719@gmail.com
