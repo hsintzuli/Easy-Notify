@@ -13,11 +13,11 @@ Easy-Notify is a handy push notification service that enables developer to easil
 3. [Techniques](#techniques)
    - [Brief Architecture](#-brief-architecture)
    - [Architecture of Web-Push Notification and WebSocket Notification](#-architecture-of-web-push-notification-and-websocket-notification)
-     - [Scale Out Web-Push Worker by Using AWS Lambda](#Scale-Out-Web-Push-Worker-by-Using-AWS-Lambda)
-     - [Scalability of Socket.IO Server](#Scalability-of-Socket.IO-Server)
-   - [Mechanism of Sending and Tracking Notification](#-Mechanism-of-Sending-and-Tracking-Notification)
-     - [Schedule Notification with Crontab and RabbitMQ](#-Schedule-Notification-with-Crontab-and-RabbitMQ)
-     - [Record the ACK Response on Redis](#-Record-the-ACK-Response-on-Redis)</a>  
+     - [Scale Out Web-Push Worker by Using AWS Lambda](#scale-out-web-push-worker-by-using-aws-lambda--------read-more)
+     - [Scalability of Socket.IO Server](#scalability-of-socket.io-server--------read-more)
+   - [Mechanism of Sending and Tracking Notification](#-mechanism-of-sending-and-tracking-notification)
+     - [Schedule Notification with Crontab and RabbitMQ](#schedule-notification-with-crontab-and-rabbitMQ--------read-more)
+     - [Record the ACK Response on Redis](#record-the-aCK-response-on-redis--------read-more)</a>  
 4. [Demo](#demo)
    - [Home Page](#home-page)
    - [Subscribe to Your Channel on the Demo Website](#subscribe-to-your-channel-on-the-demo-website)
