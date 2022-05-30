@@ -77,17 +77,17 @@ _Note: After experiencing the service of Easy-Notify on Demo website with the te
   
 - #### Scalability of Socket.IO Server      <a align='right' href="./docs/socketio-scaling.md" target="_blank">  📋Read More</a>
 
-   **Load Test on Vertical Scaling and Horizontal Scaling**  
-   Vertical Scaling is capable of maintaining a higher maximum concurrency connection than Horizontal Scaling.  
-   <p align="center">
-   <img src="./docs/imgs/socketio-loadtest.png" alt="Load Test Result" width="800"/>
-   </p>  
+   - **Load Test on Vertical Scaling and Horizontal Scaling**  
+      Vertical Scaling is capable of maintaining a higher maximum concurrency connection than Horizontal Scaling.  
+      <p align="center">
+      <img src="./docs/imgs/socketio-loadtest.png" alt="Load Test Result" width="800"/>
+      </p>  
 
-   **Auto Scaling by AWS Application Load Balancer**  
-   ALB successfully scaled out the auto scaling groups after the concurrency connections reached approximately 21,000. 
-   <p align="center">
-   <img src="./docs/imgs/socketio-autoscaling.png" alt="Auto Scaling" width="800"/>
-   </p>  
+   - **Auto Scaling by AWS Application Load Balancer**  
+      ALB successfully scaled out the auto scaling groups after the concurrency connections reached approximately 21,000. 
+      <p align="center">
+      <img src="./docs/imgs/socketio-autoscaling.png" alt="Auto Scaling" width="800"/>
+      </p>  
 
 ### 🔍 Mechanism of Sending and Tracking Notification  
 - #### chedule Notification with Crontab and RabbitMQ      <a align='right' href="./docs/notification-related_mechanism.md/#three-cases-of-notifications" target="_blank">  📋Read More</a>
@@ -105,22 +105,22 @@ _Note: After experiencing the service of Easy-Notify on Demo website with the te
 --------------
 ## Demo
 ### 🔍 Home Page  
-Click Get Started to sign up a new account and follow the instruction in Demo page to quickly experience Easy-Notify
+#### Click Get Started to sign up a new account and follow the instruction in Demo page to quickly experience Easy-Notify
 ![Home Page](./docs/imgs/homepage.gif)
 <br/>
 
 ### 🔍 Subscribe to Your Channel on the Demo Website
-Subscribe your own channel on Demo Website by the Channel ID and Channel Key
+#### Subscribe your own channel on Demo Website by the Channel ID and Channel Key
 ![Subscribe Channel](./docs/imgs/subscribe.gif)
 <br/>
 
 ### 🔍 Send a Web-Push Notification in Console
-Send a Web-Push notification to the channel you subscribed in console and checkout the notification on the Demo Website 
+#### Send a Web-Push notification to the channel you subscribed in console and checkout the notification on the Demo Website 
 ![Send Notification](./docs/imgs/notification.gif)
 <br/>
 
 ### 🔍 Key-Rotate
-In addition to create Apps and Channels, you can also rotate the Channel Key to enhance the security of your account
+#### In addition to create Apps and Channels, you can also rotate the Channel Key to enhance the security of your account
 ![Key Rotate](./docs/imgs/keyrotate.gif)
 <br/>
 
