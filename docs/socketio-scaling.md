@@ -17,8 +17,8 @@ Vertical Scaling is capable of maintaining a higher maximum concurrency connecti
 </p>  
 
   _Note:   
-  ``white background``: the maximum concurrency connection that the server can maintain stably.  
-  ``orange background``: the case that the server starts to error._  
+    ``white background``: the maximum concurrency connection that the server can maintain stably.  
+    ``orange background``: the case that the server starts to error._  
 
 ## Auto Scaling by AWS Application Load Balancer
 ### Auto Scaling Policy - CloudWatch Alarm  
@@ -36,16 +36,14 @@ Vertical Scaling is capable of maintaining a higher maximum concurrency connecti
 
 
 ### Result 
+ALB successfully scaled out the auto scaling groups after the concurrency connections reached approximately 21,000. 
 <p align="center">
   <img src="./imgs/socketio-scalingconfig.png" alt="Auto Scaling" width="800" />
 </p> 
 
-ALB successfully scaled out the auto scaling groups after the concurrency connections reached approximately 21,000. 
+Because it took 4 - 5 minutes to trigger CloudWatch alarm and completely launch new instances, the Auto Scaling is more suitable for the case that there is no surge in the new clients.
 <p align="center">
   <img src="./imgs/socketio-autoscaling.png" alt="Auto Scaling" width="800" />
 </p>    
 
   _Note: The three dots are the datapoints that exceeded the threshold and triggered the scale alarm._  
-
-### Conclusion
-Because it took 4 - 5 minutes to trigger CloudWatch alarm and completely launch new instances, the Auto Scaling is more suitable for the case that there is no surge in the new clients.
