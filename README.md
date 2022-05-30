@@ -13,11 +13,11 @@ Easy-Notify is a handy push notification service that enables developer to easil
 3. [Techniques](#techniques)
    - [Brief Architecture](#-brief-architecture)
    - [Architecture of Web-Push Notification and WebSocket Notification](#-architecture-of-web-push-notification-and-websocket-notification)
-     - <a href="./docs/webpush-lambda.md/#scale-out-web-push-worker-by-using-aws-lambda" target="_blank">Scale Out Web-Push Worker by Using AWS Lambda</a>
-     - Scalability of Socket.IO Server
-   - <a href="./docs/notification-related_mechanism.md/" target="_blank">Mechanism of Sending and Tracking Notification</a>
-     - <a href="./docs/notification-related_mechanism.md/#three-cases-of-notifications" target="_blank">Schedule Notification with Crontab and RabbitMQ</a>
-     - <a href="./docs/notification-related_mechanism.md/#record-ack-response-on-redis-without-race-condition" target="_blank">Record the ACK Response on Redis [Avoid Race Condition]</a>  
+     - [Scale Out Web-Push Worker by Using AWS Lambda](#Scale-Out-Web-Push-Worker-by-Using-AWS-Lambda)
+     - [Scalability of Socket.IO Server](#Scalability-of-Socket.IO-Server)
+   - [Mechanism of Sending and Tracking Notification](#-Mechanism-of-Sending-and-Tracking-Notification)
+     - [Schedule Notification with Crontab and RabbitMQ](#-Schedule-Notification-with-Crontab-and-RabbitMQ)
+     - [Record the ACK Response on Redis](#-Record-the-ACK-Response-on-Redis)</a>  
 4. [Demo](#demo)
    - [Home Page](#home-page)
    - [Subscribe to Your Channel on the Demo Website](#subscribe-to-your-channel-on-the-demo-website)
@@ -89,39 +89,37 @@ ALB successfully scaled out the auto scaling groups after the concurrency connec
   <img src="./docs/imgs/socketio-autoscaling.png" alt="Auto Scaling" width="800"/>
 </p>  
 
-### Mechanism of Sending and Tracking Notification    <a align='right' href="./docs/notification-related_mechanism.md" target="_blank">  📋Read More</a>
+### Mechanism of Sending and Tracking Notification  
+#### Schedule Notification with Crontab and RabbitMQ      <a align='right' href="./docs/notification-related_mechanism.md/#three-cases-of-notifications" target="_blank">  📋Read More</a>
 Three cases of notifications
 <p align="center">
   <img src="./docs/imgs/notification-flow.png" alt="Notification Flow Chart" width="800" />
 </p>
 
-#### Schedule Notification with Crontab and RabbitMQ      <a align='right' href="./docs/notification-related_mechanism.md/#three-cases-of-notifications" target="_blank">  📋Read More</a>
-
+#### Record the ACK Response on Redis    <a align='right' href="./docs/notification-related_mechanism.md/#record-ack-response-on-redis" target="_blank">  📋Read More</a>
 Rotate two HashMaps on Redis to record the ack responses from subscribers
 <p align="center">
   <img src="./docs/imgs/ack-response.png" alt="./imgs/ack-response.png" width="800" />
 </p>
 
-
-#### Record the ACK Response on Redis Without Race Condition    <a align='right' href="./docs/notification-related_mechanism.md/#record-ack-response-on-redis-without-race-condition" target="_blank">  📋Read More</a>
 --------------
-## Demo  
-- ### **Home Page**
+## Demo
+### 🔍 Home Page  
 Click Get Started to sign up a new account and follow the instruction in Demo page to quickly experience Easy-Notify
 ![Home Page](./docs/imgs/homepage.gif)
 <br/>
 
-- ### **Subscribe to Your Channel on the Demo Website**
+### 🔍 Subscribe to Your Channel on the Demo Website
 Subscribe your own channel on Demo Website by the Channel ID and Channel Key
 ![Subscribe Channel](./docs/imgs/subscribe.gif)
 <br/>
 
-- ### **Send a Web-Push Notification in Console**
+### 🔍 Send a Web-Push Notification in Console
 Send a Web-Push notification to the channel you subscribed in console and checkout the notification on the Demo Website 
 ![Send Notification](./docs/imgs/notification.gif)
 <br/>
 
-- ### **Key-Rotate**
+### 🔍 Key-Rotate
 In addition to create Apps and Channels, you can also rotate the Channel Key to enhance the security of your account
 ![Key Rotate](./docs/imgs/keyrotate.gif)
 <br/>
