@@ -60,19 +60,36 @@ _Note: After experiencing the service of Easy-Notify on Demo website with the te
 --------------
 ## Techniques  
 ### 🔍 Brief Architecture
-![Brief Architecture](./docs/imgs/architecture.png)  
-<br />
+<p align="center">
+  <img src="./docs/imgs/architecture.png" alt="Brief Architecture" width="800"/>
+</p> 
 
-### **🔍Architecture of Web-Push Notification and WebSocket Notification**
-The architecture to scale out the handlers of Web-Push Notification and WebSocket Notification
-![Architecture of Notification Handler](./docs/imgs/scaleout-architecture.png)    
+### 🔍Architecture of Web-Push Notification and WebSocket Notification
+<p align="center">
+  <img src="./docs/imgs/scaleout-architecture.png" alt="Architecture of Notification Handler" width="800"/>
+</p>   
+
+#### Scale Out Web-Push Worker by Using AWS Lambda      <a align='right' href="./docs/webpush-lambda.md" target="_blank">  📋Read More</a>
+The concurrency executions of the AWS Lambda function enable Easy-Notify to send notifications to at least **1,200 * 20** subscribers in 15 minutes. At the same time, the exact number could be more extensive than 24,000 because of the maximum 1,000 concurrency executions of the AWS Lambda function.
+<p align="center">
+  <img src="./docs/imgs/lambda-cost-time.png" alt="Lambda Cost Of Time" width="800" />
+</p>  
   
-#### **⭐ Documents about how this project implemented the two mechanisms**  
+#### Scalability of Socket.IO Server      <a align='right' href="./docs/socketio-scaling.md" target="_blank">  📋Read More</a>
 
-<a href="./docs/webpush-lambda.md/#scale-out-web-push-worker-by-using-aws-lambda" target="_blank">Scale Out Web-Push Worker by Using AWS Lambda</a>  
+##### Load Test on Vertical Scaling and Horizontal Scaling
+Vertical Scaling is capable of maintaining a higher maximum concurrency connection than Horizontal Scaling.  
+<p align="center">
+  <img src="./docs/imgs/socketio-loadtest.png" alt="Load Test Result" width="800"/>
+</p>  
 
-<a href="./docs/socketio-scaling.md/" target="_blank">Scalability of Socket.IO Server </a> 
-<br/>
+##### Auto Scaling by AWS Application Load Balancer
+ALB successfully scaled out the auto scaling groups after the concurrency connections reached approximately 21,000. 
+<p align="center">
+  <img src="./docs/imgs/socketio-autoscaling.png" alt="Auto Scaling" width="800"/>
+</p>  
+
+#### Mechanism of Sending and Tracking Notification     <a align='right' href="./docs/webpush-lambda.md/#scale-out-web-push-worker-by-using-aws-lambda" target="_blank">  📋Read More</a>
 
 - ### **Mechanism of scheduled notification**  
 
