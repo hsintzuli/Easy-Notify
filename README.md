@@ -70,18 +70,18 @@ _Note: After experiencing the service of Easy-Notify on Demo website with the te
 </p>   
 
 - #### Scale Out Web-Push Worker by Using AWS Lambda      <a align='right' href="./docs/webpush-lambda.md" target="_blank">  📋Read More</a>
-The concurrency executions of the AWS Lambda function enable Easy-Notify to send notifications to at least **1,200 * 20** subscribers in 15 minutes. At the same time, the exact number could be more extensive than 24,000 because of the maximum 1,000 concurrency executions of the AWS Lambda function.
-<p align="center">
-  <img src="./docs/imgs/lambda-cost-time.png" alt="Lambda Cost Of Time" width="800" />
-</p>  
+   The concurrency executions of the AWS Lambda function enable Easy-Notify to send notifications to at least **1,200 * 20** subscribers in 15 minutes. At the same time, the exact number could be more extensive than 24,000 because of the maximum 1,000 concurrency executions of the AWS Lambda function.
+   <p align="center">
+   <img src="./docs/imgs/lambda-cost-time.png" alt="Lambda Cost Of Time" width="800" />
+   </p>  
   
 - #### Scalability of Socket.IO Server      <a align='right' href="./docs/socketio-scaling.md" target="_blank">  📋Read More</a>
 
-**Load Test on Vertical Scaling and Horizontal Scaling**  
-Vertical Scaling is capable of maintaining a higher maximum concurrency connection than Horizontal Scaling.  
-<p align="center">
-  <img src="./docs/imgs/socketio-loadtest.png" alt="Load Test Result" width="800"/>
-</p>  
+   **Load Test on Vertical Scaling and Horizontal Scaling**  
+   Vertical Scaling is capable of maintaining a higher maximum concurrency connection than Horizontal Scaling.  
+   <p align="center">
+   <img src="./docs/imgs/socketio-loadtest.png" alt="Load Test Result" width="800"/>
+   </p>  
 
 **Auto Scaling by AWS Application Load Balancer**  
 ALB successfully scaled out the auto scaling groups after the concurrency connections reached approximately 21,000. 
@@ -90,17 +90,17 @@ ALB successfully scaled out the auto scaling groups after the concurrency connec
 </p>  
 
 ### 🔍 Mechanism of Sending and Tracking Notification  
-- #### Schedule Notification with Crontab and RabbitMQ      <a align='right' href="./docs/notification-related_mechanism.md/#three-cases-of-notifications" target="_blank">  📋Read More</a>
-Three cases of notifications
-<p align="center">
-  <img src="./docs/imgs/notification-flow.png" alt="Notification Flow Chart" width="800" />
-</p>
+- #### chedule Notification with Crontab and RabbitMQ      <a align='right' href="./docs/notification-related_mechanism.md/#three-cases-of-notifications" target="_blank">  📋Read More</a>
+   Three cases of notifications
+   <p align="center">
+   <img src="./docs/imgs/notification-flow.png" alt="Notification Flow Chart" width="800" />
+   </p>
 
 - #### Record the ACK Response on Redis    <a align='right' href="./docs/notification-related_mechanism.md/#record-ack-response-on-redis" target="_blank">  📋Read More</a>
-Rotate two HashMaps on Redis to record the ack responses from subscribers
-<p align="center">
-  <img src="./docs/imgs/ack-response.png" alt="./imgs/ack-response.png" width="800" />
-</p>
+   Rotate two HashMaps on Redis to record the ack responses from subscribers
+   <p align="center">
+   <img src="./docs/imgs/ack-response.png" alt="./imgs/ack-response.png" width="800" />
+   </p>
 
 --------------
 ## Demo
