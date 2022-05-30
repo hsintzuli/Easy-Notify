@@ -1,14 +1,9 @@
 # Scalability of Socket.IO Server
----------
-To actively push notifications to the subscribers at any time, the Socket.IO server must keep the connections to all the online subscribers. As a result, the maximum concurrency connection that the Socket.IO server can maintain becomes an important indicator of the performance. The following tests mainly use **the maximum concurrency connection** as the measurement of scalability. 
-<br/>
-
----------
+To actively push notifications to the subscribers at any time, the Socket.IO server must keep the connections to all the online subscribers. As a result, the maximum concurrency connection that the Socket.IO server can maintain becomes an important indicator of the performance. The following tests mainly use ``the maximum concurrency connection`` as the measurement of scalability. 
 
 
 ## Load Test on Vertical Scaling and Horizontal Scaling  
-
-Test Circumstance
+### Test Circumstance
 - **Tool :** Artillery
 - **Test Machine  :** One t2.small EC2 in Singapore
 - **Test Scenario :** Artillery will establish virtual clients every second and keep the connections for seconds. Each client will emit to the Socket.IO server for subscribing at 5 seconds after the connection is established.
@@ -28,12 +23,7 @@ _Note:
 ``white background``: the maximum concurrency connection that the server can maintain stably.  
 ``orange background``: the case that the server starts to error._  
 
-<br/> 
-
----------
-
 ## Auto Scaling by AWS Application Load Balancer
-
 ### Auto Scaling Policy - CloudWatch Alarm  
 - **Custom Metrics :**  the numbers of connections of the Socket.IO server    
 - **Metrics Update Frequency :** every minute   
@@ -60,4 +50,5 @@ ALB successfully scaled out the auto scaling groups after the concurrency connec
 
 _Note: The three dots are the datapoints that exceeded the threshold and triggered the scale alarm._  
 
-Because it took 4 - 5 minutes to trigger alarm and completely launch new instances, the Auto Scaling is more suitbal for the case that there is no surge in the new clients.
+### Conclusion
+Because it took 4 - 5 minutes to trigger CloudWatch alarm and completely launch new instances, the Auto Scaling is more suitable for the case that there is no surge in the new clients.

@@ -84,7 +84,7 @@ _Note: After experiencing the service of Easy-Notify on Demo website with the te
       </p>  
 
    - **Auto Scaling by AWS Application Load Balancer**  
-      ALB successfully scaled out the auto scaling groups after the concurrency connections reached approximately 21,000. 
+      Because it took 4 - 5 minutes to trigger CloudWatch alarm and completely launch new instances, the Auto Scaling is more suitable for the case that there is no surge in the new clients. 
       <p align="center">
       <img src="./docs/imgs/socketio-autoscaling.png" alt="Auto Scaling" width="800"/>
       </p>  
