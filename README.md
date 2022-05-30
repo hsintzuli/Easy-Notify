@@ -14,10 +14,10 @@ Easy-Notify is a handy push notification service that enables developer to easil
    - [Brief Architecture](#-brief-architecture)
    - [Architecture of Web-Push Notification and WebSocket Notification](#-architecture-of-web-push-notification-and-websocket-notification)
      - [Scale Out Web-Push Worker by Using AWS Lambda](#scale-out-web-push-worker-by-using-aws-lambda--------read-more)
-     - [Scalability of Socket.IO Server](#scalability-of-socket.io-server--------read-more)
+     - [Scalability of Socket.IO Server](#scalability-of-socketio-server--------read-more)
    - [Mechanism of Sending and Tracking Notification](#-mechanism-of-sending-and-tracking-notification)
-     - [Schedule Notification with Crontab and RabbitMQ](#schedule-notification-with-crontab-and-rabbitMQ--------read-more)
-     - [Record the ACK Response on Redis](#record-the-aCK-response-on-redis--------read-more)</a>  
+     - [Schedule Notification with Crontab and RabbitMQ](#schedule-notification-with-crontab-and-rabbitmq--------read-more)
+     - [Record the ACK Response on Redis](#record-the-ack-response-on-redis------read-more)  
 4. [Demo](#demo)
    - [Home Page](#home-page)
    - [Subscribe to Your Channel on the Demo Website](#subscribe-to-your-channel-on-the-demo-website)
@@ -89,7 +89,7 @@ ALB successfully scaled out the auto scaling groups after the concurrency connec
   <img src="./docs/imgs/socketio-autoscaling.png" alt="Auto Scaling" width="800"/>
 </p>  
 
-### Mechanism of Sending and Tracking Notification  
+### 🔍 Mechanism of Sending and Tracking Notification  
 #### Schedule Notification with Crontab and RabbitMQ      <a align='right' href="./docs/notification-related_mechanism.md/#three-cases-of-notifications" target="_blank">  📋Read More</a>
 Three cases of notifications
 <p align="center">
