@@ -10,13 +10,12 @@ To actively push notifications to the subscribers at any time, the Socket.IO ser
 - **Fail Rate :** numbers of WebSocket error / total connections  
   _For example, the scenario, Duration(s): 400, User/s: 190, Wait(s): 130, means Artillery will create 190 virtual Socket.IO clients every second for 400 seconds, and each connection will last for 130 seconds. In this scenario, the maximum concurrent connections would be 24,700._
 
-<br/> 
-
 ### Result  
 Vertical Scaling is capable of maintaining a higher maximum concurrency connection than Horizontal Scaling.  
 <p align="center">
-  <img src="./imgs/socketio-loadtest.png" alt="Load Test Result width="800" />
+  <img src="./imgs/socketio-loadtest.png" alt="Load Test Result" width="800" />  
 </p>  
+
   _Note:   
   ``white background``: the maximum concurrency connection that the server can maintain stably.  
   ``orange background``: the case that the server starts to error._  
@@ -38,13 +37,14 @@ Vertical Scaling is capable of maintaining a higher maximum concurrency connecti
 
 ### Result 
 <p align="center">
-  <img src="./imgs/socketio-scalingconfig.png" alt="Auto Scaling width="800" />
+  <img src="./imgs/socketio-scalingconfig.png" alt="Auto Scaling" width="800" />
 </p> 
 
 ALB successfully scaled out the auto scaling groups after the concurrency connections reached approximately 21,000. 
 <p align="center">
-  <img src="./imgs/socketio-autoscaling.png" alt="Auto Scaling width="800" />
+  <img src="./imgs/socketio-autoscaling.png" alt="Auto Scaling" width="800" />
 </p>    
+
   _Note: The three dots are the datapoints that exceeded the threshold and triggered the scale alarm._  
 
 ### Conclusion
