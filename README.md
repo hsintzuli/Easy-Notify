@@ -77,24 +77,33 @@ The concurrency executions of the AWS Lambda function enable Easy-Notify to send
   
 #### Scalability of Socket.IO Server      <a align='right' href="./docs/socketio-scaling.md" target="_blank">  📋Read More</a>
 
-##### Load Test on Vertical Scaling and Horizontal Scaling
+##### **Load Test on Vertical Scaling and Horizontal Scaling**
 Vertical Scaling is capable of maintaining a higher maximum concurrency connection than Horizontal Scaling.  
 <p align="center">
   <img src="./docs/imgs/socketio-loadtest.png" alt="Load Test Result" width="800"/>
 </p>  
 
-##### Auto Scaling by AWS Application Load Balancer
+##### **Auto Scaling by AWS Application Load Balancer**
 ALB successfully scaled out the auto scaling groups after the concurrency connections reached approximately 21,000. 
 <p align="center">
   <img src="./docs/imgs/socketio-autoscaling.png" alt="Auto Scaling" width="800"/>
 </p>  
 
-#### Mechanism of Sending and Tracking Notification     <a align='right' href="./docs/webpush-lambda.md/#scale-out-web-push-worker-by-using-aws-lambda" target="_blank">  📋Read More</a>
+### Mechanism of Sending and Tracking Notification    <a align='right' href="./docs/notification-related_mechanism.md" target="_blank">  📋Read More</a>
+Three cases of notifications
+<p align="center">
+  <img src="./docs/imgs/notification-flow.png" alt="Notification Flow Chart" width="800" />
+</p>
 
-- ### **Mechanism of scheduled notification**  
+#### Schedule Notification with Crontab and RabbitMQ      <a align='right' href="./docs/notification-related_mechanism.md/#three-cases-of-notifications" target="_blank">  📋Read More</a>
 
-   - <a href="./docs/notification-related_mechanism.md/#three-cases-of-notifications" target="_blank">Schedule Notification with Crontab and RabbitMQ</a>
-   - <a href="./docs/notification-related_mechanism.md/#record-ack-response-on-redis-without-race-condition" target="_blank">Record the ACK Response on Redis Without Race Condition</a>  
+Rotate two HashMaps on Redis to record the ack responses from subscribers
+<p align="center">
+  <img src="./docs/imgs/ack-response.png" alt="./imgs/ack-response.png" width="800" />
+</p>
+
+
+#### Record the ACK Response on Redis Without Race Condition    <a align='right' href="./docs/notification-related_mechanism.md/#record-ack-response-on-redis-without-race-condition" target="_blank">  📋Read More</a>
 --------------
 ## Demo  
 - ### **Home Page**
