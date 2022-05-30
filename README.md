@@ -3,7 +3,7 @@
 </a>
 
 # Easy-Notify
-Easy-Notify is a handy push notification service that enables developer to easily send and manage notifications via RESTful API and a management console. A Front-End NPM library, <a href="https://github.com/hsintzuli/EasyNotify-Client" target="_blank">EasyNotify-Client</a>, is provided for receiving the push notifications.  
+Easy-Notify is a handy push notification service that enables developers to easily send and manage notifications via RESTful API and a management console. A Front-End NPM library, <a href="https://github.com/hsintzuli/EasyNotify-Client" target="_blank">EasyNotify-Client</a>, is provided for receiving the push notifications.  
 
 --------------  
 
@@ -13,7 +13,7 @@ Easy-Notify is a handy push notification service that enables developer to easil
 3. [Techniques](#techniques)
    - [Brief Architecture](#-brief-architecture)
    - [Architecture of Web-Push Notification and WebSocket Notification](#-architecture-of-web-push-notification-and-websocket-notification)
-     - [Scale Out Web-Push Worker by Using AWS Lambda](#scale-out-web-push-worker-by-using-aws-lambda--------read-more)
+     - [Scale-Out Web-Push Worker by Using AWS Lambda](#scale-out-web-push-worker-by-using-aws-lambda--------read-more)
      - [Scalability of Socket.IO Server](#scalability-of-socketio-server--------read-more)
    - [Mechanism of Sending and Tracking Notification](#-mechanism-of-sending-and-tracking-notification)
      - [Schedule Notification with Crontab and RabbitMQ](#schedule-notification-with-crontab-and-rabbitmq--------read-more)
@@ -21,7 +21,7 @@ Easy-Notify is a handy push notification service that enables developer to easil
 4. [Demo](#demo)
    - [Home Page](#home-page)
    - [Subscribe to Your Channel on the Demo Website](#subscribe-to-your-channel-on-the-demo-website)
-   - [Send A Web-Push Notification in Console](#send-a-web-push-notification-in-console)
+   - [Send A Web-Push Notification in the Console](#send-a-web-push-notification-in-console)
    - [Key-Rotate](#key-rotate)
 5. [Contact](#contact)
 
@@ -49,12 +49,12 @@ _Note: After experiencing the service of Easy-Notify on Demo website with the te
 ## Features
 - Send real-time/scheduled notifications by Web-Push or WebSocket
    - Web-Push : Need the authorization of your clients and let them receive messages even though your web app is not in the foreground. **Re-engage your clients with Web-Push notifications!**
-   - WebSocket : Do not need the clients' authorization but only appears on your website. **Notify all the visitors landing on your website with upcoming activities by WebSocket!**
+   - WebSocket : Does not need the clients' authorization but only appears on your website. **Notify all the visitors landing on your website with upcoming activities by WebSocket!**
 - Create channels for each App to further separate the environment
 - Track the status and delivered rate of all the notifications
 - Capture the tendency of the numbers of subscribers
-- Send notifications with customize configuration
-- Quickly get start with fully documented NPM library for Front-End and demo website
+- Send notifications with customizing the configuration
+- Quickly get started with fully documented NPM library for Front-End and demo website
 - Scalable architecture for users with thousands of subscribers 
 
 --------------
@@ -69,7 +69,7 @@ _Note: After experiencing the service of Easy-Notify on Demo website with the te
   <img src="./docs/imgs/scaleout-architecture.png" alt="Architecture of Notification Handler" width="800"/>
 </p>   
 
-- #### Scale Out Web-Push Worker by Using AWS Lambda      <a align='right' href="./docs/webpush-lambda.md" target="_blank">  📋Read More</a>
+- #### Scale-Out Web-Push Worker by Using AWS Lambda      <a align='right' href="./docs/webpush-lambda.md" target="_blank">  📋Read More</a>
    The concurrency executions of the AWS Lambda function enable Easy-Notify to send notifications to at least **1,200 * 20** subscribers in 15 minutes. At the same time, the exact number could be more extensive than 24,000 because of the maximum 1,000 concurrency executions of the AWS Lambda function.
    <p align="center">
    <img src="./docs/imgs/lambda-cost-time.png" alt="Lambda Cost Of Time" width="800" />
@@ -105,22 +105,22 @@ _Note: After experiencing the service of Easy-Notify on Demo website with the te
 --------------
 ## Demo
 ### 🔍 Home Page  
-#### Click Get Started to sign up a new account and follow the instruction in Demo page to quickly experience Easy-Notify.
+#### Click Get Started to sign up for a new account and follow the instruction on the Demo Website to quickly experience Easy-Notify.
 ![Home Page](./docs/imgs/homepage.gif)
 <br/>
 
 ### 🔍 Subscribe to Your Channel on the Demo Website
-#### Subscribe your own channel on Demo Website by the Channel ID and Channel Key.
+#### Subscribe to your channel on the Demo Website by the Channel ID and Channel Key.
 ![Subscribe Channel](./docs/imgs/subscribe.gif)
 <br/>
 
 ### 🔍 Send a Web-Push Notification in Console
-#### Send a Web-Push notification to the channel you subscribed in console and checkout the notification on the Demo Website. 
+#### Send a Web-Push notification to the channel you subscribed to in the console and check out the notification on the Demo Website. 
 ![Send Notification](./docs/imgs/notification.gif)
 <br/>
 
 ### 🔍 Key-Rotate
-#### In addition to create Apps and Channels, you can also rotate the Channel Key to enhance the security of your account.
+#### In addition to creating Apps and Channels, you can also rotate the Channel Key to enhance the security of your account.
 ![Key Rotate](./docs/imgs/keyrotate.gif)
 <br/>
 
