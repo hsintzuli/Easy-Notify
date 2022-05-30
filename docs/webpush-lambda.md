@@ -29,6 +29,6 @@ AWS Lambda functions are limited to running up for a maximum of 15 minutes per e
 8 min ÷ 0.25 second/subscriber =  1,200 subscribers  
 ```  
 
-## Conclusion
+## Result
 According to the results of tests, the concurrency executions of the AWS Lambda function enable Easy-Notify to send notifications to at least **1,200 * 20** subscribers in 15 minutes. At the same time, the exact number could be more extensive than 24,000 because of the maximum 1,000 concurrency executions of the AWS Lambda function.
  
