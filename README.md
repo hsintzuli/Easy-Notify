@@ -83,11 +83,11 @@ _Note: After experiencing the service of Easy-Notify on Demo website with the te
    <img src="./docs/imgs/socketio-loadtest.png" alt="Load Test Result" width="800"/>
    </p>  
 
-**Auto Scaling by AWS Application Load Balancer**  
-ALB successfully scaled out the auto scaling groups after the concurrency connections reached approximately 21,000. 
-<p align="center">
-  <img src="./docs/imgs/socketio-autoscaling.png" alt="Auto Scaling" width="800"/>
-</p>  
+   **Auto Scaling by AWS Application Load Balancer**  
+   ALB successfully scaled out the auto scaling groups after the concurrency connections reached approximately 21,000. 
+   <p align="center">
+   <img src="./docs/imgs/socketio-autoscaling.png" alt="Auto Scaling" width="800"/>
+   </p>  
 
 ### 🔍 Mechanism of Sending and Tracking Notification  
 - #### chedule Notification with Crontab and RabbitMQ      <a align='right' href="./docs/notification-related_mechanism.md/#three-cases-of-notifications" target="_blank">  📋Read More</a>
