@@ -64,7 +64,7 @@ _Note: After experiencing the service of Easy-Notify on Demo website with the te
   <img src="./docs/imgs/architecture.png" alt="Brief Architecture" width="800"/>
 </p> 
 
-### 🔍Architecture of Web-Push Notification and WebSocket Notification
+### 🔍 Architecture of Web-Push Notification and WebSocket Notification
 <p align="center">
   <img src="./docs/imgs/scaleout-architecture.png" alt="Architecture of Notification Handler" width="800"/>
 </p>   
@@ -77,13 +77,13 @@ The concurrency executions of the AWS Lambda function enable Easy-Notify to send
   
 #### Scalability of Socket.IO Server      <a align='right' href="./docs/socketio-scaling.md" target="_blank">  📋Read More</a>
 
-##### **Load Test on Vertical Scaling and Horizontal Scaling**
+**Load Test on Vertical Scaling and Horizontal Scaling**  
 Vertical Scaling is capable of maintaining a higher maximum concurrency connection than Horizontal Scaling.  
 <p align="center">
   <img src="./docs/imgs/socketio-loadtest.png" alt="Load Test Result" width="800"/>
 </p>  
 
-##### **Auto Scaling by AWS Application Load Balancer**
+**Auto Scaling by AWS Application Load Balancer**  
 ALB successfully scaled out the auto scaling groups after the concurrency connections reached approximately 21,000. 
 <p align="center">
   <img src="./docs/imgs/socketio-autoscaling.png" alt="Auto Scaling" width="800"/>
