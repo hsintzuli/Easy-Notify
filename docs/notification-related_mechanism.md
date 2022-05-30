@@ -1,5 +1,5 @@
 # Mechanism of Sending and Tracking Notification
-## Mechanism of scheduled notification  
+## Schedule Notification with Crontab and RabbitMQ  
 <p align="center">
   <img src="./imgs/notification-flow.png" alt="Notification Flow Chart" width="800" />
 </p>
