@@ -90,7 +90,7 @@ _Note: After experiencing the service of Easy-Notify on Demo website with the te
       </p>  
 
 ### 🔍 Mechanism of Sending and Tracking Notification  
-- #### Schedule Notification with Crontab and RabbitMQ      <a align='right' href="./docs/notification-related_mechanism.md/#three-cases-of-notifications" target="_blank">  📋Read More</a>
+- #### Schedule Notification with Crontab and RabbitMQ      <a align='right' href="./docs/notification-related_mechanism.md/#schedule-notification-with-crontab-and-rabbitmq" target="_blank">  📋Read More</a>
    Three cases of notifications
    <p align="center">
    <img src="./docs/imgs/notification-flow.png" alt="Notification Flow Chart" width="800" />
