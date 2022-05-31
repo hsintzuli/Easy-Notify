@@ -54,9 +54,8 @@ app.use((req, res) => {
 // eslint-disable-next-line no-unused-vars
 app.use((err, req, res, next) => {
   err.status = err.status || 500;
-  res.status(err.status);
   console.error('[Uncaught error] %o:', err);
-  res.statys(err.status).json({
+  res.status(err.status).json({
     status: err.status,
     error: 'Please contact the server administrator',
   });
