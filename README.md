@@ -19,10 +19,10 @@ Easy-Notify is a handy push notification service that enables developers to easi
      - [Schedule Notification with Crontab and RabbitMQ](#schedule-notification-with-crontab-and-rabbitmq--------read-more)
      - [Record the ACK Response on Redis](#record-the-ack-response-on-redis------read-more)  
 4. [Demo](#demo)
-   - [Home Page](#home-page)
-   - [Subscribe to Your Channel on the Demo Website](#subscribe-to-your-channel-on-the-demo-website)
-   - [Send A Web-Push Notification in the Console](#send-a-web-push-notification-in-console)
-   - [Key-Rotate](#key-rotate)
+   - [Home Page](#-home-page)
+   - [Subscribe to Your Channel on the Demo Website](#-subscribe-to-your-channel-on-the-demo-website)
+   - [Send A Web-Push Notification in the Console](#-send-a-web-push-notification-in-console)
+   - [Key-Rotate](#-key-rotate)
 5. [Contact](#contact)
 
 --------------  
