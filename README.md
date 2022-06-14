@@ -17,7 +17,8 @@ Easy-Notify is a handy push notification service that enables developers to easi
      - [Scalability of Socket.IO Server](#scalability-of-socketio-server--------read-more)
    - [Mechanism of Sending and Tracking Notification](#-mechanism-of-sending-and-tracking-notification)
      - [Schedule Notification with Crontab and RabbitMQ](#schedule-notification-with-crontab-and-rabbitmq--------read-more)
-     - [Record the ACK Response on Redis](#record-the-ack-response-on-redis------read-more)  
+     - [Record the ACK Response on Redis](#record-the-ack-response-on-redis------read-more)
+   - [Database Schema](#-database-schema)  
 4. [Demo](#demo)
    - [Home Page](#-home-page)
    - [Subscribe to Your Channel on the Demo Website](#-subscribe-to-your-channel-on-the-demo-website)
@@ -101,6 +102,11 @@ _Note: After experiencing the service of Easy-Notify on Demo website with the te
    <p align="center">
    <img src="./docs/imgs/ack-response.png" alt="./imgs/ack-response.png" width="800" />
    </p>
+
+### 🔍 Database Schema
+<p align="center">
+  <img src="./docs/imgs/db_schema.png" alt="Database Schema" width="800"/>
+</p> 
 
 --------------
 ## Demo
